@@ -3,35 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#07090d">
-    <meta name="description" content="PlayPC — игровой портал о PC и PlayStation. Новости, релизы, голосования и игровой календарь.">
-    <title>PlayPC — Игровой портал</title>
+    <meta name="theme-color" content="#05070b">
+    <meta name="description" content="PlayPC — игровые новости, релизы, цены, системные требования и календарь выхода игр.">
+    <title>PlayPC — Gaming News & Release Calendar</title>
 
     <style>
         :root {
-            --bg: #07090d;
-            --bg-soft: #0a0e14;
-            --panel: #0d121a;
-            --panel-2: #111822;
-            --panel-3: #151d29;
+            --bg: #05070b;
+            --bg-soft: #090d14;
+            --panel: rgba(10, 15, 24, 0.88);
+            --panel-2: rgba(14, 21, 32, 0.94);
+            --panel-hover: rgba(20, 29, 44, 0.96);
             --text: #f4f7fb;
-            --muted: #8d9aaa;
-            --border: rgba(255, 255, 255, 0.09);
-            --border-strong: rgba(0, 229, 255, 0.32);
+            --muted: #8b98aa;
+            --muted-2: #687487;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.14);
             --accent: #00e5ff;
-            --accent-rgb: 0, 229, 255;
-            --accent-2: #a855f7;
-            --success: #2cff8c;
-            --danger: #ff426d;
-            --gold: #ffd166;
-            --shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
-            --radius: 16px;
-            --header-height: 76px;
+            --accent-2: #7c4dff;
+            --green: #39ff88;
+            --yellow: #ffd84d;
+            --red: #ff4d67;
+            --orange: #ff9b42;
+            --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+            --radius: 18px;
+            --radius-small: 11px;
+            --header-height: 72px;
+            --sidebar-width: 390px;
+            --content-max: 1600px;
         }
 
-        html {
-            scroll-behavior: smooth;
-            background: var(--bg);
+        body.light-theme {
+            --bg: #eef2f7;
+            --bg-soft: #f5f7fa;
+            --panel: rgba(255, 255, 255, 0.9);
+            --panel-2: rgba(255, 255, 255, 0.96);
+            --panel-hover: #ffffff;
+            --text: #111827;
+            --muted: #64748b;
+            --muted-2: #94a3b8;
+            --border: rgba(15, 23, 42, 0.09);
+            --border-strong: rgba(15, 23, 42, 0.16);
+            --shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
         }
 
         * {
@@ -40,30 +53,53 @@
             padding: 0;
         }
 
+        html {
+            scroll-behavior: smooth;
+            background: var(--bg);
+        }
+
         body {
             min-height: 100vh;
             background:
-                radial-gradient(circle at 10% 0%, rgba(var(--accent-rgb), 0.08), transparent 30%),
-                radial-gradient(circle at 90% 10%, rgba(168, 85, 247, 0.07), transparent 28%),
+                linear-gradient(rgba(5, 7, 11, 0.78), rgba(5, 7, 11, 0.94)),
+                radial-gradient(circle at 20% 0%, rgba(0, 229, 255, 0.08), transparent 30%),
+                radial-gradient(circle at 85% 20%, rgba(124, 77, 255, 0.08), transparent 30%),
                 var(--bg);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--text);
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            line-height: 1.55;
-            overflow-x: hidden;
-            transition: background 0.3s ease, color 0.3s ease;
+            line-height: 1.5;
+            transition: background-image 0.8s ease, background-color 0.3s ease, color 0.3s ease;
         }
 
-        body.light-theme {
-            --bg: #eef2f7;
-            --bg-soft: #f5f7fa;
-            --panel: #ffffff;
-            --panel-2: #f7f9fc;
-            --panel-3: #edf2f7;
-            --text: #101722;
-            --muted: #647184;
-            --border: rgba(15, 23, 42, 0.1);
-            --border-strong: rgba(var(--accent-rgb), 0.35);
-            --shadow: 0 15px 40px rgba(15, 23, 42, 0.1);
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                linear-gradient(90deg, rgba(0, 229, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(rgba(0, 229, 255, 0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 0%, transparent 0%, rgba(0, 0, 0, 0.18) 70%),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.52));
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
         button,
@@ -74,52 +110,46 @@
         }
 
         button {
+            border: 0;
             cursor: pointer;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
         }
 
         img {
             max-width: 100%;
+            display: block;
         }
 
         ::selection {
-            background: var(--accent);
-            color: #001015;
+            background: rgba(0, 229, 255, 0.25);
+            color: #fff;
         }
 
-        .scroll-progress {
-            position: fixed;
-            z-index: 9999;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-2));
-            box-shadow: 0 0 14px var(--accent);
+        .app-shell {
+            width: min(100%, var(--content-max));
+            margin: 0 auto;
+            padding: 0 18px 40px;
         }
 
-        .top-header {
+        .topbar {
             position: sticky;
             top: 0;
             z-index: 1000;
+            width: 100%;
             min-height: var(--header-height);
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 18px;
-            padding: 12px clamp(14px, 3vw, 42px);
-            background: rgba(7, 9, 13, 0.84);
+            padding: 12px 18px;
+            margin-bottom: 22px;
+            background: rgba(5, 7, 11, 0.78);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
             border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
         }
 
-        body.light-theme .top-header {
-            background: rgba(255, 255, 255, 0.86);
+        body.light-theme .topbar {
+            background: rgba(245, 247, 250, 0.82);
         }
 
         .brand {
@@ -134,677 +164,962 @@
             height: 42px;
             display: grid;
             place-items: center;
-            border: 1px solid var(--border-strong);
-            border-radius: 12px;
-            background: rgba(var(--accent-rgb), 0.08);
-            color: var(--accent);
-            font-size: 22px;
-            box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.12);
+            border-radius: 13px;
+            color: #001014;
+            background: linear-gradient(135deg, var(--accent), #7df5ff);
+            box-shadow:
+                0 0 22px rgba(0, 229, 255, 0.25),
+                inset 0 1px rgba(255, 255, 255, 0.55);
+            font-size: 21px;
+            font-weight: 1000;
         }
 
-        .brand-name {
-            font-size: clamp(20px, 3vw, 27px);
-            font-weight: 900;
+        .brand-text {
+            font-size: 21px;
+            line-height: 1;
+            font-weight: 1000;
             letter-spacing: -0.8px;
         }
 
-        .brand-name span {
-            color: var(--accent);
-            text-shadow: 0 0 18px rgba(var(--accent-rgb), 0.35);
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 9px;
-        }
-
-        .network-status {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 11px;
-            border: 1px solid var(--border);
-            border-radius: 11px;
-            background: var(--panel);
-            font-size: 12px;
+        .brand-subtitle {
+            display: block;
+            margin-top: 4px;
             color: var(--muted);
-            white-space: nowrap;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.7px;
+            text-transform: uppercase;
         }
 
-        .network-status strong {
-            color: var(--text);
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .status-widget {
+            min-height: 42px;
+            padding: 7px 11px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.035);
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 11px var(--success);
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(57, 255, 136, 0.75);
         }
 
-        .header-button {
+        .status-label {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        .status-value {
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .icon-btn,
+        .admin-btn {
             min-height: 42px;
-            border: 1px solid var(--border);
-            border-radius: 11px;
-            background: var(--panel);
-            color: var(--text);
             padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.045);
             transition: 0.2s ease;
+            font-weight: 850;
         }
 
-        .header-button:hover {
+        .icon-btn {
+            width: 42px;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            font-size: 17px;
+        }
+
+        .icon-btn:hover,
+        .admin-btn:hover {
             transform: translateY(-1px);
-            border-color: var(--border-strong);
-            color: var(--accent);
-            box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.1);
+            border-color: rgba(0, 229, 255, 0.35);
+            background: rgba(0, 229, 255, 0.08);
         }
 
-        .page-shell {
-            width: min(1500px, calc(100% - 28px));
-            margin: 0 auto;
-            padding: 30px 0 42px;
+        .admin-btn {
+            color: #001014;
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.12);
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .content-column {
+            min-width: 0;
+        }
+
+        .sidebar {
+            min-width: 0;
+            position: sticky;
+            top: calc(var(--header-height) + 18px);
+            max-height: calc(100vh - var(--header-height) - 36px);
+            overflow-y: auto;
+            padding-right: 2px;
+            scrollbar-width: thin;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 99px;
         }
 
         .hero {
             position: relative;
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
             overflow: hidden;
-            padding: clamp(22px, 4vw, 45px);
-            margin-bottom: 24px;
+            margin-bottom: 18px;
+            padding: 34px;
             border: 1px solid var(--border);
-            border-radius: 22px;
+            border-radius: 24px;
             background:
-                linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), transparent 45%),
-                linear-gradient(135deg, rgba(168, 85, 247, 0.08), transparent 75%),
-                var(--panel);
+                linear-gradient(135deg, rgba(0, 229, 255, 0.09), rgba(124, 77, 255, 0.05)),
+                rgba(5, 9, 15, 0.78);
             box-shadow: var(--shadow);
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            right: -100px;
+            top: -130px;
+            border-radius: 50%;
+            background: rgba(0, 229, 255, 0.08);
+            filter: blur(3px);
         }
 
         .hero::after {
             content: "";
             position: absolute;
-            right: -90px;
-            bottom: -120px;
-            width: 320px;
-            height: 320px;
-            border-radius: 50%;
-            border: 1px solid rgba(var(--accent-rgb), 0.15);
-            box-shadow:
-                0 0 0 30px rgba(var(--accent-rgb), 0.025),
-                0 0 0 60px rgba(var(--accent-rgb), 0.02);
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.025), transparent);
             pointer-events: none;
         }
 
-        .hero-kicker {
+        .eyebrow {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            width: max-content;
+            padding: 6px 9px;
+            margin-bottom: 13px;
+            border: 1px solid rgba(0, 229, 255, 0.22);
+            border-radius: 8px;
+            background: rgba(0, 229, 255, 0.06);
             color: var(--accent);
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 2px;
+            font-size: 10px;
+            font-weight: 950;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
         .hero h1 {
+            position: relative;
+            z-index: 1;
             max-width: 800px;
             font-size: clamp(30px, 5vw, 58px);
-            line-height: 1.04;
-            letter-spacing: -2px;
+            line-height: 0.98;
+            letter-spacing: -2.4px;
             margin-bottom: 13px;
         }
 
         .hero p {
-            max-width: 780px;
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
             color: var(--muted);
-            font-size: clamp(14px, 2vw, 17px);
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: minmax(250px, 320px) minmax(0, 1fr);
-            gap: 24px;
-            align-items: start;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: calc(var(--header-height) + 18px);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .side-card {
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--panel);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .side-card-header {
-            padding: 15px 16px;
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.07), transparent);
-        }
-
-        .side-card-header h2 {
-            font-size: 15px;
-            line-height: 1.3;
-        }
-
-        .side-card-body {
-            padding: 14px;
-        }
-
-        .release-list {
-            display: flex;
-            flex-direction: column;
-            gap: 9px;
-        }
-
-        .release-item {
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--panel-2);
-            transition: 0.2s ease;
-        }
-
-        .release-item:hover {
-            border-color: var(--border-strong);
-            transform: translateY(-1px);
-        }
-
-        .release-title {
             font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 3px;
-            overflow-wrap: anywhere;
         }
 
-        .release-date {
-            color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 6px;
-        }
-
-        .release-countdown {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--accent);
-        }
-
-        .release-countdown.released {
-            color: var(--success);
-            text-shadow: 0 0 12px rgba(44, 255, 140, 0.25);
-        }
-
-        .loading,
-        .empty-state,
-        .error-state {
-            color: var(--muted);
-            text-align: center;
-            padding: 18px 8px;
-            font-size: 13px;
+        .toolbar {
+            display: grid;
+            grid-template-columns: minmax(180px, 1fr) auto;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .search-box {
             position: relative;
         }
 
-        .search-box input {
-            width: 100%;
-            height: 46px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            outline: none;
-            background: var(--panel-2);
-            color: var(--text);
-            padding: 0 13px 0 42px;
-            transition: 0.2s ease;
-        }
-
-        .search-box input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08);
-        }
-
-        .search-icon {
+        .search-box span {
             position: absolute;
-            left: 14px;
+            left: 13px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--muted);
             pointer-events: none;
         }
 
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .filter-button {
-            flex: 1;
-            min-width: 70px;
-            min-height: 38px;
+        .search-input {
+            width: 100%;
+            min-height: 46px;
+            padding: 0 14px 0 40px;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--panel);
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 800;
+            border-radius: 13px;
+            outline: none;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.045);
             transition: 0.2s ease;
         }
 
-        .filter-button:hover,
-        .filter-button.active {
-            color: var(--text);
-            border-color: var(--accent);
-            background: rgba(var(--accent-rgb), 0.09);
-            box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.08);
+        .search-input:focus {
+            border-color: rgba(0, 229, 255, 0.5);
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.08);
         }
 
-        .feed {
-            min-width: 0;
-        }
-
-        .feed-topbar {
+        .filters {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 15px;
+            gap: 7px;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
 
-        .feed-title {
-            font-size: 21px;
-            font-weight: 900;
+        .filters::-webkit-scrollbar {
+            display: none;
         }
 
-        .post-count {
+        .filter-btn {
+            min-height: 46px;
+            padding: 0 13px;
+            flex: 0 0 auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
             color: var(--muted);
-            font-size: 13px;
+            background: rgba(255, 255, 255, 0.035);
+            font-size: 12px;
+            font-weight: 850;
+            transition: 0.2s ease;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            color: #001014;
+            border-color: var(--accent);
+            background: var(--accent);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 18px 0 11px;
+        }
+
+        .section-heading h2 {
+            font-size: 19px;
+            letter-spacing: -0.4px;
+        }
+
+        .section-heading span {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 750;
         }
 
         .news-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
+            gap: 13px;
         }
 
         .news-card {
             position: relative;
             min-width: 0;
-            display: flex;
-            flex-direction: column;
+            overflow: hidden;
             border: 1px solid var(--border);
             border-radius: var(--radius);
             background: var(--panel);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+            transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
         }
 
         .news-card:hover {
             transform: translateY(-3px);
-            border-color: var(--border-strong);
-            box-shadow:
-                var(--shadow),
-                0 0 28px rgba(var(--accent-rgb), 0.06);
-        }
-
-        .news-card.pinned {
-            border-color: rgba(255, 209, 102, 0.65);
-            box-shadow:
-                var(--shadow),
-                0 0 25px rgba(255, 209, 102, 0.08);
-        }
-
-        .pinned-badge {
-            position: absolute;
-            z-index: 3;
-            top: 12px;
-            left: 12px;
-            padding: 5px 8px;
-            border-radius: 7px;
-            color: #1b1400;
-            background: var(--gold);
-            font-size: 10px;
-            font-weight: 950;
-            letter-spacing: 0.7px;
-        }
-
-        .news-image-wrap {
-            position: relative;
-            background: var(--panel-3);
+            border-color: rgba(0, 229, 255, 0.23);
+            background: var(--panel-hover);
         }
 
         .news-image {
-            display: block;
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            background: var(--panel-3);
+            position: relative;
+            aspect-ratio: 16 / 8.5;
+            overflow: hidden;
+            background: linear-gradient(135deg, #101827, #080b11);
         }
 
-        .platform-badge {
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.45s ease;
+        }
+
+        .news-card:hover .news-image img {
+            transform: scale(1.04);
+        }
+
+        .news-image::after {
+            content: "";
             position: absolute;
-            right: 11px;
-            bottom: 11px;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 35%, rgba(0, 0, 0, 0.66));
+        }
+
+        .pin-badge {
+            position: absolute;
+            z-index: 2;
+            left: 11px;
+            top: 11px;
             padding: 5px 8px;
             border-radius: 7px;
-            background: rgba(0, 0, 0, 0.72);
-            color: #fff;
-            font-size: 10px;
-            font-weight: 900;
-            backdrop-filter: blur(8px);
+            background: var(--yellow);
+            color: #1b1600;
+            font-size: 9px;
+            font-weight: 1000;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
         }
 
         .news-body {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            padding: 17px;
+            padding: 16px;
         }
 
         .news-meta {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
+            justify-content: space-between;
             gap: 8px;
+            margin-bottom: 9px;
             color: var(--muted);
-            font-size: 11px;
-            margin-bottom: 8px;
+            font-size: 10px;
+            font-weight: 750;
         }
 
-        .news-meta span:not(:last-child)::after {
-            content: "•";
-            margin-left: 8px;
-            opacity: 0.5;
+        .news-platform {
+            color: var(--accent);
         }
 
         .news-title {
-            font-size: clamp(18px, 2vw, 23px);
-            line-height: 1.2;
-            letter-spacing: -0.35px;
-            margin-bottom: 10px;
+            margin-bottom: 9px;
+            font-size: 19px;
+            line-height: 1.12;
+            letter-spacing: -0.5px;
         }
 
         .news-content {
             color: var(--muted);
-            font-size: 14px;
-            overflow-wrap: anywhere;
+            font-size: 13px;
+            line-height: 1.65;
         }
 
-        .news-content strong {
-            color: var(--text);
+        .news-content.spoiler-content {
+            position: relative;
+            overflow: hidden;
+            max-height: 100px;
         }
 
-        .news-content em {
-            color: var(--accent);
-        }
-
-        .spoiler-text {
-            display: inline-block;
-            padding: 1px 6px;
-            border-radius: 5px;
-            background: #000;
-            color: transparent;
+        .spoiler-content.is-hidden {
+            filter: blur(7px);
             user-select: none;
-            cursor: pointer;
-            transition: 0.2s ease;
         }
 
-        .spoiler-text::after {
-            content: "Нажмите, чтобы раскрыть";
-            color: #777;
-            font-size: 11px;
-        }
-
-        .spoiler-text.revealed {
-            color: #fff;
-        }
-
-        .spoiler-text.revealed::after {
-            display: none;
+        .spoiler-toggle {
+            display: inline-flex;
+            margin-top: 9px;
+            padding: 6px 9px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--accent);
+            background: rgba(0, 229, 255, 0.04);
+            font-size: 10px;
+            font-weight: 850;
         }
 
         .news-actions {
             display: flex;
+            align-items: center;
+            gap: 7px;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: auto;
-            padding-top: 16px;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
         }
 
-        .vote-button,
-        .action-button {
-            min-height: 38px;
+        .vote-btn,
+        .small-action {
+            min-height: 34px;
+            padding: 0 10px;
             border: 1px solid var(--border);
             border-radius: 9px;
-            background: var(--panel-2);
-            color: var(--text);
-            padding: 0 11px;
-            font-size: 11px;
-            font-weight: 800;
-            transition: 0.2s ease;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.035);
+            font-size: 10px;
+            font-weight: 850;
+            transition: 0.18s ease;
         }
 
-        .vote-button:hover,
-        .action-button:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+        .vote-btn:hover,
+        .small-action:hover {
+            color: var(--text);
+            border-color: var(--border-strong);
             transform: translateY(-1px);
         }
 
-        .vote-button:disabled {
-            cursor: wait;
-            opacity: 0.6;
+        .vote-btn.wait:hover {
+            color: var(--green);
+            border-color: rgba(57, 255, 136, 0.4);
         }
 
-        .vote-button.play:hover {
-            border-color: var(--success);
-            color: var(--success);
+        .vote-btn.skip:hover {
+            color: var(--red);
+            border-color: rgba(255, 77, 103, 0.4);
         }
 
-        .vote-button.skip:hover {
-            border-color: var(--danger);
-            color: var(--danger);
+        .counter {
+            color: var(--muted-2);
+            font-size: 10px;
+            font-weight: 800;
         }
 
-        .bookmark-button.saved {
-            color: var(--gold);
-            border-color: rgba(255, 209, 102, 0.45);
-        }
-
-        .no-results {
-            grid-column: 1 / -1;
-            border: 1px dashed var(--border);
+        .empty-state {
+            padding: 42px 18px;
+            text-align: center;
+            border: 1px dashed var(--border-strong);
             border-radius: var(--radius);
-            padding: 45px 20px;
-            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
             color: var(--muted);
-            background: var(--panel);
         }
 
-        .footer {
-            width: min(1500px, calc(100% - 28px));
-            margin: 0 auto;
-            padding: 25px 0 45px;
-            border-top: 1px solid var(--border);
+        .empty-state strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .sidebar-card {
+            margin-bottom: 12px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--panel);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.16);
+        }
+
+        .sidebar-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 13px;
+        }
+
+        .sidebar-title h3 {
+            font-size: 14px;
+            letter-spacing: -0.2px;
+        }
+
+        .sidebar-title span {
             color: var(--muted);
-            text-align: center;
-            font-size: 11px;
+            font-size: 9px;
+            font-weight: 850;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
         }
 
-        .legal-notice {
-            max-width: 900px;
-            margin: 0 auto;
+        .release-list {
+            display: grid;
+            gap: 10px;
         }
 
-        .back-to-top {
-            position: fixed;
-            z-index: 900;
-            right: 20px;
-            bottom: 20px;
-            width: 44px;
-            height: 44px;
-            border: 1px solid var(--border-strong);
-            border-radius: 12px;
-            background: var(--panel);
+        .release-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.025);
+            transition: 0.2s ease;
+        }
+
+        .release-card:hover {
+            border-color: rgba(0, 229, 255, 0.25);
+            background: rgba(0, 229, 255, 0.025);
+        }
+
+        .release-art {
+            position: relative;
+            height: 100px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #111827, #06080d);
+        }
+
+        .release-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.82;
+        }
+
+        .release-art::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.84));
+        }
+
+        .release-date {
+            position: absolute;
+            z-index: 2;
+            left: 9px;
+            bottom: 8px;
+            padding: 4px 7px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.62);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 950;
+        }
+
+        .release-main-hit {
+            position: absolute;
+            z-index: 2;
+            right: 9px;
+            top: 8px;
+            padding: 4px 7px;
+            border-radius: 6px;
+            background: var(--yellow);
+            color: #201900;
+            font-size: 8px;
+            font-weight: 1000;
+        }
+
+        .release-content {
+            padding: 12px;
+        }
+
+        .release-name {
+            margin-bottom: 7px;
+            font-size: 15px;
+            font-weight: 950;
+            line-height: 1.15;
+        }
+
+        .release-countdown {
+            min-height: 31px;
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            margin-bottom: 9px;
+            border-radius: 8px;
+            background: rgba(0, 229, 255, 0.045);
+            border: 1px solid rgba(0, 229, 255, 0.09);
             color: var(--accent);
-            box-shadow: var(--shadow);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: 0.25s ease;
+            font-size: 10px;
+            font-weight: 900;
         }
 
-        .back-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
+        .release-countdown.sold {
+            color: var(--green);
+            background: rgba(57, 255, 136, 0.05);
+            border-color: rgba(57, 255, 136, 0.14);
         }
 
-        /* ADMIN */
+        .release-info {
+            display: grid;
+            gap: 7px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 10px;
+        }
+
+        .info-label {
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .info-value {
+            text-align: right;
+            font-weight: 800;
+        }
+
+        .platforms {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .platform-badge {
+            min-width: 27px;
+            padding: 3px 6px;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            text-align: center;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+            font-size: 8px;
+            font-weight: 1000;
+        }
+
+        .platform-badge.pc {
+            color: var(--accent);
+            border-color: rgba(0, 229, 255, 0.2);
+        }
+
+        .platform-badge.ps {
+            color: #80a9ff;
+            border-color: rgba(80, 130, 255, 0.22);
+        }
+
+        .requirement {
+            padding: 3px 6px;
+            border-radius: 6px;
+            font-size: 8px;
+            font-weight: 950;
+        }
+
+        .requirement.weak {
+            color: var(--green);
+            background: rgba(57, 255, 136, 0.07);
+        }
+
+        .requirement.strong {
+            color: var(--orange);
+            background: rgba(255, 155, 66, 0.08);
+        }
+
+        .prices {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .price-box {
+            padding: 7px 8px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .price-label {
+            display: block;
+            margin-bottom: 2px;
+            color: var(--muted);
+            font-size: 8px;
+            font-weight: 800;
+        }
+
+        .price-old {
+            margin-right: 4px;
+            color: var(--muted-2);
+            text-decoration: line-through;
+            font-size: 9px;
+        }
+
+        .price-new {
+            color: var(--green);
+            font-weight: 1000;
+        }
+
+        .discount-badge {
+            display: inline-block;
+            margin-left: 4px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            background: rgba(57, 255, 136, 0.1);
+            color: var(--green);
+            font-size: 8px;
+            font-weight: 1000;
+        }
+
+        .release-votes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .release-vote {
+            min-height: 32px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.025);
+            font-size: 9px;
+            font-weight: 900;
+            transition: 0.18s ease;
+        }
+
+        .release-vote:hover {
+            transform: translateY(-1px);
+        }
+
+        .release-vote.wait:hover {
+            color: var(--green);
+            border-color: rgba(57, 255, 136, 0.35);
+            background: rgba(57, 255, 136, 0.05);
+        }
+
+        .release-vote.skip:hover {
+            color: var(--red);
+            border-color: rgba(255, 77, 103, 0.35);
+            background: rgba(255, 77, 103, 0.05);
+        }
+
+        .release-vote:disabled {
+            opacity: 0.55;
+            cursor: wait;
+        }
+
+        .budget-total {
+            padding: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.14);
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.07), rgba(124, 77, 255, 0.04));
+        }
+
+        .budget-label {
+            display: block;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 850;
+            margin-bottom: 3px;
+        }
+
+        .budget-value {
+            color: var(--accent);
+            font-size: 21px;
+            font-weight: 1000;
+            letter-spacing: -0.5px;
+        }
+
+        .budget-chart {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .budget-item {
+            display: grid;
+            gap: 4px;
+        }
+
+        .budget-item-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .budget-track {
+            height: 6px;
+            overflow: hidden;
+            border-radius: 99px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .budget-bar {
+            height: 100%;
+            min-width: 2px;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+            transition: width 0.6s ease;
+        }
+
+        .top-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .top-empty {
+            padding: 12px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            color: var(--muted);
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .top-item {
+            display: grid;
+            grid-template-columns: 28px minmax(0, 1fr) auto;
+            gap: 8px;
+            align-items: center;
+            padding: 9px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .top-number {
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            background: rgba(0, 229, 255, 0.08);
+            color: var(--accent);
+            font-size: 10px;
+            font-weight: 1000;
+        }
+
+        .top-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        .top-votes {
+            color: var(--green);
+            font-size: 9px;
+            font-weight: 950;
+            white-space: nowrap;
+        }
 
         .admin-overlay {
             position: fixed;
-            z-index: 5000;
             inset: 0;
+            z-index: 2000;
             display: none;
-            background: rgba(0, 0, 0, 0.76);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            padding: 22px;
             overflow-y: auto;
+            background: rgba(0, 0, 0, 0.76);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
         }
 
-        .admin-overlay.active {
+        .admin-overlay.open {
             display: block;
         }
 
-        .admin-login {
-            width: min(430px, calc(100% - 30px));
-            margin: 12vh auto;
-            padding: 25px;
-            border: 1px solid var(--border-strong);
-            border-radius: 18px;
-            background: var(--panel);
-            box-shadow: 0 25px 90px rgba(0, 0, 0, 0.55);
-        }
-
-        .admin-login h2 {
-            margin-bottom: 8px;
-        }
-
-        .admin-login p {
-            color: var(--muted);
-            font-size: 13px;
-            margin-bottom: 18px;
-        }
-
         .admin-dashboard {
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at 10% 0%, rgba(var(--accent-rgb), 0.07), transparent 25%),
-                var(--bg);
+            width: min(1100px, 100%);
+            margin: 30px auto;
+            border: 1px solid var(--border-strong);
+            border-radius: 22px;
+            background: var(--panel-2);
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.65);
+            overflow: hidden;
         }
 
-        .dashboard-header {
-            position: sticky;
-            z-index: 20;
-            top: 0;
+        .admin-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
-            padding: 14px clamp(14px, 3vw, 35px);
+            padding: 18px 20px;
             border-bottom: 1px solid var(--border);
-            background: rgba(7, 9, 13, 0.92);
-            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.025);
         }
 
-        body.light-theme .dashboard-header {
-            background: rgba(255, 255, 255, 0.92);
+        .admin-header h2 {
+            font-size: 19px;
         }
 
-        .dashboard-title {
-            font-size: clamp(18px, 3vw, 25px);
-            font-weight: 900;
+        .admin-header p {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 10px;
         }
 
-        .dashboard-title span {
-            color: var(--accent);
-        }
-
-        .dashboard-header-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .password-input {
-            width: 190px;
-        }
-
-        .dashboard {
-            width: min(1500px, calc(100% - 28px));
-            margin: 0 auto;
-            padding: 25px 0 50px;
-        }
-
-        .dashboard-grid {
+        .admin-close {
+            width: 38px;
+            height: 38px;
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
-            margin-bottom: 18px;
-        }
-
-        .dashboard-card {
-            min-width: 0;
+            place-items: center;
             border: 1px solid var(--border);
-            border-radius: 16px;
-            background: var(--panel);
-            box-shadow: var(--shadow);
-            padding: 18px;
+            border-radius: 10px;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+            font-size: 18px;
         }
 
-        .dashboard-card.full-width {
-            grid-column: 1 / -1;
+        .admin-content {
+            padding: 20px;
         }
 
-        .dashboard-card h3 {
-            font-size: 16px;
-            margin-bottom: 14px;
+        .admin-login {
+            max-width: 430px;
+            margin: 50px auto;
+            text-align: center;
         }
 
-        .stat-number {
-            display: block;
-            font-size: 31px;
-            line-height: 1;
-            color: var(--accent);
-            margin-bottom: 6px;
-            font-weight: 950;
+        .admin-login h3 {
+            margin-bottom: 7px;
+            font-size: 20px;
         }
 
-        .stat-label {
+        .admin-login p {
+            margin-bottom: 18px;
             color: var(--muted);
             font-size: 12px;
         }
 
+        .admin-form {
+            display: grid;
+            gap: 13px;
+        }
+
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 11px;
         }
 
         .form-field {
-            display: flex;
-            flex-direction: column;
+            display: grid;
             gap: 6px;
         }
 
@@ -812,318 +1127,416 @@
             grid-column: 1 / -1;
         }
 
-        .form-field label {
+        .form-field label,
+        .form-label {
             color: var(--muted);
-            font-size: 11px;
-            font-weight: 800;
+            font-size: 10px;
+            font-weight: 850;
         }
 
-        .admin-input,
-        .admin-textarea,
-        .admin-select {
+        .form-control {
             width: 100%;
+            min-height: 42px;
+            padding: 9px 11px;
+            outline: none;
             border: 1px solid var(--border);
             border-radius: 10px;
-            outline: none;
-            background: var(--panel-2);
             color: var(--text);
-            padding: 11px 12px;
-            transition: 0.2s ease;
+            background: rgba(255, 255, 255, 0.045);
         }
 
-        .admin-input:focus,
-        .admin-textarea:focus,
-        .admin-select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.07);
+        .form-control:focus {
+            border-color: rgba(0, 229, 255, 0.45);
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.06);
         }
 
-        .admin-textarea {
-            min-height: 145px;
+        textarea.form-control {
+            min-height: 90px;
             resize: vertical;
         }
 
-        .checkbox-field {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            color: var(--text);
-            font-size: 12px;
-            margin: 12px 0;
+        select.form-control option {
+            color: #111827;
+            background: #fff;
         }
 
-        .checkbox-field input {
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .check {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--text);
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .check input {
             accent-color: var(--accent);
         }
 
-        .primary-button,
-        .danger-button,
-        .skin-button {
-            min-height: 40px;
-            border-radius: 10px;
-            padding: 0 13px;
-            border: 1px solid var(--border);
-            font-size: 11px;
-            font-weight: 900;
+        .submit-btn {
+            min-height: 45px;
+            padding: 0 16px;
+            border-radius: 11px;
+            color: #001014;
+            background: var(--accent);
+            font-size: 12px;
+            font-weight: 1000;
             transition: 0.2s ease;
         }
 
-        .primary-button {
-            background: rgba(var(--accent-rgb), 0.1);
-            border-color: var(--border-strong);
-            color: var(--accent);
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.16);
         }
 
-        .primary-button:hover {
-            background: rgba(var(--accent-rgb), 0.17);
+        .admin-section {
+            padding-top: 23px;
+            margin-top: 23px;
+            border-top: 1px solid var(--border);
         }
 
-        .danger-button {
-            background: rgba(255, 66, 109, 0.08);
-            border-color: rgba(255, 66, 109, 0.35);
-            color: var(--danger);
-        }
-
-        .danger-button:hover {
-            background: rgba(255, 66, 109, 0.16);
-        }
-
-        .skin-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .skin-button {
-            background: var(--panel-2);
-            color: var(--muted);
-        }
-
-        .skin-button.active {
-            color: var(--text);
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.1);
-        }
-
-        .admin-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 390px;
-            overflow-y: auto;
-        }
-
-        .admin-list-item {
+        .admin-section-title {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            padding: 11px 12px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--panel-2);
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
-        .admin-list-item-main {
-            min-width: 0;
+        .admin-section-title h3 {
+            font-size: 15px;
         }
 
-        .admin-list-item-title {
-            font-size: 12px;
-            font-weight: 800;
-            overflow-wrap: anywhere;
-        }
-
-        .admin-list-item-meta {
-            color: var(--muted);
-            font-size: 10px;
-            margin-top: 2px;
-        }
-
-        .release-admin-list {
-            max-height: 350px;
-            overflow-y: auto;
+        .sort-buttons {
             display: flex;
-            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sort-btn {
+            min-height: 33px;
+            padding: 0 9px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 9px;
+            font-weight: 850;
+        }
+
+        .sort-btn.active {
+            color: var(--accent);
+            border-color: rgba(0, 229, 255, 0.3);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .admin-release-list {
+            display: grid;
             gap: 8px;
         }
 
-        .release-admin-item {
+        .admin-release {
             display: grid;
             grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
             align-items: center;
-            gap: 10px;
-            padding: 11px 12px;
+            padding: 11px;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--panel-2);
+            border-radius: 11px;
+            background: rgba(255, 255, 255, 0.025);
         }
 
-        .release-admin-title {
+        .admin-release-main {
+            min-width: 0;
+        }
+
+        .admin-release-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             font-size: 12px;
-            font-weight: 800;
-            overflow-wrap: anywhere;
+            font-weight: 950;
         }
 
-        .release-admin-date {
+        .admin-release-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 3px;
             color: var(--muted);
-            font-size: 10px;
-            margin-top: 2px;
+            font-size: 9px;
         }
 
-        .admin-message {
-            min-height: 20px;
-            margin-top: 10px;
+        .admin-release-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .archive-btn,
+        .delete-btn {
+            min-height: 33px;
+            padding: 0 9px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 900;
+        }
+
+        .archive-btn {
+            color: var(--yellow);
+            border: 1px solid rgba(255, 216, 77, 0.18);
+            background: rgba(255, 216, 77, 0.05);
+        }
+
+        .delete-btn {
+            color: #fff;
+            border: 1px solid rgba(255, 77, 103, 0.3);
+            background: rgba(255, 77, 103, 0.12);
+        }
+
+        .archive-btn:hover,
+        .delete-btn:hover {
+            filter: brightness(1.2);
+            transform: translateY(-1px);
+        }
+
+        .toast-container {
+            position: fixed;
+            z-index: 5000;
+            right: 18px;
+            bottom: 18px;
+            display: grid;
+            gap: 8px;
+            width: min(340px, calc(100vw - 36px));
+            pointer-events: none;
+        }
+
+        .toast {
+            padding: 11px 13px;
+            border: 1px solid var(--border-strong);
+            border-radius: 11px;
+            background: rgba(12, 17, 26, 0.94);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+            color: var(--text);
+            font-size: 11px;
+            font-weight: 800;
+            animation: toastIn 0.25s ease;
+        }
+
+        .toast.success {
+            border-color: rgba(57, 255, 136, 0.25);
+        }
+
+        .toast.error {
+            border-color: rgba(255, 77, 103, 0.3);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: grid;
+            place-items: center;
+            min-height: 100px;
             color: var(--muted);
             font-size: 11px;
         }
 
-        .admin-message.success {
-            color: var(--success);
+        .footer {
+            margin-top: 24px;
+            padding: 20px 5px 5px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            text-align: center;
+            font-size: 10px;
+            line-height: 1.7;
         }
 
-        .admin-message.error {
-            color: var(--danger);
+        .footer strong {
+            color: var(--text);
+        }
+
+        .back-top {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 900;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--accent);
+            background: rgba(8, 12, 18, 0.84);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: 0.2s ease;
+        }
+
+        .back-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
         }
 
         @media (max-width: 1100px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            :root {
+                --sidebar-width: 340px;
             }
 
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .news-image {
-                height: 360px;
+            .status-widget {
+                display: none;
             }
         }
 
-        @media (max-width: 800px) {
-            :root {
-                --header-height: 66px;
-            }
-
-            .top-header {
-                padding: 9px 12px;
-            }
-
-            .network-status {
-                display: none;
-            }
-
-            .brand-mark {
-                width: 38px;
-                height: 38px;
-            }
-
-            .brand-name {
-                font-size: 20px;
-            }
-
-            .header-button {
-                min-height: 38px;
-                padding: 0 10px;
-            }
-
-            .page-shell {
-                width: min(100% - 18px, 700px);
-                padding-top: 18px;
-            }
-
-            .hero {
-                border-radius: 17px;
-                padding: 24px 18px;
-            }
-
-            .hero h1 {
-                letter-spacing: -1px;
-            }
-
-            .content-grid {
+        @media (max-width: 850px) {
+            .main-layout {
                 grid-template-columns: 1fr;
             }
 
             .sidebar {
                 position: static;
-                order: 2;
+                max-height: none;
+                overflow: visible;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
             }
 
-            .feed {
-                order: 1;
+            .sidebar-card {
+                margin-bottom: 0;
+            }
+
+            .release-sidebar-card {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 650px) {
+            :root {
+                --header-height: 62px;
+                --radius: 15px;
+            }
+
+            body {
+                background-attachment: scroll;
+            }
+
+            .app-shell {
+                padding: 0 10px 25px;
+            }
+
+            .topbar {
+                padding: 9px 10px;
+                margin-bottom: 12px;
+            }
+
+            .brand-mark {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                font-size: 17px;
+            }
+
+            .brand-text {
+                font-size: 17px;
+            }
+
+            .brand-subtitle {
+                display: none;
+            }
+
+            .top-actions {
+                gap: 5px;
+            }
+
+            .admin-btn {
+                padding: 0 9px;
+                font-size: 10px;
+            }
+
+            .icon-btn {
+                width: 36px;
+                min-height: 36px;
+            }
+
+            .hero {
+                min-height: 235px;
+                padding: 23px 18px;
+                border-radius: 18px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+                letter-spacing: -1.6px;
+            }
+
+            .hero p {
+                font-size: 12px;
+            }
+
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .search-input,
+            .filter-btn {
+                min-height: 42px;
             }
 
             .news-grid {
                 grid-template-columns: 1fr;
             }
 
-            .news-image {
-                height: 250px;
+            .news-title {
+                font-size: 18px;
             }
 
-            .footer {
-                width: min(100% - 18px, 700px);
-            }
-
-            .dashboard {
-                width: min(100% - 18px, 700px);
-            }
-
-            .dashboard-grid {
+            .sidebar {
                 grid-template-columns: 1fr;
             }
 
-            .dashboard-card.full-width {
+            .release-sidebar-card,
+            .sidebar-card {
                 grid-column: auto;
             }
 
-            .dashboard-header {
-                align-items: flex-start;
-                flex-direction: column;
+            .admin-overlay {
+                padding: 8px;
             }
 
-            .dashboard-header-actions {
-                width: 100%;
+            .admin-dashboard {
+                margin: 8px auto;
+                border-radius: 17px;
             }
 
-            .password-input {
-                flex: 1;
-                width: auto;
-            }
-        }
-
-        @media (max-width: 520px) {
-            .header-controls {
-                gap: 5px;
-            }
-
-            .header-button {
-                font-size: 0;
-                width: 40px;
-                padding: 0;
-            }
-
-            .header-button::first-letter {
-                font-size: 17px;
-            }
-
-            .news-image {
-                height: 210px;
-            }
-
-            .news-body {
+            .admin-header,
+            .admin-content {
                 padding: 14px;
-            }
-
-            .news-actions {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .action-button,
-            .vote-button {
-                width: 100%;
             }
 
             .form-grid {
@@ -1134,330 +1547,294 @@
                 grid-column: auto;
             }
 
-            .release-admin-item {
+            .admin-release {
                 grid-template-columns: 1fr;
             }
 
-            .release-admin-item .danger-button {
-                width: 100%;
+            .admin-release-actions {
+                justify-content: flex-start;
+            }
+
+            .admin-section-title {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .toast-container {
+                right: 10px;
+                bottom: 10px;
+                width: calc(100vw - 20px);
             }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            html {
-                scroll-behavior: auto;
-            }
-
             *,
             *::before,
             *::after {
-                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
                 animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="scroll-progress" id="scrollProgress"></div>
-
-    <header class="top-header">
+    <header class="topbar">
         <a class="brand" href="#" aria-label="PlayPC">
-            <div class="brand-mark">🎮</div>
-            <div class="brand-name">Play<span>PC</span></div>
+            <div class="brand-mark">▶</div>
+            <div>
+                <div class="brand-text">PlayPC</div>
+                <span class="brand-subtitle">Gaming Intelligence</span>
+            </div>
         </a>
 
-        <div class="header-controls">
-            <div class="network-status" aria-label="Статус игровых сетей">
+        <div class="top-actions">
+            <div class="status-widget">
                 <span class="status-dot"></span>
-                <span>PSN <strong>Online</strong></span>
-                <span>•</span>
-                <span>Steam <strong>Online</strong></span>
+                <div>
+                    <div class="status-label">PSN</div>
+                    <div class="status-value">Онлайн</div>
+                </div>
             </div>
 
-            <button class="header-button" id="themeToggle" type="button" title="День/ночь">
-                🌓
-            </button>
+            <div class="status-widget">
+                <span class="status-dot"></span>
+                <div>
+                    <div class="status-label">Steam</div>
+                    <div class="status-value">Онлайн</div>
+                </div>
+            </div>
 
-            <button class="header-button" id="adminOpenButton" type="button">
-                ⚙️ Панель
-            </button>
+            <button class="icon-btn" id="themeToggle" type="button" title="День / ночь" aria-label="Переключить тему">☀️</button>
+            <button class="admin-btn" id="adminOpen" type="button">⚙️ Панель</button>
         </div>
     </header>
 
-    <div class="page-shell">
-        <section class="hero">
-            <div class="hero-kicker">Gaming News • PC • PlayStation</div>
-            <h1>Игровые новости без лишнего шума.</h1>
-            <p>
-                Новости, релизы, голосования и календарь самых ожидаемых игр.
-                Следи за играми, которые действительно хочется запускать.
-            </p>
-        </section>
+    <div class="app-shell">
+        <main class="main-layout">
+            <section class="content-column">
+                <section class="hero">
+                    <div class="eyebrow">⚡ PLAYPC / GAMING HUB</div>
+                    <h1>Игры. Релизы.<br>Только главное.</h1>
+                    <p>
+                        Новости игровой индустрии, календарь релизов, цены,
+                        системные требования и мнение игрового сообщества — в одном месте.
+                    </p>
+                </section>
 
-        <div class="content-grid">
-            <aside class="sidebar">
-                <section class="side-card">
-                    <div class="side-card-header">
-                        <h2>🔎 Поиск и фильтры</h2>
+                <div class="toolbar">
+                    <div class="search-box">
+                        <span>⌕</span>
+                        <input
+                            id="searchInput"
+                            class="search-input"
+                            type="search"
+                            autocomplete="off"
+                            placeholder="Поиск по новостям..."
+                            aria-label="Поиск по новостям"
+                        >
                     </div>
 
-                    <div class="side-card-body">
-                        <div class="search-box">
-                            <span class="search-icon">⌕</span>
-                            <input
-                                id="searchInput"
-                                type="search"
-                                autocomplete="off"
-                                placeholder="Найти новость..."
-                                aria-label="Поиск новостей"
-                            >
-                        </div>
+                    <div class="filters" id="filters">
+                        <button class="filter-btn active" data-filter="all" type="button">Все</button>
+                        <button class="filter-btn" data-filter="PC" type="button">PC</button>
+                        <button class="filter-btn" data-filter="PS" type="button">PlayStation</button>
+                        <button class="filter-btn" data-filter="Xbox" type="button">Xbox</button>
+                        <button class="filter-btn" data-filter="Nintendo" type="button">Nintendo</button>
+                    </div>
+                </div>
 
-                        <div class="filters">
-                            <button class="filter-button active" type="button" data-filter="all">Все</button>
-                            <button class="filter-button" type="button" data-filter="PC">PC</button>
-                            <button class="filter-button" type="button" data-filter="PlayStation">PlayStation</button>
-                        </div>
+                <div class="section-heading">
+                    <h2>Последние новости</h2>
+                    <span id="newsCount">Загрузка...</span>
+                </div>
+
+                <section id="newsGrid" class="news-grid" aria-live="polite">
+                    <div class="loading">Загрузка новостей...</div>
+                </section>
+            </section>
+
+            <aside class="sidebar">
+                <section class="sidebar-card release-sidebar-card">
+                    <div class="sidebar-title">
+                        <h3>📅 Календарь релизов</h3>
+                        <span>LIVE</span>
+                    </div>
+
+                    <div id="releaseList" class="release-list">
+                        <div class="loading">Загрузка релизов...</div>
                     </div>
                 </section>
 
-                <section class="side-card">
-                    <div class="side-card-header">
-                        <h2>📅 Календарь релизов игр</h2>
+                <section class="sidebar-card">
+                    <div class="sidebar-title">
+                        <h3>💰 Бюджет геймера</h3>
+                        <span>Мониторинг</span>
                     </div>
 
-                    <div class="side-card-body">
-                        <div class="release-list" id="releaseList">
-                            <div class="loading">Загрузка релизов...</div>
+                    <div class="budget-total">
+                        <span class="budget-label">Стоимость всех активных цифровых релизов</span>
+                        <div id="budgetValue" class="budget-value">0 ₽</div>
+                    </div>
+
+                    <div id="budgetChart" class="budget-chart">
+                        <div class="top-empty">Нет активных релизов.</div>
+                    </div>
+                </section>
+
+                <section class="sidebar-card">
+                    <div class="sidebar-title">
+                        <h3>🏆 Топ-3</h3>
+                        <span>Ожидание</span>
+                    </div>
+
+                    <div id="topList" class="top-list">
+                        <div class="top-empty">
+                            Голосуйте за игры ниже, чтобы сформировать Топ!
                         </div>
                     </div>
                 </section>
             </aside>
+        </main>
 
-            <main class="feed">
-                <div class="feed-topbar">
-                    <h2 class="feed-title">Последние новости</h2>
-                    <div class="post-count" id="postCount">Загрузка...</div>
-                </div>
-
-                <section class="news-grid" id="newsGrid" aria-live="polite">
-                    <div class="loading">Загрузка новостей...</div>
-                </section>
-            </main>
-        </div>
+        <footer class="footer">
+            <strong>PlayPC</strong> — независимый игровой блог.
+            <br>
+            Сайт является независимым блогом. Мы не собираем и не обрабатываем персональные данные. Cookie-файлы отсутствуют. Регистрация не требуется.
+            <br>
+            © 2026 PlayPC. Все товарные знаки принадлежат их правообладателям.
+        </footer>
     </div>
 
-    <footer class="footer">
-        <div class="legal-notice">
-            Сайт является независимым блогом. Мы не собираем и не обрабатываем персональные данные. Cookie-файлы отсутствуют. Регистрация не требуется.
-        </div>
-    </footer>
+    <button class="back-top" id="backTop" type="button" title="Наверх" aria-label="Наверх">↑</button>
 
-    <button class="back-to-top" id="backToTop" type="button" aria-label="Наверх">
-        ▲
-    </button>
+    <div class="toast-container" id="toastContainer"></div>
 
-    <!-- ADMIN OVERLAY -->
     <div class="admin-overlay" id="adminOverlay" aria-hidden="true">
-        <div class="admin-login" id="adminLogin">
-            <h2>⚙️ Панель администратора</h2>
-            <p>Введите пароль администратора для доступа к Dashboard.</p>
+        <div class="admin-dashboard">
+            <div class="admin-header">
+                <div>
+                    <h2>⚙️ PlayPC Dashboard</h2>
+                    <p>Управление новостями и календарём релизов</p>
+                </div>
+                <button class="admin-close" id="adminClose" type="button" aria-label="Закрыть">×</button>
+            </div>
 
-            <input
-                class="admin-input"
-                id="loginPassword"
-                type="password"
-                autocomplete="current-password"
-                placeholder="Пароль"
-            >
+            <div class="admin-content">
+                <div id="adminLogin" class="admin-login">
+                    <h3>Вход администратора</h3>
+                    <p>Введите пароль для доступа к панели управления.</p>
 
-            <button
-                class="primary-button"
-                id="loginButton"
-                type="button"
-                style="width:100%; margin-top:10px;"
-            >
-                Войти в Dashboard
-            </button>
-
-            <div class="admin-message" id="loginMessage"></div>
-        </div>
-
-        <div class="admin-dashboard" id="adminDashboard" hidden>
-            <header class="dashboard-header">
-                <div class="dashboard-title">
-                    PlayPC <span>Dashboard</span>
+                    <form id="adminLoginForm">
+                        <input
+                            id="adminPassword"
+                            class="form-control"
+                            type="password"
+                            placeholder="Пароль администратора"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <button class="submit-btn" style="width:100%; margin-top:10px;" type="submit">
+                            🔐 Войти
+                        </button>
+                    </form>
                 </div>
 
-                <div class="dashboard-header-actions">
-                    <input
-                        class="admin-input password-input"
-                        id="adminPasswordInput"
-                        type="password"
-                        autocomplete="off"
-                        placeholder="Пароль админа"
-                    >
+                <div id="adminWorkspace" hidden>
+                    <section class="admin-section" style="padding-top:0; margin-top:0; border-top:0;">
+                        <div class="admin-section-title">
+                            <div>
+                                <h3>🎮 Управление релизами</h3>
+                            </div>
+                        </div>
 
-                    <button class="header-button" id="dashboardThemeButton" type="button" title="День/ночь">
-                        🌓
-                    </button>
-
-                    <button class="header-button" id="closeDashboardButton" type="button">
-                        ✕ Закрыть
-                    </button>
-                </div>
-            </header>
-
-            <div class="dashboard">
-                <div class="dashboard-grid">
-                    <section class="dashboard-card">
-                        <span class="stat-number" id="statTotal">0</span>
-                        <span class="stat-label">Всего новостей</span>
-                    </section>
-
-                    <section class="dashboard-card">
-                        <span class="stat-number" id="statPC">0</span>
-                        <span class="stat-label">PC новостей</span>
-                    </section>
-
-                    <section class="dashboard-card">
-                        <span class="stat-number" id="statPS">0</span>
-                        <span class="stat-label">PlayStation новостей</span>
-                    </section>
-
-                    <section class="dashboard-card">
-                        <span class="stat-number" id="statReleases">0</span>
-                        <span class="stat-label">Релизов в календаре</span>
-                    </section>
-                </div>
-
-                <div class="dashboard-grid">
-                    <section class="dashboard-card full-width">
-                        <h3>📝 Создать новость</h3>
-
-                        <form id="postForm">
+                        <form id="releaseForm" class="admin-form">
                             <div class="form-grid">
                                 <div class="form-field">
-                                    <label for="postTitle">Заголовок</label>
-                                    <input
-                                        class="admin-input"
-                                        id="postTitle"
-                                        type="text"
-                                        maxlength="180"
-                                        required
-                                        placeholder="Например: Новая игра уже близко"
-                                    >
+                                    <label for="releaseTitle">Название</label>
+                                    <input id="releaseTitle" class="form-control" type="text" required placeholder="Название игры">
                                 </div>
 
                                 <div class="form-field">
-                                    <label for="postPlatform">Платформа</label>
-                                    <select class="admin-select" id="postPlatform">
-                                        <option value="PC">PC</option>
-                                        <option value="PlayStation">PlayStation</option>
+                                    <label for="releaseDate">Дата выхода</label>
+                                    <input id="releaseDate" class="form-control" type="date" required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="priceDigital">Цена цифры, ₽</label>
+                                    <input id="priceDigital" class="form-control" type="number" min="0" step="0.01" value="0">
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="priceDisk">Цена диска, ₽</label>
+                                    <input id="priceDisk" class="form-control" type="number" min="0" step="0.01" value="0">
+                                </div>
+
+                                <div class="form-field">
+                                    <label>Платформы</label>
+                                    <div class="checkbox-row">
+                                        <label class="check">
+                                            <input id="platformPC" type="checkbox" value="PC">
+                                            PC
+                                        </label>
+                                        <label class="check">
+                                            <input id="platformPS" type="checkbox" value="PS">
+                                            PS
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="systemReq">Системные требования</label>
+                                    <select id="systemReq" class="form-control">
+                                        <option value="Слабый ПК">Слабый ПК</option>
+                                        <option value="Мощный ПК">Мощный ПК</option>
                                     </select>
                                 </div>
 
                                 <div class="form-field full">
-                                    <label for="postImage">URL обложки</label>
-                                    <input
-                                        class="admin-input"
-                                        id="postImage"
-                                        type="url"
-                                        placeholder="https://..."
-                                    >
+                                    <label for="bgUrl">URL фонового арта</label>
+                                    <input id="bgUrl" class="form-control" type="url" placeholder="https://example.com/game-art.jpg">
                                 </div>
 
-                                <div class="form-field full">
-                                    <label for="postContent">Текст новости</label>
-                                    <textarea
-                                        class="admin-textarea"
-                                        id="postContent"
-                                        required
-                                        placeholder="Текст новости. Можно использовать [b]жирный[/b], [i]курсив[/i] и [spoiler]скрытый текст[/spoiler]."
-                                    ></textarea>
+                                <div class="form-field">
+                                    <label for="discount">Скидка, %</label>
+                                    <input id="discount" class="form-control" type="number" min="0" max="100" step="1" value="0">
+                                </div>
+
+                                <div class="form-field">
+                                    <label>Главный хит</label>
+                                    <div class="checkbox-row">
+                                        <label class="check">
+                                            <input id="isMainHit" type="checkbox">
+                                            ⭐ Главный хит
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
-                            <label class="checkbox-field">
-                                <input id="postPinned" type="checkbox">
-                                📌 Закрепить новость на главной
-                            </label>
-
-                            <button class="primary-button" type="submit">
-                                Опубликовать новость
+                            <button class="submit-btn" type="submit">
+                                ➕ Добавить игру в календарь
                             </button>
-
-                            <div class="admin-message" id="postMessage"></div>
                         </form>
                     </section>
 
-                    <section class="dashboard-card">
-                        <h3>🎨 Скин сайта</h3>
+                    <section class="admin-section">
+                        <div class="admin-section-title">
+                            <div>
+                                <h3>🗂 Менеджер релизов</h3>
+                            </div>
 
-                        <div class="skin-buttons">
-                            <button class="skin-button active" type="button" data-skin="standard">
-                                Стандарт
-                            </button>
-
-                            <button class="skin-button" type="button" data-skin="playstation">
-                                PlayStation
-                            </button>
-
-                            <button class="skin-button" type="button" data-skin="pc">
-                                ПК
-                            </button>
+                            <div class="sort-buttons">
+                                <button class="sort-btn active" data-sort="date" type="button">По дате</button>
+                                <button class="sort-btn" data-sort="price" type="button">По цене</button>
+                            </div>
                         </div>
-                    </section>
 
-                    <section class="dashboard-card" style="grid-column: span 3;">
-                        <h3>🗂️ Управление контентом</h3>
-
-                        <div class="admin-list" id="adminPostList">
+                        <div id="adminReleaseList" class="admin-release-list">
                             <div class="loading">Загрузка...</div>
-                        </div>
-                    </section>
-
-                    <section class="dashboard-card full-width">
-                        <h3>📅 Управление релизами</h3>
-
-                        <div class="form-grid">
-                            <div class="form-field">
-                                <label for="releaseTitle">Название игры</label>
-                                <input
-                                    class="admin-input"
-                                    id="releaseTitle"
-                                    type="text"
-                                    maxlength="180"
-                                    required
-                                    placeholder="Например: Grand Theft Auto VI"
-                                >
-                            </div>
-
-                            <div class="form-field">
-                                <label for="releaseDate">Дата выхода</label>
-                                <input
-                                    class="admin-input"
-                                    id="releaseDate"
-                                    type="date"
-                                    required
-                                >
-                            </div>
-                        </div>
-
-                        <button
-                            class="primary-button"
-                            id="addReleaseButton"
-                            type="button"
-                            style="margin-top:12px;"
-                        >
-                            ➕ Добавить хит
-                        </button>
-
-                        <div class="admin-message" id="releaseMessage"></div>
-
-                        <div class="release-admin-list" id="adminReleaseList">
-                            <div class="loading">Загрузка релизов...</div>
                         </div>
                     </section>
                 </div>
@@ -1468,50 +1845,25 @@
     <script>
         "use strict";
 
-        const ADMIN_PASSWORD = "AdminPlayPC2026";
-
         const state = {
             posts: [],
             releases: [],
             filter: "all",
             search: "",
             adminPassword: "",
-            theme: localStorage.getItem("playpc-theme") || "dark",
-            skin: localStorage.getItem("playpc-skin") || "standard"
+            adminSort: "date"
         };
 
-        const elements = {
-            body: document.body,
-            newsGrid: document.getElementById("newsGrid"),
-            postCount: document.getElementById("postCount"),
-            releaseList: document.getElementById("releaseList"),
-            searchInput: document.getElementById("searchInput"),
-            themeToggle: document.getElementById("themeToggle"),
-            dashboardThemeButton: document.getElementById("dashboardThemeButton"),
-            adminOpenButton: document.getElementById("adminOpenButton"),
-            adminOverlay: document.getElementById("adminOverlay"),
-            adminLogin: document.getElementById("adminLogin"),
-            adminDashboard: document.getElementById("adminDashboard"),
-            loginPassword: document.getElementById("loginPassword"),
-            loginButton: document.getElementById("loginButton"),
-            loginMessage: document.getElementById("loginMessage"),
-            adminPasswordInput: document.getElementById("adminPasswordInput"),
-            closeDashboardButton: document.getElementById("closeDashboardButton"),
-            postForm: document.getElementById("postForm"),
-            postMessage: document.getElementById("postMessage"),
-            adminPostList: document.getElementById("adminPostList"),
-            statTotal: document.getElementById("statTotal"),
-            statPC: document.getElementById("statPC"),
-            statPS: document.getElementById("statPS"),
-            statReleases: document.getElementById("statReleases"),
-            releaseTitle: document.getElementById("releaseTitle"),
-            releaseDate: document.getElementById("releaseDate"),
-            addReleaseButton: document.getElementById("addReleaseButton"),
-            releaseMessage: document.getElementById("releaseMessage"),
-            adminReleaseList: document.getElementById("adminReleaseList"),
-            scrollProgress: document.getElementById("scrollProgress"),
-            backToTop: document.getElementById("backToTop")
-        };
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+        const newsGrid = $("#newsGrid");
+        const releaseList = $("#releaseList");
+        const topList = $("#topList");
+        const budgetValue = $("#budgetValue");
+        const budgetChart = $("#budgetChart");
+        const newsCount = $("#newsCount");
+        const toastContainer = $("#toastContainer");
 
         function escapeHtml(value) {
             return String(value ?? "")
@@ -1519,1354 +1871,1207 @@
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
+                .replace(/'/g, "&#039;");
         }
 
-        function stripBBCode(value) {
-            return String(value ?? "")
-                .replace(/\[\/?(?:b|i|spoiler)\]/gi, "")
-                .replace(/\s+/g, " ")
-                .trim();
+        function normalizeNumber(value, fallback = 0) {
+            const number = Number(value);
+            return Number.isFinite(number) ? number : fallback;
         }
 
-        function bbCodeToHtml(value) {
-            let safe = escapeHtml(value);
-
-            safe = safe.replace(
-                /\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi,
-                '<span class="spoiler-text" role="button" tabindex="0">$1</span>'
-            );
-
-            safe = safe.replace(
-                /\[b\]([\s\S]*?)\[\/b\]/gi,
-                "<strong>$1</strong>"
-            );
-
-            safe = safe.replace(
-                /\[i\]([\s\S]*?)\[\/i\]/gi,
-                "<em>$1</em>"
-            );
-
-            return safe.replace(/\r?\n/g, "<br>");
+        function formatPrice(value) {
+            const number = normalizeNumber(value);
+            return new Intl.NumberFormat("ru-RU", {
+                maximumFractionDigits: 0
+            }).format(number) + " ₽";
         }
 
-        function getPostId(post) {
-            return post && (post.id ?? post._id ?? post.postId);
-        }
+        function formatDate(dateString) {
+            if (!dateString) return "Дата не указана";
 
-        function getReleaseId(release) {
-            return release && (release.id ?? release._id ?? release.releaseId);
-        }
+            const date = new Date(dateString + "T00:00:00");
 
-        function normalizePlatform(platform) {
-            const value = String(platform ?? "").trim().toLowerCase();
-
-            if (
-                value === "playstation" ||
-                value === "ps" ||
-                value === "ps5" ||
-                value === "ps4"
-            ) {
-                return "PlayStation";
-            }
-
-            return "PC";
-        }
-
-        function formatDate(dateValue) {
-            if (!dateValue) {
-                return "Дата не указана";
-            }
-
-            const date = parseDateOnly(dateValue);
-
-            if (!date) {
-                return String(dateValue);
+            if (Number.isNaN(date.getTime())) {
+                return escapeHtml(dateString);
             }
 
             return new Intl.DateTimeFormat("ru-RU", {
                 day: "2-digit",
-                month: "2-digit",
+                month: "long",
                 year: "numeric"
             }).format(date);
         }
 
-        function parseDateOnly(value) {
-            const text = String(value ?? "").trim();
+        function getReleaseTimestamp(release) {
+            const date = new Date(String(release.releaseDate || "") + "T00:00:00");
+            const timestamp = date.getTime();
+            return Number.isFinite(timestamp) ? timestamp : Number.MAX_SAFE_INTEGER;
+        }
 
-            const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        function getActiveReleases() {
+            return state.releases.filter(release => release.isArchived === false);
+        }
 
-            if (match) {
-                const year = Number(match[1]);
-                const month = Number(match[2]);
-                const day = Number(match[3]);
+        function showToast(message, type = "") {
+            const toast = document.createElement("div");
+            toast.className = "toast" + (type ? " " + type : "");
+            toast.textContent = message;
 
-                const date = new Date(year, month - 1, day);
+            toastContainer.appendChild(toast);
 
-                if (
-                    date.getFullYear() === year &&
-                    date.getMonth() === month - 1 &&
-                    date.getDate() === day
-                ) {
-                    date.setHours(0, 0, 0, 0);
-                    return date;
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateY(8px)";
+
+                setTimeout(() => toast.remove(), 220);
+            }, 2800);
+        }
+
+        async function apiFetch(url, options = {}) {
+            const response = await fetch(url, {
+                cache: "no-store",
+                ...options,
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(options.headers || {})
                 }
-            }
-
-            const parsed = new Date(text);
-
-            if (Number.isNaN(parsed.getTime())) {
-                return null;
-            }
-
-            parsed.setHours(0, 0, 0, 0);
-            return parsed;
-        }
-
-        function getTodayAtMidnight() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            return today;
-        }
-
-        function getDaysUntilRelease(dateValue) {
-            const releaseDate = parseDateOnly(dateValue);
-
-            if (!releaseDate) {
-                return null;
-            }
-
-            const today = getTodayAtMidnight();
-            const millisecondsPerDay = 24 * 60 * 60 * 1000;
-
-            return Math.round(
-                (releaseDate.getTime() - today.getTime()) / millisecondsPerDay
-            );
-        }
-
-        function compareReleases(a, b) {
-            const daysA = getDaysUntilRelease(a.releaseDate);
-            const daysB = getDaysUntilRelease(b.releaseDate);
-
-            if (daysA === null && daysB === null) {
-                return String(a.title || "").localeCompare(
-                    String(b.title || ""),
-                    "ru"
-                );
-            }
-
-            if (daysA === null) {
-                return 1;
-            }
-
-            if (daysB === null) {
-                return -1;
-            }
-
-            const aFuture = daysA > 0;
-            const bFuture = daysB > 0;
-
-            if (aFuture && bFuture) {
-                return daysA - daysB;
-            }
-
-            if (!aFuture && !bFuture) {
-                return daysB - daysA;
-            }
-
-            return aFuture ? -1 : 1;
-        }
-
-        function applyTheme() {
-            const isLight = state.theme === "light";
-
-            elements.body.classList.toggle("light-theme", isLight);
-
-            const icon = isLight ? "🌙" : "☀️";
-
-            elements.themeToggle.textContent = icon;
-            elements.dashboardThemeButton.textContent = icon;
-        }
-
-        function setTheme(theme) {
-            state.theme = theme === "light" ? "light" : "dark";
-            localStorage.setItem("playpc-theme", state.theme);
-            applyTheme();
-        }
-
-        function toggleTheme() {
-            setTheme(state.theme === "dark" ? "light" : "dark");
-        }
-
-        function applySkin() {
-            const root = document.documentElement;
-
-            if (state.skin === "playstation") {
-                root.style.setProperty("--accent", "#4aa8ff");
-                root.style.setProperty("--accent-rgb", "74, 168, 255");
-                root.style.setProperty("--accent-2", "#00439c");
-            } else if (state.skin === "pc") {
-                root.style.setProperty("--accent", "#7cff00");
-                root.style.setProperty("--accent-rgb", "124, 255, 0");
-                root.style.setProperty("--accent-2", "#00ff88");
-            } else {
-                root.style.setProperty("--accent", "#00e5ff");
-                root.style.setProperty("--accent-rgb", "0, 229, 255");
-                root.style.setProperty("--accent-2", "#a855f7");
-            }
-
-            document.querySelectorAll(".skin-button").forEach(button => {
-                button.classList.toggle(
-                    "active",
-                    button.dataset.skin === state.skin
-                );
             });
-        }
 
-        function setSkin(skin) {
-            if (!["standard", "playstation", "pc"].includes(skin)) {
-                skin = "standard";
+            let data = null;
+
+            try {
+                data = await response.json();
+            } catch {
+                data = null;
             }
 
-            state.skin = skin;
-            localStorage.setItem("playpc-skin", state.skin);
-            applySkin();
+            if (!response.ok) {
+                throw new Error(
+                    data?.error ||
+                    data?.message ||
+                    `Ошибка сервера: ${response.status}`
+                );
+            }
+
+            return data;
         }
 
-        function getReadingTime(text) {
-            const clean = stripBBCode(text);
+        function calculateReadingTime(text) {
+            const cleanText = String(text || "").replace(/\s+/g, " ").trim();
 
-            if (!clean) {
+            if (!cleanText) {
                 return 1;
             }
 
-            const words = clean
-                .split(/\s+/)
-                .filter(Boolean)
-                .length;
-
+            const words = cleanText.split(" ").length;
             return Math.max(1, Math.ceil(words / 180));
         }
 
-        function getBookmarks() {
-            try {
-                const value = JSON.parse(
-                    localStorage.getItem("playpc-bookmarks") || "[]"
-                );
+        function parseSpoilers(text) {
+            const source = String(text || "");
+            const regex = /\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi;
 
-                return Array.isArray(value) ? value.map(String) : [];
-            } catch {
-                return [];
-            }
-        }
+            let hasSpoiler = false;
 
-        function saveBookmarks(bookmarks) {
-            localStorage.setItem(
-                "playpc-bookmarks",
-                JSON.stringify(bookmarks)
-            );
-        }
+            const html = source
+                .replace(regex, (_, content) => {
+                    hasSpoiler = true;
 
-        function isBookmarked(id) {
-            return getBookmarks().includes(String(id));
-        }
-
-        function toggleBookmark(id) {
-            const bookmarks = getBookmarks();
-            const stringId = String(id);
-            const index = bookmarks.indexOf(stringId);
-
-            if (index >= 0) {
-                bookmarks.splice(index, 1);
-            } else {
-                bookmarks.push(stringId);
-            }
-
-            saveBookmarks(bookmarks);
-            renderPosts();
-        }
-
-        function fallbackCopyText(text) {
-            const textarea = document.createElement("textarea");
-
-            textarea.value = text;
-            textarea.style.position = "fixed";
-            textarea.style.left = "-9999px";
-            textarea.style.top = "0";
-
-            document.body.appendChild(textarea);
-            textarea.focus();
-            textarea.select();
-
-            let success = false;
-
-            try {
-                success = document.execCommand("copy");
-            } catch {
-                success = false;
-            }
-
-            textarea.remove();
-
-            return success;
-        }
-
-        async function sharePost(post, button) {
-            const url = window.location.href.split("#")[0] + "#post-" + getPostId(post);
-            const title = String(post.title || "Новость PlayPC");
-
-            try {
-                if (navigator.share) {
-                    await navigator.share({
-                        title,
-                        text: title,
-                        url
-                    });
-
-                    return;
-                }
-
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(url);
-                } else {
-                    if (!fallbackCopyText(url)) {
-                        throw new Error("Не удалось скопировать");
-                    }
-                }
-
-                const oldText = button.textContent;
-                button.textContent = "✓ Ссылка скопирована";
-
-                setTimeout(() => {
-                    button.textContent = oldText;
-                }, 1800);
-            } catch (error) {
-                if (error && error.name === "AbortError") {
-                    return;
-                }
-
-                const oldText = button.textContent;
-                button.textContent = "⚠ Не удалось";
-
-                setTimeout(() => {
-                    button.textContent = oldText;
-                }, 1800);
-            }
-        }
-
-        function createImageElement(imageUrl, title) {
-            const wrapper = document.createElement("div");
-            wrapper.className = "news-image-wrap";
-
-            if (imageUrl) {
-                const image = document.createElement("img");
-
-                image.className = "news-image";
-                image.loading = "lazy";
-                image.alt = title || "Обложка новости";
-                image.src = String(imageUrl);
-
-                image.addEventListener("error", () => {
-                    wrapper.innerHTML = `
-                        <div class="news-image" style="
-                            display:grid;
-                            place-items:center;
-                            color:var(--muted);
-                            background:
-                                linear-gradient(135deg, rgba(var(--accent-rgb),.08), transparent),
-                                var(--panel-3);
-                        ">
-                            🎮 Нет изображения
-                        </div>
+                    return `
+                        <span class="spoiler-content is-hidden">${escapeHtml(content)}</span>
+                        <button class="spoiler-toggle" type="button">👁 Показать спойлер</button>
                     `;
-                }, { once: true });
+                })
+                .replace(/\n/g, "<br>");
 
-                wrapper.appendChild(image);
-            } else {
-                wrapper.innerHTML = `
-                    <div class="news-image" style="
-                        display:grid;
-                        place-items:center;
-                        color:var(--muted);
-                        background:
-                            linear-gradient(135deg, rgba(var(--accent-rgb),.08), transparent),
-                            var(--panel-3);
-                    ">
-                        🎮 PlayPC
-                    </div>
-                `;
-            }
-
-            return wrapper;
+            return {
+                html,
+                hasSpoiler
+            };
         }
 
-        function createPostCard(post) {
-            const id = getPostId(post);
-            const title = String(post.title || "Без названия");
-            const platform = normalizePlatform(post.platform);
-            const content = String(post.content || post.text || "");
-            const imageUrl = String(post.imageUrl || post.image || "").trim();
-
-            const willPlay = Number(
-                post.willPlay ?? post.votes?.willPlay ?? post.playVotes ?? 0
-            );
-
-            const wontPlay = Number(
-                post.wontPlay ?? post.votes?.wontPlay ?? post.skipVotes ?? 0
-            );
-
-            const dateValue =
-                post.createdAt ||
-                post.date ||
-                post.created_at ||
-                null;
-
-            const pinned = Boolean(post.pinned);
-            const bookmarked = isBookmarked(id);
-
-            const article = document.createElement("article");
-
-            article.className = "news-card" + (pinned ? " pinned" : "");
-            article.id = "post-" + id;
-
-            if (pinned) {
-                const badge = document.createElement("div");
-
-                badge.className = "pinned-badge";
-                badge.textContent = "ЗАКРЕПЛЕНО";
-
-                article.appendChild(badge);
-            }
-
-            article.appendChild(createImageElement(imageUrl, title));
-
-            const platformBadge = document.createElement("div");
-
-            platformBadge.className = "platform-badge";
-            platformBadge.textContent = platform;
-
-            const imageWrap = article.querySelector(".news-image-wrap");
-
-            if (imageWrap) {
-                imageWrap.appendChild(platformBadge);
-            }
-
-            const body = document.createElement("div");
-
-            body.className = "news-body";
-
-            body.innerHTML = `
-                <div class="news-meta">
-                    <span>${escapeHtml(formatDate(dateValue))}</span>
-                    <span>⏱ ${getReadingTime(content)} мин. чтения</span>
-                </div>
-
-                <h2 class="news-title">${escapeHtml(title)}</h2>
-
-                <div class="news-content">${bbCodeToHtml(content)}</div>
-
-                <div class="news-actions">
-                    <button class="vote-button play" type="button" data-action="vote-play">
-                        🎮 Буду играть (${willPlay})
-                    </button>
-
-                    <button class="vote-button skip" type="button" data-action="vote-skip">
-                        ❌ Пропущу (${wontPlay})
-                    </button>
-
-                    <button class="action-button" type="button" data-action="share">
-                        ↗ Поделиться
-                    </button>
-
-                    <button class="action-button bookmark-button ${bookmarked ? "saved" : ""}" type="button" data-action="bookmark">
-                        ${bookmarked ? "★ Сохранено" : "☆ Сохранить"}
-                    </button>
-                </div>
-            `;
-
-            body.querySelectorAll(".spoiler-text").forEach(spoiler => {
-                const reveal = () => {
-                    spoiler.classList.toggle("revealed");
-                };
-
-                spoiler.addEventListener("click", reveal);
-
-                spoiler.addEventListener("keydown", event => {
-                    if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        reveal();
-                    }
-                });
-            });
-
-            const playButton = body.querySelector('[data-action="vote-play"]');
-            const skipButton = body.querySelector('[data-action="vote-skip"]');
-            const shareButton = body.querySelector('[data-action="share"]');
-            const bookmarkButton = body.querySelector('[data-action="bookmark"]');
-
-            playButton.addEventListener("click", () => {
-                votePost(id, "willPlay", playButton, skipButton);
-            });
-
-            skipButton.addEventListener("click", () => {
-                votePost(id, "wontPlay", skipButton, playButton);
-            });
-
-            shareButton.addEventListener("click", () => {
-                sharePost(post, shareButton);
-            });
-
-            bookmarkButton.addEventListener("click", () => {
-                toggleBookmark(id);
-            });
-
-            article.appendChild(body);
-
-            return article;
-        }
-
-        function getFilteredPosts() {
-            const query = state.search.trim().toLowerCase();
-
-            return state.posts.filter(post => {
-                const platform = normalizePlatform(post.platform);
-
-                if (
-                    state.filter !== "all" &&
-                    platform !== state.filter
-                ) {
-                    return false;
-                }
-
-                if (!query) {
-                    return true;
-                }
-
-                const title = String(post.title || "").toLowerCase();
-                const content = stripBBCode(
-                    String(post.content || post.text || "")
-                ).toLowerCase();
-
-                return title.includes(query) || content.includes(query);
-            });
+        function normalizePost(post) {
+            return {
+                id: post.id ?? Date.now().toString(),
+                title: post.title || "Без названия",
+                platform: post.platform || "Gaming",
+                imageUrl: post.imageUrl || "",
+                content: post.content || "",
+                pinned: Boolean(post.pinned),
+                willPlay: normalizeNumber(post.willPlay),
+                wontPlay: normalizeNumber(post.wontPlay),
+                createdAt: post.createdAt || new Date().toISOString()
+            };
         }
 
         function renderPosts() {
-            const posts = getFilteredPosts();
+            const search = state.search.trim().toLowerCase();
 
-            elements.newsGrid.innerHTML = "";
+            const filtered = state.posts.filter(post => {
+                const matchesSearch =
+                    !search ||
+                    post.title.toLowerCase().includes(search) ||
+                    post.content.toLowerCase().includes(search) ||
+                    post.platform.toLowerCase().includes(search);
 
-            elements.postCount.textContent =
-                posts.length === state.posts.length
-                    ? `${posts.length} ${getRussianNewsWord(posts.length)}`
-                    : `${posts.length} из ${state.posts.length}`;
+                const matchesFilter =
+                    state.filter === "all" ||
+                    post.platform.toLowerCase().includes(state.filter.toLowerCase());
 
-            if (!posts.length) {
-                const empty = document.createElement("div");
+                return matchesSearch && matchesFilter;
+            });
 
-                empty.className = "no-results";
-                empty.textContent = state.posts.length
-                    ? "🔎 По вашему запросу ничего не найдено."
-                    : "📰 Новостей пока нет.";
+            newsCount.textContent = `${filtered.length} ${getRussianPlural(filtered.length, "новость", "новости", "новостей")}`;
 
-                elements.newsGrid.appendChild(empty);
+            if (!filtered.length) {
+                newsGrid.innerHTML = `
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <strong>Ничего не найдено</strong>
+                        Попробуйте изменить запрос или фильтр.
+                    </div>
+                `;
                 return;
             }
 
-            posts.forEach(post => {
-                elements.newsGrid.appendChild(createPostCard(post));
+            newsGrid.innerHTML = filtered.map(post => {
+                const parsed = parseSpoilers(post.content);
+                const readingTime = calculateReadingTime(post.content);
+
+                return `
+                    <article class="news-card" data-post-id="${escapeHtml(post.id)}">
+                        <div class="news-image">
+                            ${post.pinned ? `<div class="pin-badge">📌 Закреплено</div>` : ""}
+                            ${
+                                post.imageUrl
+                                    ? `<img src="${escapeHtml(post.imageUrl)}" alt="${escapeHtml(post.title)}" loading="lazy" onerror="this.style.display='none'">`
+                                    : ""
+                            }
+                        </div>
+
+                        <div class="news-body">
+                            <div class="news-meta">
+                                <span class="news-platform">${escapeHtml(post.platform)}</span>
+                                <span>⏱ ${readingTime} мин чтения</span>
+                            </div>
+
+                            <h3 class="news-title">${escapeHtml(post.title)}</h3>
+
+                            <div class="news-content">
+                                ${parsed.html}
+                            </div>
+
+                            <div class="news-actions">
+                                <button class="vote-btn wait" data-post-vote="willPlay" data-id="${escapeHtml(post.id)}" type="button">
+                                    🎮 Жду ${post.willPlay}
+                                </button>
+
+                                <button class="vote-btn skip" data-post-vote="wontPlay" data-id="${escapeHtml(post.id)}" type="button">
+                                    ⏭ Пропущу ${post.wontPlay}
+                                </button>
+
+                                <button class="small-action" data-share-id="${escapeHtml(post.id)}" type="button">
+                                    ↗ Поделиться
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+
+            $$(".spoiler-toggle").forEach(button => {
+                button.addEventListener("click", () => {
+                    const spoiler = button.previousElementSibling;
+
+                    if (!spoiler) return;
+
+                    spoiler.classList.toggle("is-hidden");
+
+                    button.textContent = spoiler.classList.contains("is-hidden")
+                        ? "👁 Показать спойлер"
+                        : "🙈 Скрыть спойлер";
+                });
+            });
+
+            $$("[data-post-vote]").forEach(button => {
+                button.addEventListener("click", () => votePost(button.dataset.id, button.dataset.postVote, button));
+            });
+
+            $$("[data-share-id]").forEach(button => {
+                button.addEventListener("click", () => sharePost(button.dataset.shareId));
             });
         }
 
-        function getRussianNewsWord(number) {
+        async function votePost(id, type, button) {
+            button.disabled = true;
+
+            try {
+                const result = await apiFetch(`/api/posts/${encodeURIComponent(id)}/vote`, {
+                    method: "POST",
+                    body: JSON.stringify({ type })
+                });
+
+                const post = state.posts.find(item => String(item.id) === String(id));
+
+                if (post) {
+                    post.willPlay = normalizeNumber(result.willPlay, post.willPlay);
+                    post.wontPlay = normalizeNumber(result.wontPlay, post.wontPlay);
+                }
+
+                playBlip(type === "willPlay" ? 740 : 430);
+                renderPosts();
+            } catch (error) {
+                showToast(error.message, "error");
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function sharePost(id) {
+            const post = state.posts.find(item => String(item.id) === String(id));
+
+            if (!post) return;
+
+            const shareData = {
+                title: post.title,
+                text: post.content.replace(/\[\/?spoiler\]/gi, ""),
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(window.location.href);
+                    showToast("Ссылка скопирована", "success");
+                } else {
+                    showToast("Скопируйте ссылку из адресной строки");
+                }
+            } catch {
+                // Пользователь мог закрыть системное окно Share.
+            }
+        }
+
+        function getRussianPlural(number, one, few, many) {
             const n = Math.abs(number) % 100;
             const n1 = n % 10;
 
-            if (n > 10 && n < 20) {
-                return "новостей";
+            if (n > 10 && n < 20) return many;
+            if (n1 > 1 && n1 < 5) return few;
+            if (n1 === 1) return one;
+
+            return many;
+        }
+
+        function getCountdownText(releaseDate) {
+            const target = new Date(String(releaseDate || "") + "T00:00:00").getTime();
+            const now = Date.now();
+
+            if (!Number.isFinite(target)) {
+                return {
+                    text: "Дата релиза неизвестна",
+                    sold: false
+                };
             }
 
-            if (n1 === 1) {
-                return "новость";
+            if (target <= now) {
+                return {
+                    text: "🎮 Уже в продаже!",
+                    sold: true
+                };
             }
 
-            if (n1 >= 2 && n1 <= 4) {
-                return "новости";
+            const diff = target - now;
+
+            const days = Math.floor(diff / 86400000);
+            const hours = Math.floor((diff % 86400000) / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+
+            return {
+                text: `Осталось: ${days} д. ${hours} ч. ${minutes} мин.`,
+                sold: false
+            };
+        }
+
+        function renderReleases() {
+            const releases = getActiveReleases()
+                .slice()
+                .sort((a, b) => getReleaseTimestamp(a) - getReleaseTimestamp(b));
+
+            if (!releases.length) {
+                releaseList.innerHTML = `
+                    <div class="empty-state">
+                        <strong>Календарь пуст</strong>
+                        Новые релизы появятся здесь.
+                    </div>
+                `;
+            } else {
+                releaseList.innerHTML = releases.map(release => {
+                    const countdown = getCountdownText(release.releaseDate);
+
+                    const platforms = Array.isArray(release.platforms)
+                        ? release.platforms
+                        : [];
+
+                    const discount = Math.min(
+                        100,
+                        Math.max(0, normalizeNumber(release.discount))
+                    );
+
+                    const digital = normalizeNumber(release.priceDigital);
+                    const disk = normalizeNumber(release.priceDisk);
+
+                    const digitalDiscounted = digital * (1 - discount / 100);
+                    const diskDiscounted = disk * (1 - discount / 100);
+
+                    const showDigitalDiscount = discount > 0 && digital > 0;
+                    const showDiskDiscount = discount > 0 && disk > 0;
+
+                    const systemReq = String(release.systemReq || "Слабый ПК");
+                    const strong = systemReq.toLowerCase().includes("мощ");
+
+                    return `
+                        <article class="release-card" data-release-id="${escapeHtml(release.id)}">
+                            <div class="release-art">
+                                ${
+                                    release.bgUrl
+                                        ? `<img src="${escapeHtml(release.bgUrl)}" alt="${escapeHtml(release.title)}" loading="lazy" onerror="this.style.display='none'">`
+                                        : ""
+                                }
+
+                                ${release.isMainHit ? `<div class="release-main-hit">⭐ ГЛАВНЫЙ ХИТ</div>` : ""}
+
+                                <div class="release-date">
+                                    ${escapeHtml(formatDate(release.releaseDate))}
+                                </div>
+                            </div>
+
+                            <div class="release-content">
+                                <h3 class="release-name">${escapeHtml(release.title)}</h3>
+
+                                <div class="release-countdown ${countdown.sold ? "sold" : ""}">
+                                    ${escapeHtml(countdown.text)}
+                                </div>
+
+                                <div class="release-info">
+                                    <div class="info-row">
+                                        <span class="info-label">Платформы</span>
+                                        <div class="platforms">
+                                            ${
+                                                platforms.length
+                                                    ? platforms.map(platform => {
+                                                        const normalized = String(platform).toUpperCase();
+                                                        const cls = normalized === "PS" ? "ps" : "pc";
+                                                        const icon = normalized === "PS" ? "🎮 PS" : "🖥 PC";
+
+                                                        return `
+                                                            <span class="platform-badge ${cls}">
+                                                                ${escapeHtml(icon)}
+                                                            </span>
+                                                        `;
+                                                    }).join("")
+                                                    : `<span class="platform-badge">—</span>`
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="info-label">Требования</span>
+                                        <span class="requirement ${strong ? "strong" : "weak"}">
+                                            ${escapeHtml(strong ? "Мощный ПК" : "Слабый ПК")}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="prices">
+                                    <div class="price-box">
+                                        <span class="price-label">Цифра</span>
+                                        ${
+                                            showDigitalDiscount
+                                                ? `
+                                                    <span class="price-old">${formatPrice(digital)}</span>
+                                                    <span class="price-new">${formatPrice(digitalDiscounted)}</span>
+                                                    <span class="discount-badge">-${discount}%</span>
+                                                `
+                                                : `<span class="price-new">${formatPrice(digital)}</span>`
+                                        }
+                                    </div>
+
+                                    <div class="price-box">
+                                        <span class="price-label">Диск</span>
+                                        ${
+                                            showDiskDiscount
+                                                ? `
+                                                    <span class="price-old">${formatPrice(disk)}</span>
+                                                    <span class="price-new">${formatPrice(diskDiscounted)}</span>
+                                                    <span class="discount-badge">-${discount}%</span>
+                                                `
+                                                : `<span class="price-new">${formatPrice(disk)}</span>`
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="release-votes">
+                                    <button
+                                        class="release-vote wait"
+                                        data-release-vote="willPlay"
+                                        data-id="${escapeHtml(release.id)}"
+                                        type="button"
+                                    >
+                                        🎮 Жду <span>${normalizeNumber(release.votesWillPlay)}</span>
+                                    </button>
+
+                                    <button
+                                        class="release-vote skip"
+                                        data-release-vote="wontPlay"
+                                        data-id="${escapeHtml(release.id)}"
+                                        type="button"
+                                    >
+                                        ⏭ Пропущу <span>${normalizeNumber(release.votesWontPlay)}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }).join("");
             }
 
-            return "новостей";
+            $$("[data-release-vote]").forEach(button => {
+                button.addEventListener("click", () => {
+                    voteRelease(
+                        button.dataset.id,
+                        button.dataset.releaseVote,
+                        button
+                    );
+                });
+            });
+
+            renderBudget();
+            renderTop3();
+            renderAdminReleases();
+        }
+
+        async function voteRelease(id, type, button) {
+            button.disabled = true;
+
+            try {
+                const result = await apiFetch(`/api/releases/${encodeURIComponent(id)}/vote`, {
+                    method: "POST",
+                    body: JSON.stringify({ type })
+                });
+
+                const release = state.releases.find(item => String(item.id) === String(id));
+
+                if (release) {
+                    release.votesWillPlay = normalizeNumber(
+                        result.votesWillPlay,
+                        release.votesWillPlay
+                    );
+
+                    release.votesWontPlay = normalizeNumber(
+                        result.votesWontPlay,
+                        release.votesWontPlay
+                    );
+                }
+
+                playBlip(type === "willPlay" ? 760 : 420);
+                renderReleases();
+            } catch (error) {
+                showToast(error.message, "error");
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        function renderBudget() {
+            const releases = getActiveReleases();
+
+            const total = releases.reduce((sum, release) => {
+                return sum + Math.max(0, normalizeNumber(release.priceDigital));
+            }, 0);
+
+            budgetValue.textContent = formatPrice(total);
+
+            if (!releases.length || total <= 0) {
+                budgetChart.innerHTML = `
+                    <div class="top-empty">
+                        Нет цифровых цен для построения графика.
+                    </div>
+                `;
+                return;
+            }
+
+            budgetChart.innerHTML = releases
+                .slice()
+                .sort((a, b) => normalizeNumber(b.priceDigital) - normalizeNumber(a.priceDigital))
+                .map(release => {
+                    const price = Math.max(0, normalizeNumber(release.priceDigital));
+                    const percentage = Math.max(0, Math.min(100, price / total * 100));
+
+                    return `
+                        <div class="budget-item">
+                            <div class="budget-item-head">
+                                <span>${escapeHtml(release.title)}</span>
+                                <span>${percentage.toFixed(1)}%</span>
+                            </div>
+                            <div class="budget-track">
+                                <div class="budget-bar" style="width:${percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .join("");
+        }
+
+        function renderTop3() {
+            const releases = getActiveReleases()
+                .slice()
+                .sort((a, b) => {
+                    const votesDifference =
+                        normalizeNumber(b.votesWillPlay) -
+                        normalizeNumber(a.votesWillPlay);
+
+                    if (votesDifference !== 0) {
+                        return votesDifference;
+                    }
+
+                    return getReleaseTimestamp(a) - getReleaseTimestamp(b);
+                })
+                .slice(0, 3);
+
+            const hasVotes = releases.some(
+                release => normalizeNumber(release.votesWillPlay) > 0
+            );
+
+            if (!releases.length || !hasVotes) {
+                topList.innerHTML = `
+                    <div class="top-empty">
+                        Голосуйте за игры ниже, чтобы сформировать Топ!
+                    </div>
+                `;
+                return;
+            }
+
+            topList.innerHTML = releases.map((release, index) => `
+                <div class="top-item">
+                    <div class="top-number">#${index + 1}</div>
+
+                    <div class="top-name" title="${escapeHtml(release.title)}">
+                        ${escapeHtml(release.title)}
+                    </div>
+
+                    <div class="top-votes">
+                        🎮 ${normalizeNumber(release.votesWillPlay)}
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function applyBackground(releases) {
+            const validReleases = releases
+                .filter(release => {
+                    return (
+                        release.isArchived === false &&
+                        release.bgUrl &&
+                        Number.isFinite(getReleaseTimestamp(release))
+                    );
+                })
+                .sort((a, b) => {
+                    const now = Date.now();
+
+                    const aDistance = Math.abs(getReleaseTimestamp(a) - now);
+                    const bDistance = Math.abs(getReleaseTimestamp(b) - now);
+
+                    return aDistance - bDistance;
+                });
+
+            const closest = validReleases[0];
+
+            if (!closest || !closest.bgUrl) {
+                document.body.style.removeProperty("background-image");
+                return;
+            }
+
+            const url = String(closest.bgUrl).replace(/"/g, '\\"');
+
+            const background = `
+                linear-gradient(
+                    rgba(3, 5, 9, 0.80),
+                    rgba(3, 5, 9, 0.94)
+                ),
+                url("${url}")
+            `;
+
+            document.body.style.backgroundImage = background;
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            document.body.style.backgroundAttachment = window.innerWidth <= 650
+                ? "scroll"
+                : "fixed";
         }
 
         async function loadPosts() {
             try {
-                const response = await fetch("/api/posts", {
-                    method: "GET",
-                    headers: {
-                        "Accept": "application/json"
-                    },
-                    cache: "no-store"
-                });
+                const data = await apiFetch("/api/posts");
 
-                if (!response.ok) {
-                    throw new Error("HTTP " + response.status);
-                }
-
-                const data = await response.json();
-
-                state.posts = Array.isArray(data)
+                const posts = Array.isArray(data)
                     ? data
                     : Array.isArray(data.posts)
                         ? data.posts
                         : [];
 
-                renderPosts();
-                updateAdminStats();
-                renderAdminPosts();
-            } catch (error) {
-                console.error("Ошибка загрузки новостей:", error);
-
-                elements.newsGrid.innerHTML = `
-                    <div class="no-results">
-                        ⚠ Не удалось загрузить новости.
-                    </div>
-                `;
-
-                elements.postCount.textContent = "Ошибка загрузки";
-            }
-        }
-
-        async function votePost(id, type, clickedButton, otherButton) {
-            if (clickedButton.disabled) {
-                return;
-            }
-
-            clickedButton.disabled = true;
-            otherButton.disabled = true;
-
-            try {
-                const response = await fetch(
-                    `/api/posts/${encodeURIComponent(id)}/vote`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
-                        body: JSON.stringify({ type })
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error("HTTP " + response.status);
-                }
-
-                const data = await response.json();
-
-                const updatedPost = state.posts.find(
-                    post => String(getPostId(post)) === String(id)
-                );
-
-                if (updatedPost) {
-                    if (
-                        data &&
-                        (
-                            Object.prototype.hasOwnProperty.call(data, "willPlay") ||
-                            Object.prototype.hasOwnProperty.call(data, "wontPlay")
-                        )
-                    ) {
-                        if (Object.prototype.hasOwnProperty.call(data, "willPlay")) {
-                            updatedPost.willPlay = Number(data.willPlay);
-                        }
-
-                        if (Object.prototype.hasOwnProperty.call(data, "wontPlay")) {
-                            updatedPost.wontPlay = Number(data.wontPlay);
-                        }
-                    } else if (data && data.post) {
-                        Object.assign(updatedPost, data.post);
-                    } else {
-                        if (type === "willPlay") {
-                            updatedPost.willPlay =
-                                Number(updatedPost.willPlay || 0) + 1;
-                        } else {
-                            updatedPost.wontPlay =
-                                Number(updatedPost.wontPlay || 0) + 1;
-                        }
-                    }
-                }
-
+                state.posts = posts.map(normalizePost);
                 renderPosts();
             } catch (error) {
-                console.error("Ошибка голосования:", error);
+                state.posts = [];
 
-                clickedButton.disabled = false;
-                otherButton.disabled = false;
-
-                alert("Не удалось отправить голос. Попробуйте ещё раз.");
-            }
-        }
-
-        function renderReleases() {
-            const releases = [...state.releases].sort(compareReleases);
-
-            elements.releaseList.innerHTML = "";
-
-            if (!releases.length) {
-                elements.releaseList.innerHTML = `
-                    <div class="empty-state">
-                        Пока нет добавленных релизов.
-                    </div>
-                `;
-                return;
-            }
-
-            releases.forEach(release => {
-                const item = document.createElement("div");
-
-                item.className = "release-item";
-
-                const days = getDaysUntilRelease(release.releaseDate);
-                const released = days !== null && days <= 0;
-
-                let countdown = "Дата не указана";
-
-                if (released) {
-                    countdown = "🎮 Уже в продаже!";
-                } else if (days !== null) {
-                    countdown = `Осталось: ${days} ${getDayWord(days)}`;
-                }
-
-                item.innerHTML = `
-                    <div class="release-title">${escapeHtml(release.title || "Без названия")}</div>
-                    <div class="release-date">${escapeHtml(formatDate(release.releaseDate))}</div>
-                    <div class="release-countdown ${released ? "released" : ""}">
-                        ${escapeHtml(countdown)}
+                newsGrid.innerHTML = `
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <strong>Не удалось загрузить новости</strong>
+                        ${escapeHtml(error.message)}
                     </div>
                 `;
 
-                elements.releaseList.appendChild(item);
-            });
+                newsCount.textContent = "Ошибка";
+            }
         }
 
-        function getDayWord(days) {
-            const n = Math.abs(Number(days)) % 100;
-            const n1 = n % 10;
-
-            if (n > 10 && n < 20) {
-                return "дней";
-            }
-
-            if (n1 === 1) {
-                return "день";
-            }
-
-            if (n1 >= 2 && n1 <= 4) {
-                return "дня";
-            }
-
-            return "дней";
+        function normalizeRelease(release) {
+            return {
+                id: release.id ?? Date.now().toString(),
+                title: release.title || "Без названия",
+                releaseDate: release.releaseDate || "",
+                priceDigital: normalizeNumber(release.priceDigital),
+                priceDisk: normalizeNumber(release.priceDisk),
+                platforms: Array.isArray(release.platforms)
+                    ? release.platforms
+                    : [],
+                systemReq: release.systemReq || "Слабый ПК",
+                bgUrl: release.bgUrl || "",
+                discount: Math.min(100, Math.max(0, normalizeNumber(release.discount))),
+                isMainHit: Boolean(release.isMainHit),
+                isArchived: Boolean(release.isArchived),
+                votesWillPlay: normalizeNumber(release.votesWillPlay),
+                votesWontPlay: normalizeNumber(release.votesWontPlay)
+            };
         }
 
         async function loadReleases() {
             try {
-                const response = await fetch("/api/releases", {
-                    method: "GET",
-                    headers: {
-                        "Accept": "application/json"
-                    },
-                    cache: "no-store"
-                });
+                const data = await apiFetch("/api/releases");
 
-                if (!response.ok) {
-                    throw new Error("HTTP " + response.status);
-                }
-
-                const data = await response.json();
-
-                state.releases = Array.isArray(data)
+                const releases = Array.isArray(data)
                     ? data
                     : Array.isArray(data.releases)
                         ? data.releases
                         : [];
 
+                state.releases = releases.map(normalizeRelease);
+
                 renderReleases();
-                renderAdminReleases();
-                updateAdminStats();
+                applyBackground(state.releases);
             } catch (error) {
-                console.error("Ошибка загрузки релизов:", error);
+                state.releases = [];
 
-                elements.releaseList.innerHTML = `
-                    <div class="error-state">
-                        ⚠ Не удалось загрузить календарь.
+                releaseList.innerHTML = `
+                    <div class="empty-state">
+                        <strong>Не удалось загрузить календарь</strong>
+                        ${escapeHtml(error.message)}
                     </div>
                 `;
 
-                elements.adminReleaseList.innerHTML = `
-                    <div class="error-state">
-                        ⚠ Не удалось загрузить релизы.
-                    </div>
-                `;
-
-                elements.statReleases.textContent = "—";
+                renderBudget();
+                renderTop3();
             }
         }
 
-        function updateAdminStats() {
-            const total = state.posts.length;
+        function updateCountdowns() {
+            $$(".release-card").forEach(card => {
+                const id = card.dataset.releaseId;
+                const release = state.releases.find(item => String(item.id) === String(id));
 
-            const pc = state.posts.filter(
-                post => normalizePlatform(post.platform) === "PC"
-            ).length;
+                if (!release) return;
 
-            const ps = state.posts.filter(
-                post => normalizePlatform(post.platform) === "PlayStation"
-            ).length;
+                const countdown = getCountdownText(release.releaseDate);
+                const element = card.querySelector(".release-countdown");
 
-            elements.statTotal.textContent = String(total);
-            elements.statPC.textContent = String(pc);
-            elements.statPS.textContent = String(ps);
-            elements.statReleases.textContent = String(state.releases.length);
-        }
+                if (!element) return;
 
-        function renderAdminPosts() {
-            elements.adminPostList.innerHTML = "";
-
-            if (!state.posts.length) {
-                elements.adminPostList.innerHTML = `
-                    <div class="empty-state">Новостей пока нет.</div>
-                `;
-                return;
-            }
-
-            state.posts.forEach(post => {
-                const item = document.createElement("div");
-
-                item.className = "admin-list-item";
-
-                const title = String(post.title || "Без названия");
-                const platform = normalizePlatform(post.platform);
-                const pinned = post.pinned ? " • 📌 Закреплено" : "";
-
-                item.innerHTML = `
-                    <div class="admin-list-item-main">
-                        <div class="admin-list-item-title">${escapeHtml(title)}</div>
-                        <div class="admin-list-item-meta">
-                            ${escapeHtml(platform)}${escapeHtml(pinned)}
-                        </div>
-                    </div>
-
-                    <button class="danger-button" type="button" data-delete-post="${escapeHtml(getPostId(post))}">
-                        🗑 Удалить
-                    </button>
-                `;
-
-                const deleteButton = item.querySelector(
-                    "[data-delete-post]"
-                );
-
-                deleteButton.addEventListener("click", () => {
-                    deletePost(getPostId(post), deleteButton);
-                });
-
-                elements.adminPostList.appendChild(item);
+                element.textContent = countdown.text;
+                element.classList.toggle("sold", countdown.sold);
             });
         }
 
         function renderAdminReleases() {
-            const releases = [...state.releases].sort(compareReleases);
+            const container = $("#adminReleaseList");
 
-            elements.adminReleaseList.innerHTML = "";
+            if (!container) return;
+
+            let releases = state.releases.slice();
+
+            if (state.adminSort === "price") {
+                releases.sort(
+                    (a, b) => normalizeNumber(b.priceDigital) - normalizeNumber(a.priceDigital)
+                );
+            } else {
+                releases.sort(
+                    (a, b) => getReleaseTimestamp(a) - getReleaseTimestamp(b)
+                );
+            }
 
             if (!releases.length) {
-                elements.adminReleaseList.innerHTML = `
+                container.innerHTML = `
                     <div class="empty-state">
-                        В календаре пока нет игр.
+                        <strong>Релизов пока нет</strong>
+                        Добавьте первую игру через форму выше.
                     </div>
                 `;
                 return;
             }
 
-            releases.forEach(release => {
-                const id = getReleaseId(release);
-                const item = document.createElement("div");
-
-                item.className = "release-admin-item";
-
-                item.innerHTML = `
-                    <div>
-                        <div class="release-admin-title">
-                            ${escapeHtml(release.title || "Без названия")}
+            container.innerHTML = releases.map(release => `
+                <div class="admin-release">
+                    <div class="admin-release-main">
+                        <div class="admin-release-title">
+                            ${escapeHtml(release.title)}
+                            ${release.isArchived ? " · 📦 Архив" : ""}
+                            ${release.isMainHit ? " · ⭐ Хит" : ""}
                         </div>
-                        <div class="release-admin-date">
-                            ${escapeHtml(formatDate(release.releaseDate))}
+
+                        <div class="admin-release-meta">
+                            <span>📅 ${escapeHtml(formatDate(release.releaseDate))}</span>
+                            <span>💰 ${formatPrice(release.priceDigital)}</span>
+                            <span>🎮 ${escapeHtml((release.platforms || []).join(", ") || "—")}</span>
+                            <span>👍 ${normalizeNumber(release.votesWillPlay)}</span>
                         </div>
                     </div>
 
-                    <button
-                        class="danger-button"
-                        type="button"
-                        data-delete-release
-                    >
-                        🗑 Удалить
-                    </button>
-                `;
+                    <div class="admin-release-actions">
+                        ${
+                            release.isArchived
+                                ? `<span class="archive-btn" style="display:grid;place-items:center;">📦 В архиве</span>`
+                                : `
+                                    <button
+                                        class="archive-btn"
+                                        data-archive-id="${escapeHtml(release.id)}"
+                                        type="button"
+                                    >
+                                        📁 В архив
+                                    </button>
+                                `
+                        }
 
-                item
-                    .querySelector("[data-delete-release]")
-                    .addEventListener("click", () => {
-                        deleteRelease(id);
-                    });
+                        <button
+                            class="delete-btn"
+                            data-delete-release="${escapeHtml(release.id)}"
+                            type="button"
+                        >
+                            🗑 Удалить
+                        </button>
+                    </div>
+                </div>
+            `).join("");
 
-                elements.adminReleaseList.appendChild(item);
+            $$("[data-archive-id]").forEach(button => {
+                button.addEventListener("click", () => archiveRelease(button.dataset.archiveId));
+            });
+
+            $$("[data-delete-release]").forEach(button => {
+                button.addEventListener("click", () => deleteRelease(button.dataset.deleteRelease));
             });
         }
 
-        function getAdminPassword() {
-            return (
-                elements.adminPasswordInput.value.trim() ||
-                state.adminPassword ||
-                ADMIN_PASSWORD
-            );
-        }
-
-        function setAdminMessage(element, text, type = "") {
-            element.textContent = text;
-            element.className = "admin-message" + (type ? ` ${type}` : "");
-        }
-
-        function openAdminPanel() {
-            elements.adminOverlay.classList.add("active");
-            elements.adminOverlay.setAttribute("aria-hidden", "false");
-
-            elements.adminLogin.hidden = false;
-            elements.adminDashboard.hidden = true;
-
-            elements.loginPassword.value = "";
-            setAdminMessage(elements.loginMessage, "");
-
-            setTimeout(() => {
-                elements.loginPassword.focus();
-            }, 50);
-        }
-
-        function closeAdminPanel() {
-            elements.adminOverlay.classList.remove("active");
-            elements.adminOverlay.setAttribute("aria-hidden", "true");
-        }
-
-        function loginAdmin() {
-            const password = elements.loginPassword.value;
-
-            if (password !== ADMIN_PASSWORD) {
-                setAdminMessage(
-                    elements.loginMessage,
-                    "❌ Неверный пароль.",
-                    "error"
-                );
-
-                elements.loginPassword.select();
-                return;
-            }
-
-            state.adminPassword = password;
-            elements.adminPasswordInput.value = password;
-
-            elements.adminLogin.hidden = true;
-            elements.adminDashboard.hidden = false;
-
-            setAdminMessage(elements.loginMessage, "");
-
-            updateAdminStats();
-            renderAdminPosts();
-            renderAdminReleases();
-        }
-
-        async function createPost(event) {
-            event.preventDefault();
-
-            const password = getAdminPassword();
-
-            const payload = {
-                title: elements.postForm.querySelector("#postTitle").value.trim(),
-                platform: elements.postForm.querySelector("#postPlatform").value,
-                imageUrl: elements.postForm.querySelector("#postImage").value.trim(),
-                content: elements.postForm.querySelector("#postContent").value,
-                pinned: elements.postForm.querySelector("#postPinned").checked,
-                password
-            };
-
-            if (!payload.title || !payload.content) {
-                setAdminMessage(
-                    elements.postMessage,
-                    "Заполните заголовок и текст.",
-                    "error"
-                );
+        async function archiveRelease(id) {
+            if (!state.adminPassword) {
+                showToast("Сначала войдите в админ-панель", "error");
                 return;
             }
 
             try {
-                const response = await fetch("/api/posts", {
-                    method: "POST",
+                const data = await apiFetch(`/api/releases/${encodeURIComponent(id)}/archive`, {
+                    method: "PATCH",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const data = await response.json().catch(() => null);
-                    throw new Error(
-                        data?.error ||
-                        data?.message ||
-                        `HTTP ${response.status}`
-                    );
-                }
-
-                setAdminMessage(
-                    elements.postMessage,
-                    "✓ Новость успешно опубликована.",
-                    "success"
-                );
-
-                elements.postForm.reset();
-
-                await loadPosts();
-            } catch (error) {
-                console.error("Ошибка создания новости:", error);
-
-                setAdminMessage(
-                    elements.postMessage,
-                    "❌ " + error.message,
-                    "error"
-                );
-            }
-        }
-
-        async function deletePost(id, button) {
-            if (!confirm("Удалить эту новость?")) {
-                return;
-            }
-
-            button.disabled = true;
-
-            try {
-                const response = await fetch(
-                    `/api/posts/${encodeURIComponent(id)}`,
-                    {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json",
-                            "X-Admin-Password": getAdminPassword()
-                        },
-                        body: JSON.stringify({
-                            password: getAdminPassword()
-                        })
-                    }
-                );
-
-                if (!response.ok) {
-                    const data = await response.json().catch(() => null);
-
-                    throw new Error(
-                        data?.error ||
-                        data?.message ||
-                        `HTTP ${response.status}`
-                    );
-                }
-
-                await loadPosts();
-            } catch (error) {
-                console.error("Ошибка удаления новости:", error);
-                alert("Не удалось удалить новость: " + error.message);
-                button.disabled = false;
-            }
-        }
-
-        async function createRelease() {
-            const title = elements.releaseTitle.value.trim();
-            const releaseDate = elements.releaseDate.value;
-            const password = getAdminPassword();
-
-            if (!title || !releaseDate) {
-                setAdminMessage(
-                    elements.releaseMessage,
-                    "Заполните название игры и дату выхода.",
-                    "error"
-                );
-                return;
-            }
-
-            elements.addReleaseButton.disabled = true;
-
-            try {
-                const response = await fetch("/api/releases", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        "X-Admin-Password": state.adminPassword
                     },
                     body: JSON.stringify({
-                        title,
-                        releaseDate,
-                        password
+                        password: state.adminPassword
                     })
                 });
 
-                const data = await response.json().catch(() => null);
+                const updated = data?.release || data;
 
-                if (!response.ok) {
-                    throw new Error(
-                        data?.error ||
-                        data?.message ||
-                        `HTTP ${response.status}`
-                    );
-                }
-
-                if (response.status !== 201) {
-                    throw new Error(
-                        data?.error ||
-                        data?.message ||
-                        `Сервер вернул неожиданный статус: ${response.status}`
-                    );
-                }
-
-                elements.releaseTitle.value = "";
-                elements.releaseDate.value = "";
-
-                setAdminMessage(
-                    elements.releaseMessage,
-                    "✓ Игра добавлена в календарь.",
-                    "success"
+                const index = state.releases.findIndex(
+                    release => String(release.id) === String(id)
                 );
 
-                await loadReleases();
+                if (index !== -1 && updated && updated.id) {
+                    state.releases[index] = normalizeRelease(updated);
+                } else if (index !== -1) {
+                    state.releases[index].isArchived = !state.releases[index].isArchived;
+                }
+
+                showToast("Статус архива обновлён", "success");
+                renderReleases();
+                applyBackground(state.releases);
             } catch (error) {
-                console.error("Ошибка добавления релиза:", error);
-
-                setAdminMessage(
-                    elements.releaseMessage,
-                    "❌ " + error.message,
-                    "error"
-                );
-            } finally {
-                elements.addReleaseButton.disabled = false;
+                showToast(error.message, "error");
             }
         }
 
         async function deleteRelease(id) {
-            if (!confirm("Удалить эту игру из календаря?")) {
+            if (!state.adminPassword) {
+                showToast("Сначала войдите в админ-панель", "error");
                 return;
             }
 
-            const password = getAdminPassword();
+            const release = state.releases.find(
+                item => String(item.id) === String(id)
+            );
+
+            if (!release) return;
+
+            const confirmed = window.confirm(
+                `Удалить игру "${release.title}" полностью из базы?`
+            );
+
+            if (!confirmed) return;
 
             try {
-                const response = await fetch(
-                    `/api/releases/${encodeURIComponent(id)}`,
-                    {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
-                        body: JSON.stringify({
-                            password
-                        })
-                    }
+                await apiFetch(`/api/releases/${encodeURIComponent(id)}`, {
+                    method: "DELETE",
+                    headers: {
+                        "X-Admin-Password": state.adminPassword
+                    },
+                    body: JSON.stringify({
+                        password: state.adminPassword
+                    })
+                });
+
+                state.releases = state.releases.filter(
+                    item => String(item.id) !== String(id)
                 );
 
-                const data = await response.json().catch(() => null);
+                showToast("Игра удалена", "success");
+                renderReleases();
+                applyBackground(state.releases);
+            } catch (error) {
+                showToast(error.message, "error");
+            }
+        }
 
-                if (!response.ok) {
-                    throw new Error(
-                        data?.error ||
-                        data?.message ||
-                        `HTTP ${response.status}`
-                    );
+        async function createRelease(event) {
+            event.preventDefault();
+
+            if (!state.adminPassword) {
+                showToast("Сначала войдите в админ-панель", "error");
+                return;
+            }
+
+            const platforms = [];
+
+            if ($("#platformPC").checked) {
+                platforms.push("PC");
+            }
+
+            if ($("#platformPS").checked) {
+                platforms.push("PS");
+            }
+
+            const payload = {
+                password: state.adminPassword,
+                title: $("#releaseTitle").value.trim(),
+                releaseDate: $("#releaseDate").value,
+                priceDigital: normalizeNumber($("#priceDigital").value),
+                priceDisk: normalizeNumber($("#priceDisk").value),
+                platforms,
+                systemReq: $("#systemReq").value,
+                bgUrl: $("#bgUrl").value.trim(),
+                discount: Math.min(
+                    100,
+                    Math.max(0, normalizeNumber($("#discount").value))
+                ),
+                isMainHit: $("#isMainHit").checked,
+                isArchived: false
+            };
+
+            if (!payload.title || !payload.releaseDate) {
+                showToast("Заполните название и дату выхода", "error");
+                return;
+            }
+
+            try {
+                const data = await apiFetch("/api/releases", {
+                    method: "POST",
+                    headers: {
+                        "X-Admin-Password": state.adminPassword
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const created = data?.release || data;
+
+                if (created && created.id) {
+                    state.releases.push(normalizeRelease(created));
+                } else {
+                    await loadReleases();
                 }
 
-                await loadReleases();
+                event.target.reset();
 
-                setAdminMessage(
-                    elements.releaseMessage,
-                    "✓ Игра удалена из календаря.",
-                    "success"
-                );
+                $("#priceDigital").value = "0";
+                $("#priceDisk").value = "0";
+                $("#discount").value = "0";
+                $("#systemReq").value = "Слабый ПК";
+
+                showToast("Игра добавлена в календарь", "success");
+
+                renderReleases();
+                applyBackground(state.releases);
             } catch (error) {
-                console.error("Ошибка удаления релиза:", error);
+                showToast(error.message, "error");
+            }
+        }
 
-                setAdminMessage(
-                    elements.releaseMessage,
-                    "❌ " + error.message,
-                    "error"
+        function openAdmin() {
+            $("#adminOverlay").classList.add("open");
+            $("#adminOverlay").setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+
+            if (state.adminPassword) {
+                showAdminWorkspace();
+            } else {
+                $("#adminLogin").hidden = false;
+                $("#adminWorkspace").hidden = true;
+                setTimeout(() => $("#adminPassword").focus(), 50);
+            }
+        }
+
+        function closeAdmin() {
+            $("#adminOverlay").classList.remove("open");
+            $("#adminOverlay").setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+        }
+
+        function showAdminWorkspace() {
+            $("#adminLogin").hidden = true;
+            $("#adminWorkspace").hidden = false;
+            renderAdminReleases();
+        }
+
+        function setTheme(theme) {
+            const isLight = theme === "light";
+
+            document.body.classList.toggle("light-theme", isLight);
+
+            $("#themeToggle").textContent = isLight ? "🌙" : "☀️";
+            $("#themeToggle").title = isLight ? "Ночная тема" : "Дневная тема";
+
+            localStorage.setItem("playpc-theme", isLight ? "light" : "dark");
+
+            applyBackground(state.releases);
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem("playpc-theme");
+
+            if (saved === "light") {
+                setTheme("light");
+            } else {
+                setTheme("dark");
+            }
+        }
+
+        let audioContext = null;
+
+        function playBlip(frequency = 650) {
+            try {
+                if (!audioContext) {
+                    const AudioContextClass =
+                        window.AudioContext ||
+                        window.webkitAudioContext;
+
+                    if (!AudioContextClass) return;
+
+                    audioContext = new AudioContextClass();
+                }
+
+                if (audioContext.state === "suspended") {
+                    audioContext.resume();
+                }
+
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+
+                oscillator.type = "sine";
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(
+                    Math.max(180, frequency * 0.62),
+                    audioContext.currentTime + 0.07
                 );
+
+                gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(
+                    0.045,
+                    audioContext.currentTime + 0.008
+                );
+                gain.gain.exponentialRampToValueAtTime(
+                    0.0001,
+                    audioContext.currentTime + 0.085
+                );
+
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.09);
+            } catch {
+                // Web Audio API недоступен — голосование всё равно работает.
             }
         }
 
         function setupFilters() {
-            document.querySelectorAll(".filter-button").forEach(button => {
+            $$(".filter-btn").forEach(button => {
                 button.addEventListener("click", () => {
-                    state.filter = button.dataset.filter || "all";
+                    $$(".filter-btn").forEach(item => item.classList.remove("active"));
+                    button.classList.add("active");
 
-                    document
-                        .querySelectorAll(".filter-button")
-                        .forEach(item => {
-                            item.classList.toggle(
-                                "active",
-                                item === button
-                            );
-                        });
-
+                    state.filter = button.dataset.filter;
                     renderPosts();
                 });
             });
-        }
 
-        function setupSearch() {
-            elements.searchInput.addEventListener("input", event => {
+            $("#searchInput").addEventListener("input", event => {
                 state.search = event.target.value;
                 renderPosts();
             });
         }
 
-        function updateScrollUI() {
-            const scrollTop =
-                window.scrollY ||
-                document.documentElement.scrollTop ||
-                0;
-
-            const scrollHeight =
-                document.documentElement.scrollHeight -
-                window.innerHeight;
-
-            const progress =
-                scrollHeight > 0
-                    ? Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100))
-                    : 0;
-
-            elements.scrollProgress.style.width = `${progress}%`;
-            elements.backToTop.classList.toggle("visible", scrollTop > 500);
-        }
-
-        function setupScroll() {
-            window.addEventListener("scroll", updateScrollUI, {
-                passive: true
-            });
-
-            elements.backToTop.addEventListener("click", () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
-            });
-
-            updateScrollUI();
-        }
-
         function setupAdmin() {
-            elements.adminOpenButton.addEventListener(
-                "click",
-                openAdminPanel
-            );
+            $("#adminOpen").addEventListener("click", openAdmin);
+            $("#adminClose").addEventListener("click", closeAdmin);
 
-            elements.closeDashboardButton.addEventListener(
-                "click",
-                closeAdminPanel
-            );
-
-            elements.loginButton.addEventListener(
-                "click",
-                loginAdmin
-            );
-
-            elements.loginPassword.addEventListener("keydown", event => {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    loginAdmin();
+            $("#adminOverlay").addEventListener("click", event => {
+                if (event.target === $("#adminOverlay")) {
+                    closeAdmin();
                 }
             });
 
-            elements.adminOverlay.addEventListener("click", event => {
-                if (event.target === elements.adminOverlay) {
-                    closeAdminPanel();
+            document.addEventListener("keydown", event => {
+                if (event.key === "Escape" && $("#adminOverlay").classList.contains("open")) {
+                    closeAdmin();
                 }
             });
 
-            elements.postForm.addEventListener(
-                "submit",
-                createPost
-            );
+            $("#adminLoginForm").addEventListener("submit", event => {
+                event.preventDefault();
 
-            elements.addReleaseButton.addEventListener(
-                "click",
-                createRelease
-            );
+                const password = $("#adminPassword").value;
 
-            elements.adminPasswordInput.addEventListener(
-                "input",
-                event => {
-                    state.adminPassword = event.target.value.trim();
+                if (!password) {
+                    showToast("Введите пароль", "error");
+                    return;
                 }
-            );
 
-            document.querySelectorAll(".skin-button").forEach(button => {
+                state.adminPassword = password;
+                showAdminWorkspace();
+
+                showToast("Доступ к панели открыт", "success");
+            });
+
+            $("#releaseForm").addEventListener("submit", createRelease);
+
+            $$(".sort-btn").forEach(button => {
                 button.addEventListener("click", () => {
-                    setSkin(button.dataset.skin);
+                    $$(".sort-btn").forEach(item => item.classList.remove("active"));
+                    button.classList.add("active");
+
+                    state.adminSort = button.dataset.sort;
+                    renderAdminReleases();
                 });
             });
         }
 
         function setupTheme() {
-            elements.themeToggle.addEventListener(
-                "click",
-                toggleTheme
-            );
-
-            elements.dashboardThemeButton.addEventListener(
-                "click",
-                toggleTheme
-            );
-        }
-
-        function setupKeyboardShortcuts() {
-            document.addEventListener("keydown", event => {
-                if (
-                    event.key === "Escape" &&
-                    elements.adminOverlay.classList.contains("active")
-                ) {
-                    closeAdminPanel();
-                }
+            $("#themeToggle").addEventListener("click", () => {
+                const isLight = document.body.classList.contains("light-theme");
+                setTheme(isLight ? "dark" : "light");
             });
         }
 
-        function refreshReleaseCountdowns() {
-            renderReleases();
+        function setupBackTop() {
+            const button = $("#backTop");
 
-            if (!elements.adminDashboard.hidden) {
-                renderAdminReleases();
-            }
+            window.addEventListener("scroll", () => {
+                button.classList.toggle("visible", window.scrollY > 500);
+            }, { passive: true });
+
+            button.addEventListener("click", () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
         }
 
-        async function initialize() {
-            applyTheme();
-            applySkin();
-            setupTheme();
+        async function initializeApp() {
+            initTheme();
             setupFilters();
-            setupSearch();
-            setupScroll();
             setupAdmin();
-            setupKeyboardShortcuts();
+            setupTheme();
+            setupBackTop();
 
             await Promise.all([
                 loadPosts(),
                 loadReleases()
             ]);
 
-            setInterval(refreshReleaseCountdowns, 60 * 1000);
+            updateCountdowns();
+
+            setInterval(() => {
+                updateCountdowns();
+            }, 60000);
+
+            setInterval(async () => {
+                try {
+                    const data = await apiFetch("/api/releases");
+
+                    const releases = Array.isArray(data)
+                        ? data
+                        : Array.isArray(data.releases)
+                            ? data.releases
+                            : [];
+
+                    state.releases = releases.map(normalizeRelease);
+
+                    renderReleases();
+                    applyBackground(state.releases);
+                } catch {
+                    // Текущее состояние остаётся на экране при временной ошибке.
+                }
+            }, 300000);
         }
 
-        initialize();
+        function setupFilters() {
+            setupFiltersOnce();
+        }
+
+        function setupFiltersOnce() {
+            $$(".filter-btn").forEach(button => {
+                button.addEventListener("click", () => {
+                    $$(".filter-btn").forEach(item => item.classList.remove("active"));
+                    button.classList.add("active");
+
+                    state.filter = button.dataset.filter;
+                    renderPosts();
+                });
+            });
+
+            $("#searchInput").addEventListener("input", event => {
+                state.search = event.target.value;
+                renderPosts();
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", initializeApp);
     </script>
 </body>
 </html>
