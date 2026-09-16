@@ -22,7 +22,7 @@ function ensurePostsFile() {
     }
 }
 
-// Read posts
+// Read posts from posts.json
 function readPosts() {
     ensurePostsFile();
 
@@ -30,14 +30,18 @@ function readPosts() {
         const data = fs.readFileSync(POSTS_FILE, 'utf8');
         const posts = JSON.parse(data);
 
-        return Array.isArray(posts) ? posts : [];
+        if (!Array.isArray(posts)) {
+            throw new Error('posts.json должен содержать массив');
+        }
+
+        return posts;
     } catch (error) {
         console.error('Ошибка чтения posts.json:', error);
-        return [];
+        throw error;
     }
 }
 
-// Save posts
+// Save posts to posts.json
 function savePosts(posts) {
     fs.writeFileSync(
         POSTS_FILE,
@@ -50,11 +54,13 @@ function savePosts(posts) {
 app.get('/api/posts', (req, res) => {
     try {
         const posts = readPosts();
+
         res.status(200).json(posts);
     } catch (error) {
         console.error('Ошибка GET /api/posts:', error);
+
         res.status(500).json({
-            error: 'Ошибка сервера'
+            error: 'Ошибка сервера при чтении новостей'
         });
     }
 });
@@ -70,14 +76,14 @@ app.post('/api/posts', (req, res) => {
             password
         } = req.body;
 
-        // Check admin password
+        // Check administrator password
         if (password !== ADMIN_PASSWORD) {
             return res.status(401).json({
                 error: 'Ошибка доступа'
             });
         }
 
-        // Validate required fields
+        // Validate post data
         if (
             typeof title !== 'string' ||
             typeof platform !== 'string' ||
@@ -89,18 +95,51 @@ app.post('/api/posts', (req, res) => {
             });
         }
 
+        const cleanTitle = title.trim();
+        const cleanPlatform = platform.trim();
+        const cleanImageUrl = imageUrl.trim();
+        const cleanContent = content.trim();
+
+        if (
+            !cleanTitle ||
+            !cleanPlatform ||
+            !cleanImageUrl ||
+            !cleanContent
+        ) {
+            return res.status(400).json({
+                error: 'Все поля поста обязательны'
+            });
+        }
+
+        if (
+            cleanPlatform !== 'PC' &&
+            cleanPlatform !== 'PlayStation'
+        ) {
+            return res.status(400).json({
+                error: 'Недопустимая платформа'
+            });
+        }
+
         const posts = readPosts();
 
+        // Generate a unique ID
+        let id = Date.now().toString();
+
+        while (posts.some(post => String(post.id) === id)) {
+            id = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+        }
+
         const newPost = {
-            id: Date.now().toString(),
-            title: title.trim(),
-            platform: platform.trim(),
-            imageUrl: imageUrl.trim(),
-            content: content.trim(),
+            id,
+            title: cleanTitle,
+            platform: cleanPlatform,
+            imageUrl: cleanImageUrl,
+            content: cleanContent,
             createdAt: new Date().toISOString()
         };
 
         posts.push(newPost);
+
         savePosts(posts);
 
         return res.status(201).json(newPost);
@@ -108,15 +147,70 @@ app.post('/api/posts', (req, res) => {
         console.error('Ошибка POST /api/posts:', error);
 
         return res.status(500).json({
-            error: 'Ошибка сервера'
+            error: 'Ошибка сервера при создании новости'
         });
     }
 });
 
-// Ensure posts.json exists on startup
-ensurePostsFile();
+// DELETE /api/posts/:id
+app.delete('/api/posts/:id', (req, res) => {
+    try {
+        const postId = String(req.params.id);
+
+        // Password can be provided in the request body
+        // or in the X-Admin-Password header.
+        const password =
+            req.body?.password ||
+            req.get('X-Admin-Password');
+
+        // Check administrator password
+        if (password !== ADMIN_PASSWORD) {
+            return res.status(401).json({
+                error: 'Ошибка доступа'
+            });
+        }
+
+        const posts = readPosts();
+
+        const postIndex = posts.findIndex(
+            post => String(post.id) === postId
+        );
+
+        if (postIndex === -1) {
+            return res.status(404).json({
+                error: 'Пост не найден'
+            });
+        }
+
+        const deletedPost = posts[postIndex];
+
+        posts.splice(postIndex, 1);
+
+        savePosts(posts);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Пост успешно удален',
+            post: deletedPost
+        });
+    } catch (error) {
+        console.error('Ошибка DELETE /api/posts/:id:', error);
+
+        return res.status(500).json({
+            error: 'Ошибка сервера при удалении новости'
+        });
+    }
+});
+
+// Create posts.json during server initialization
+try {
+    ensurePostsFile();
+} catch (error) {
+    console.error('Не удалось создать posts.json:', error);
+    process.exit(1);
+}
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
+    console.log(`PlayPC сервер запущен на порту ${PORT}`);
 });
