@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Независимый игровой блог о PC и PlayStation">
+    <meta name="description" content="PlayPC — независимый игровой блог о PC и PlayStation">
     <meta name="theme-color" content="#0d0e12">
     <title>PlayPC — Игровые новости</title>
 
@@ -11,17 +11,18 @@
         :root {
             --bg: #0d0e12;
             --surface: #161920;
-            --surface-hover: #1c1f28;
-            --border: #272b36;
+            --surface-2: #12151b;
+            --surface-hover: #1b1f28;
+            --border: #292e39;
             --text: #f4f6f8;
             --muted: #9299a8;
+            --muted-2: #686f7d;
             --ps: #00439c;
-            --ps-light: #4285dc;
+            --ps-light: #62a2ff;
             --pc: #55ff66;
-            --pc-dark: #20bd38;
-            --danger: #ff5364;
-            --success: #4ade80;
-            --shadow: 0 14px 45px rgba(0, 0, 0, 0.35);
+            --danger: #ff6373;
+            --success: #55e98a;
+            --shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
             --radius: 18px;
         }
 
@@ -37,13 +38,17 @@
 
         body {
             min-height: 100vh;
-            background:
-                radial-gradient(circle at 15% 0%, rgba(0, 67, 156, 0.14), transparent 30%),
-                radial-gradient(circle at 85% 20%, rgba(85, 255, 102, 0.06), transparent 25%),
-                var(--bg);
             color: var(--text);
+            background:
+                radial-gradient(circle at 10% 0%, rgba(0, 67, 156, 0.15), transparent 30%),
+                radial-gradient(circle at 90% 20%, rgba(85, 255, 102, 0.055), transparent 25%),
+                var(--bg);
             font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             line-height: 1.6;
+        }
+
+        body.modal-open {
+            overflow: hidden;
         }
 
         button,
@@ -62,10 +67,12 @@
             margin: 0 auto;
         }
 
+        /* HEADER */
+
         header {
             position: sticky;
             top: 0;
-            z-index: 20;
+            z-index: 50;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(13, 14, 18, 0.88);
             backdrop-filter: blur(18px);
@@ -84,8 +91,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            text-decoration: none;
             color: var(--text);
+            text-decoration: none;
         }
 
         .logo-mark {
@@ -126,12 +133,14 @@
             box-shadow: 0 0 12px rgba(85, 255, 102, 0.7);
         }
 
+        /* MAIN */
+
         main {
-            padding: 54px 0 70px;
+            padding: 48px 0 70px;
         }
 
         .hero {
-            margin-bottom: 42px;
+            margin-bottom: 34px;
         }
 
         .hero-label {
@@ -152,10 +161,10 @@
 
         .hero h1 {
             max-width: 780px;
-            font-size: clamp(36px, 6vw, 64px);
+            margin-bottom: 16px;
+            font-size: clamp(38px, 6vw, 64px);
             line-height: 1.02;
             letter-spacing: -2.8px;
-            margin-bottom: 18px;
         }
 
         .hero h1 span {
@@ -167,6 +176,120 @@
             color: var(--muted);
             font-size: 17px;
         }
+
+        /* SEARCH & FILTERS */
+
+        .controls {
+            margin-bottom: 34px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: rgba(18, 21, 27, 0.88);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 13px;
+        }
+
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            width: 17px;
+            height: 17px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--muted);
+        }
+
+        .search-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 44px;
+            border: 1px solid #303541;
+            border-radius: 12px;
+            outline: none;
+            color: var(--text);
+            background: #0d0f13;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .search-input::placeholder {
+            color: #626977;
+        }
+
+        .search-input:focus {
+            border-color: #426ea9;
+            box-shadow: 0 0 0 3px rgba(0, 67, 156, 0.14);
+        }
+
+        .clear-search {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            display: none;
+            place-items: center;
+            transform: translateY(-50%);
+            border: 0;
+            border-radius: 8px;
+            background: #20242c;
+            color: #9ca3af;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .clear-search.visible {
+            display: grid;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .filter-button {
+            flex: 0 0 auto;
+            min-height: 39px;
+            padding: 0 15px;
+            border: 1px solid #2c303a;
+            border-radius: 10px;
+            background: #181b22;
+            color: #9299a8;
+            font-size: 13px;
+            font-weight: 750;
+            transition: 0.2s ease;
+        }
+
+        .filter-button:hover {
+            border-color: #414754;
+            color: var(--text);
+        }
+
+        .filter-button.active {
+            border-color: #426ea9;
+            background: rgba(0, 67, 156, 0.25);
+            color: #b9d6ff;
+        }
+
+        .filter-button[data-platform="PC"].active {
+            border-color: rgba(85, 255, 102, 0.38);
+            background: rgba(85, 255, 102, 0.08);
+            color: var(--pc);
+        }
+
+        .filter-button[data-platform="PlayStation"].active {
+            border-color: rgba(66, 133, 220, 0.5);
+            background: rgba(0, 67, 156, 0.28);
+            color: #9cc8ff;
+        }
+
+        /* NEWS */
 
         .section-heading {
             display: flex;
@@ -198,10 +321,16 @@
             border-radius: var(--radius);
             background: var(--surface);
             box-shadow: var(--shadow);
+            scroll-margin-top: 100px;
             transition:
                 transform 0.2s ease,
                 border-color 0.2s ease,
                 background 0.2s ease;
+        }
+
+        .news-card:target {
+            border-color: #426ea9;
+            box-shadow: 0 0 0 2px rgba(0, 67, 156, 0.18), var(--shadow);
         }
 
         .news-card:hover {
@@ -242,6 +371,7 @@
             letter-spacing: 0.4px;
             text-transform: uppercase;
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .platform-pc {
@@ -270,9 +400,17 @@
 
         .news-content {
             color: #b8bdc8;
-            white-space: pre-wrap;
             overflow-wrap: anywhere;
             font-size: 15px;
+        }
+
+        .news-content strong {
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        .news-content em {
+            color: #d6dae2;
         }
 
         .news-meta {
@@ -283,8 +421,44 @@
             margin-top: 20px;
             padding-top: 15px;
             border-top: 1px solid var(--border);
+        }
+
+        .news-date {
             color: var(--muted);
             font-size: 12px;
+        }
+
+        .share-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            min-height: 31px;
+            padding: 0 10px;
+            border: 1px solid #303540;
+            border-radius: 8px;
+            background: #1b1e25;
+            color: #9ba2ae;
+            font-size: 11px;
+            font-weight: 750;
+            transition: 0.2s ease;
+        }
+
+        .share-button:hover {
+            border-color: #4b5361;
+            background: #22262f;
+            color: var(--text);
+        }
+
+        .share-button.copied {
+            border-color: rgba(85, 255, 102, 0.35);
+            background: rgba(85, 255, 102, 0.08);
+            color: var(--success);
+        }
+
+        .share-icon {
+            width: 14px;
+            height: 14px;
+            flex: 0 0 auto;
         }
 
         .copyright-note {
@@ -294,6 +468,8 @@
             line-height: 1.5;
         }
 
+        /* STATES */
+
         .loading,
         .empty-state,
         .error-state {
@@ -302,18 +478,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
             padding: 35px;
             border: 1px dashed var(--border);
             border-radius: var(--radius);
             background: rgba(22, 25, 32, 0.7);
             color: var(--muted);
+            text-align: center;
         }
 
         .loading::before {
             content: "";
             width: 24px;
             height: 24px;
+            flex: 0 0 auto;
             margin-right: 12px;
             border: 3px solid #30343e;
             border-top-color: var(--ps-light);
@@ -324,6 +501,8 @@
         .error-state {
             color: #ff9ca7;
         }
+
+        /* FOOTER */
 
         footer {
             padding: 30px 0 40px;
@@ -380,6 +559,8 @@
             font-size: 11px;
             text-align: center;
         }
+
+        /* MODAL */
 
         .modal {
             position: fixed;
@@ -474,6 +655,20 @@
             cursor: pointer;
         }
 
+        .markdown-hint {
+            margin-top: 7px;
+            color: #737a88;
+            font-size: 11px;
+        }
+
+        .markdown-hint code {
+            padding: 2px 5px;
+            border-radius: 5px;
+            background: #20232b;
+            color: #aeb6c4;
+            font-family: Consolas, monospace;
+        }
+
         .form-actions {
             display: flex;
             justify-content: flex-end;
@@ -531,11 +726,40 @@
             color: #86efac;
         }
 
+        /* TOAST */
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 200;
+            max-width: calc(100vw - 40px);
+            padding: 12px 16px;
+            border: 1px solid rgba(85, 255, 102, 0.28);
+            border-radius: 11px;
+            background: #151a18;
+            color: var(--success);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+            font-size: 13px;
+            font-weight: 750;
+            opacity: 0;
+            transform: translateY(12px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
+
+        /* RESPONSIVE */
 
         @media (max-width: 760px) {
             .header-inner {
@@ -547,7 +771,7 @@
             }
 
             main {
-                padding-top: 38px;
+                padding-top: 36px;
             }
 
             .news-grid {
@@ -575,6 +799,10 @@
 
             .hero p {
                 font-size: 15px;
+            }
+
+            .controls {
+                padding: 12px;
             }
 
             .news-body {
@@ -652,6 +880,72 @@
                     Актуальные материалы о PC и PlayStation в одном месте.
                     Новости, события и интересные публикации для игроков.
                 </p>
+            </section>
+
+            <section class="controls" aria-label="Поиск и фильтрация новостей">
+                <div class="search-wrapper">
+                    <svg
+                        class="search-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        aria-hidden="true"
+                    >
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m20 20-4-4"></path>
+                    </svg>
+
+                    <input
+                        class="search-input"
+                        id="searchInput"
+                        type="search"
+                        placeholder="Поиск по названию новости..."
+                        autocomplete="off"
+                        aria-label="Поиск по названию новости"
+                    >
+
+                    <button
+                        type="button"
+                        class="clear-search"
+                        id="clearSearch"
+                        aria-label="Очистить поиск"
+                    >
+                        ×
+                    </button>
+                </div>
+
+                <div class="filter-tabs" role="tablist" aria-label="Фильтр платформы">
+                    <button
+                        type="button"
+                        class="filter-button active"
+                        data-platform="all"
+                        role="tab"
+                        aria-selected="true"
+                    >
+                        Все платформы
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-button"
+                        data-platform="PC"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        PC
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filter-button"
+                        data-platform="PlayStation"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        PlayStation
+                    </button>
+                </div>
             </section>
 
             <section aria-labelledby="news-heading">
@@ -757,6 +1051,7 @@
 
                 <div class="form-group">
                     <label for="content">Текст новости</label>
+
                     <textarea
                         class="form-control"
                         id="content"
@@ -765,6 +1060,12 @@
                         required
                         placeholder="Введите текст статьи..."
                     ></textarea>
+
+                    <div class="markdown-hint">
+                        Подсказка:
+                        <code>[b]текст[/b]</code> — жирный,
+                        <code>[i]текст[/i]</code> — курсив.
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -808,11 +1109,28 @@
         </div>
     </div>
 
+    <div
+        class="toast"
+        id="toast"
+        role="status"
+        aria-live="polite"
+    >
+        Ссылка скопирована!
+    </div>
+
     <script>
         'use strict';
 
+        let allPosts = [];
+        let currentPlatform = 'all';
+        let currentSearch = '';
+
         const newsList = document.getElementById('newsList');
         const newsCount = document.getElementById('newsCount');
+
+        const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearSearch');
+        const filterButtons = document.querySelectorAll('.filter-button');
 
         const adminModal = document.getElementById('adminModal');
         const openAdminButton = document.getElementById('openAdminButton');
@@ -823,10 +1141,56 @@
         const formMessage = document.getElementById('formMessage');
         const submitButton = document.getElementById('submitButton');
 
-        function escapeHtml(value) {
-            const div = document.createElement('div');
-            div.textContent = String(value ?? '');
-            return div.innerHTML;
+        const toast = document.getElementById('toast');
+
+        /*
+         * Преобразует только разрешенные BB-теги [b] и [i].
+         *
+         * Сначала пользовательский текст полностью экранируется
+         * через textContent, поэтому пользовательский HTML никогда
+         * не попадает напрямую в DOM как HTML.
+         *
+         * После этого безопасно заменяются только наши собственные
+         * BB-теги регулярными выражениями.
+         */
+        function renderSafeBBCode(text) {
+            const container = document.createElement('span');
+
+            const textNode = document.createTextNode(String(text ?? ''));
+            container.appendChild(textNode);
+
+            const escapedText = container.textContent;
+
+            const safeHtml = escapedText
+                .replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<strong>$1</strong>')
+                .replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<em>$1</em>');
+
+            const result = document.createElement('div');
+            result.innerHTML = safeHtml;
+
+            return result;
+        }
+
+        /*
+         * Дополнительная защита:
+         * BB-код сначала обрабатывается в HTML-строке, но сам
+         * пользовательский ввод предварительно экранирован.
+         * Поэтому символы < > & " ' не могут превратиться
+         * в исполняемый пользовательский HTML.
+         */
+        function createSafeContent(text) {
+            const wrapper = document.createElement('div');
+            const source = document.createElement('div');
+
+            source.textContent = String(text ?? '');
+
+            const escaped = source.textContent
+                .replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<strong>$1</strong>')
+                .replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<em>$1</em>');
+
+            wrapper.innerHTML = escaped;
+
+            return wrapper;
         }
 
         function formatDate(dateValue) {
@@ -837,7 +1201,7 @@
             const date = new Date(dateValue);
 
             if (Number.isNaN(date.getTime())) {
-                return escapeHtml(dateValue);
+                return String(dateValue);
             }
 
             return new Intl.DateTimeFormat('ru-RU', {
@@ -849,42 +1213,117 @@
             }).format(date);
         }
 
-        function getPlatformClass(platform) {
-            return String(platform).toLowerCase() === 'playstation'
-                ? 'platform-playstation'
-                : 'platform-pc';
-        }
-
-        function getPlatformLabel(platform) {
-            return String(platform).toLowerCase() === 'playstation'
+        function normalizePlatform(platform) {
+            return String(platform ?? '').toLowerCase() === 'playstation'
                 ? 'PlayStation'
                 : 'PC';
         }
 
-        function createNewsCard(post) {
+        function getPlatformClass(platform) {
+            return normalizePlatform(platform) === 'PlayStation'
+                ? 'platform-playstation'
+                : 'platform-pc';
+        }
+
+        function createShareIcon() {
+            const svg = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'svg'
+            );
+
+            svg.setAttribute('class', 'share-icon');
+            svg.setAttribute('viewBox', '0 0 24 24');
+            svg.setAttribute('fill', 'none');
+            svg.setAttribute('stroke', 'currentColor');
+            svg.setAttribute('stroke-width', '2');
+            svg.setAttribute('stroke-linecap', 'round');
+            svg.setAttribute('stroke-linejoin', 'round');
+            svg.setAttribute('aria-hidden', 'true');
+
+            const path1 = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'path'
+            );
+
+            path1.setAttribute(
+                'd',
+                'M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7'
+            );
+
+            const path2 = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'path'
+            );
+
+            path2.setAttribute('d', 'M12 16V3');
+            
+            const path3 = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'path'
+            );
+
+            path3.setAttribute('d', 'm7 8 5-5 5 5');
+
+            svg.appendChild(path1);
+            svg.appendChild(path2);
+            svg.appendChild(path3);
+
+            return svg;
+        }
+
+        function getPostId(post, index) {
+            if (
+                post &&
+                post.id !== undefined &&
+                post.id !== null &&
+                String(post.id).trim() !== ''
+            ) {
+                return String(post.id);
+            }
+
+            return String(index + 1);
+        }
+
+        function createNewsCard(post, index) {
+            const postId = getPostId(post, index);
+            const platform = normalizePlatform(post.platform);
+
             const article = document.createElement('article');
             article.className = 'news-card';
+            article.id = `post-${postId}`;
+            article.dataset.title = String(post.title ?? '').toLowerCase();
+            article.dataset.platform = platform;
 
             const imageWrapper = document.createElement('div');
             imageWrapper.className = 'news-image-wrapper';
 
             const badge = document.createElement('span');
-            badge.className = `platform-badge ${getPlatformClass(post.platform)}`;
-            badge.textContent = getPlatformLabel(post.platform);
+            badge.className =
+                `platform-badge ${getPlatformClass(platform)}`;
+            badge.textContent = platform;
 
             const image = document.createElement('img');
             image.className = 'news-image';
-            image.src = post.imageUrl || '';
-            image.alt = post.title || 'Изображение новости';
+            image.alt = post.title
+                ? `Изображение: ${post.title}`
+                : 'Изображение новости';
             image.loading = 'lazy';
             image.decoding = 'async';
 
-            image.addEventListener('error', () => {
-                imageWrapper.style.background =
-                    'linear-gradient(135deg, #171a21, #0b0c10)';
+            const imageUrl = String(post.imageUrl ?? '').trim();
 
+            /*
+             * src устанавливается как URL-значение атрибута,
+             * а не через innerHTML.
+             */
+            if (imageUrl) {
+                image.src = imageUrl;
+            }
+
+            image.addEventListener('error', () => {
                 image.removeAttribute('src');
                 image.alt = 'Изображение недоступно';
+                imageWrapper.classList.add('image-error');
             });
 
             imageWrapper.appendChild(image);
@@ -899,26 +1338,56 @@
 
             const content = document.createElement('div');
             content.className = 'news-content';
-            content.textContent = post.content || '';
+
+            /*
+             * Безопасный BBCode.
+             * Разрешены только [b] и [i].
+             */
+            const renderedContent = createSafeContent(post.content || '');
+
+            while (renderedContent.firstChild) {
+                content.appendChild(renderedContent.firstChild);
+            }
 
             const meta = document.createElement('div');
             meta.className = 'news-meta';
 
             const date = document.createElement('time');
+            date.className = 'news-date';
             date.dateTime = post.createdAt || '';
             date.textContent = formatDate(post.createdAt);
 
-            meta.appendChild(date);
+            const shareButton = document.createElement('button');
+            shareButton.type = 'button';
+            shareButton.className = 'share-button';
+            shareButton.setAttribute(
+                'aria-label',
+                `Поделиться новостью: ${post.title || 'Без заголовка'}`
+            );
 
-            const note = document.createElement('div');
-            note.className = 'copyright-note';
-            note.textContent =
+            shareButton.appendChild(createShareIcon());
+
+            const shareText = document.createElement('span');
+            shareText.textContent = 'Поделиться';
+
+            shareButton.appendChild(shareText);
+
+            shareButton.addEventListener('click', async () => {
+                await sharePost(postId, shareButton, shareText);
+            });
+
+            meta.appendChild(date);
+            meta.appendChild(shareButton);
+
+            const copyrightNote = document.createElement('div');
+            copyrightNote.className = 'copyright-note';
+            copyrightNote.textContent =
                 'Изображения используются исключительно в ознакомительных целях из открытых медиа-китов правообладателей';
 
             body.appendChild(title);
             body.appendChild(content);
             body.appendChild(meta);
-            body.appendChild(note);
+            body.appendChild(copyrightNote);
 
             article.appendChild(imageWrapper);
             article.appendChild(body);
@@ -926,58 +1395,66 @@
             return article;
         }
 
-        async function loadPosts() {
-            newsList.innerHTML = '<div class="loading">Загрузка новостей...</div>';
-            newsCount.textContent = '';
+        function filterPosts() {
+            const searchTerm = currentSearch.trim().toLowerCase();
 
-            try {
-                const response = await fetch('/api/posts', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    cache: 'no-store'
-                });
+            return allPosts.filter(post => {
+                const platformMatches =
+                    currentPlatform === 'all' ||
+                    normalizePlatform(post.platform) === currentPlatform;
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
+                const title = String(post.title ?? '').toLowerCase();
 
-                const posts = await response.json();
+                const searchMatches =
+                    searchTerm === '' ||
+                    title.includes(searchTerm);
 
-                newsList.innerHTML = '';
+                return platformMatches && searchMatches;
+            });
+        }
 
-                if (!Array.isArray(posts) || posts.length === 0) {
-                    const emptyState = document.createElement('div');
-                    emptyState.className = 'empty-state';
-                    emptyState.textContent =
-                        'Новостей пока нет, загляните позже!';
-                    newsList.appendChild(emptyState);
-                    newsCount.textContent = '0 публикаций';
-                    return;
-                }
+        function renderPosts() {
+            const filteredPosts = filterPosts();
 
-                posts
-                    .slice()
-                    .reverse()
-                    .forEach(post => {
-                        newsList.appendChild(createNewsCard(post));
-                    });
+            newsList.innerHTML = '';
 
-                newsCount.textContent =
-                    `${posts.length} ${getRussianPostWord(posts.length)}`;
-            } catch (error) {
-                console.error('Ошибка загрузки новостей:', error);
+            if (allPosts.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+                emptyState.textContent =
+                    'Новостей пока нет, загляните позже!';
 
-                newsList.innerHTML = '';
-
-                const errorState = document.createElement('div');
-                errorState.className = 'error-state';
-                errorState.textContent =
-                    'Не удалось загрузить новости. Попробуйте обновить страницу позже.';
-
-                newsList.appendChild(errorState);
+                newsList.appendChild(emptyState);
+                newsCount.textContent = '0 публикаций';
+                return;
             }
+
+            if (filteredPosts.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+
+                if (currentSearch.trim()) {
+                    emptyState.textContent =
+                        'По вашему запросу новости не найдены.';
+                } else {
+                    emptyState.textContent =
+                        'На этой платформе пока нет новостей.';
+                }
+
+                newsList.appendChild(emptyState);
+                newsCount.textContent = '0 публикаций';
+                return;
+            }
+
+            filteredPosts.forEach(post => {
+                const originalIndex = allPosts.indexOf(post);
+                newsList.appendChild(
+                    createNewsCard(post, originalIndex)
+                );
+            });
+
+            newsCount.textContent =
+                `${filteredPosts.length} ${getRussianPostWord(filteredPosts.length)}`;
         }
 
         function getRussianPostWord(count) {
@@ -999,25 +1476,180 @@
             }
         }
 
+        async function loadPosts(showLoading = true) {
+            if (showLoading) {
+                newsList.innerHTML =
+                    '<div class="loading">Загрузка новостей...</div>';
+                newsCount.textContent = '';
+            }
+
+            try {
+                const response = await fetch('/api/posts', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    cache: 'no-store'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const posts = await response.json();
+
+                allPosts = Array.isArray(posts) ? posts : [];
+
+                renderPosts();
+                handleInitialHash();
+            } catch (error) {
+                console.error('Ошибка загрузки новостей:', error);
+
+                newsList.innerHTML = '';
+
+                const errorState = document.createElement('div');
+                errorState.className = 'error-state';
+                errorState.textContent =
+                    'Не удалось загрузить новости. Попробуйте обновить страницу позже.';
+
+                newsList.appendChild(errorState);
+            }
+        }
+
+        async function copyText(text) {
+            if (
+                navigator.clipboard &&
+                typeof navigator.clipboard.writeText === 'function'
+            ) {
+                await navigator.clipboard.writeText(text);
+                return;
+            }
+
+            const temporaryInput = document.createElement('textarea');
+            temporaryInput.value = text;
+            temporaryInput.setAttribute('readonly', '');
+            temporaryInput.style.position = 'fixed';
+            temporaryInput.style.left = '-9999px';
+            temporaryInput.style.top = '-9999px';
+
+            document.body.appendChild(temporaryInput);
+            temporaryInput.select();
+
+            const successful = document.execCommand('copy');
+
+            temporaryInput.remove();
+
+            if (!successful) {
+                throw new Error('Не удалось скопировать ссылку');
+            }
+        }
+
+        async function sharePost(postId, button, textElement) {
+            const url =
+                `${window.location.origin}${window.location.pathname}#post-${encodeURIComponent(postId)}`;
+
+            try {
+                await copyText(url);
+
+                button.classList.add('copied');
+                textElement.textContent = 'Скопировано!';
+
+                showToast('Ссылка скопирована!');
+
+                window.setTimeout(() => {
+                    button.classList.remove('copied');
+                    textElement.textContent = 'Поделиться';
+                }, 2200);
+            } catch (error) {
+                console.error('Ошибка копирования:', error);
+
+                showToast('Не удалось скопировать ссылку');
+
+                const fallbackUrl = url;
+
+                try {
+                    window.prompt(
+                        'Скопируйте ссылку:',
+                        fallbackUrl
+                    );
+                } catch {
+                    // Пользователь мог закрыть системное окно.
+                }
+            }
+        }
+
+        let toastTimer = null;
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('visible');
+
+            window.clearTimeout(toastTimer);
+
+            toastTimer = window.setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 2200);
+        }
+
+        searchInput.addEventListener('input', () => {
+            currentSearch = searchInput.value;
+
+            if (currentSearch.trim()) {
+                clearSearch.classList.add('visible');
+            } else {
+                clearSearch.classList.remove('visible');
+            }
+
+            renderPosts();
+        });
+
+        clearSearch.addEventListener('click', () => {
+            searchInput.value = '';
+            currentSearch = '';
+            clearSearch.classList.remove('visible');
+            searchInput.focus();
+            renderPosts();
+        });
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                currentPlatform = button.dataset.platform || 'all';
+
+                filterButtons.forEach(item => {
+                    const isActive =
+                        item === button;
+
+                    item.classList.toggle('active', isActive);
+                    item.setAttribute(
+                        'aria-selected',
+                        String(isActive)
+                    );
+                });
+
+                renderPosts();
+            });
+        });
+
         function openAdminModal() {
             adminModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-open');
             clearFormMessage();
 
-            setTimeout(() => {
+            window.setTimeout(() => {
                 document.getElementById('title').focus();
             }, 50);
         }
 
         function closeAdminModal() {
             adminModal.classList.remove('active');
-            document.body.style.overflow = '';
+            document.body.classList.remove('modal-open');
             clearFormMessage();
         }
 
         function showFormMessage(message, type) {
             formMessage.textContent = message;
-            formMessage.className = `form-message visible ${type}`;
+            formMessage.className =
+                `form-message visible ${type}`;
         }
 
         function clearFormMessage() {
@@ -1036,7 +1668,10 @@
         });
 
         document.addEventListener('keydown', event => {
-            if (event.key === 'Escape' && adminModal.classList.contains('active')) {
+            if (
+                event.key === 'Escape' &&
+                adminModal.classList.contains('active')
+            ) {
                 closeAdminModal();
             }
         });
@@ -1045,17 +1680,18 @@
             event.preventDefault();
 
             clearFormMessage();
+
             submitButton.disabled = true;
             submitButton.textContent = 'Публикация...';
 
             const formData = new FormData(adminForm);
 
             const postData = {
-                title: formData.get('title'),
-                platform: formData.get('platform'),
-                imageUrl: formData.get('imageUrl'),
-                content: formData.get('content'),
-                password: formData.get('password')
+                title: String(formData.get('title') ?? '').trim(),
+                platform: String(formData.get('platform') ?? ''),
+                imageUrl: String(formData.get('imageUrl') ?? '').trim(),
+                content: String(formData.get('content') ?? ''),
+                password: String(formData.get('password') ?? '')
             };
 
             try {
@@ -1071,27 +1707,40 @@
                 if (response.status === 201) {
                     adminForm.reset();
                     closeAdminModal();
-                    await loadPosts();
+
+                    await loadPosts(false);
+
+                    showToast('Новость успешно опубликована!');
                     return;
                 }
 
                 if (response.status === 401) {
-                    showFormMessage('Ошибка: Доступ запрещен', 'error');
+                    showFormMessage(
+                        'Ошибка: Доступ запрещен',
+                        'error'
+                    );
+
                     document.getElementById('password').value = '';
                     document.getElementById('password').focus();
+
                     return;
                 }
 
-                let errorMessage = 'Не удалось опубликовать новость.';
+                let errorMessage =
+                    'Не удалось опубликовать новость.';
 
                 try {
                     const data = await response.json();
 
-                    if (data && typeof data.error === 'string') {
+                    if (
+                        data &&
+                        typeof data.error === 'string' &&
+                        data.error.trim()
+                    ) {
                         errorMessage = data.error;
                     }
                 } catch {
-                    // Ответ может не содержать JSON.
+                    // Сервер мог вернуть ответ без JSON.
                 }
 
                 showFormMessage(errorMessage, 'error');
@@ -1107,6 +1756,29 @@
                 submitButton.textContent = 'Опубликовать';
             }
         });
+
+        function handleInitialHash() {
+            const hash = window.location.hash;
+
+            if (!hash.startsWith('#post-')) {
+                return;
+            }
+
+            window.setTimeout(() => {
+                const target = document.getElementById(
+                    CSS.escape(hash.substring(1))
+                );
+
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }, 100);
+        }
+
+        window.addEventListener('hashchange', handleInitialHash);
 
         loadPosts();
     </script>
