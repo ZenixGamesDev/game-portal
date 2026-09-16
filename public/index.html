@@ -2,28 +2,30 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#090a0f">
-    <meta name="description" content="PlayPC — игровой портал о PC и PlayStation. Новости, обзоры и материалы для геймеров.">
-    <title>PlayPC — Gaming Portal</title>
+    <meta name="description" content="PlayPC — игровой портал с новостями PC и PlayStation">
+    <title>PlayPC — Игровой портал</title>
 
     <style>
         :root {
             --bg: #090a0f;
+            --bg-soft: #0d0f16;
             --card: #12141c;
             --card-hover: #171a24;
             --border: rgba(255,255,255,.08);
             --border-strong: rgba(255,255,255,.14);
-            --text: #f4f7fb;
-            --muted: #8d95a6;
-            --muted-light: #b6bdca;
-            --ps: #2f80ff;
-            --ps-soft: rgba(47,128,255,.14);
-            --pc: #72ff68;
-            --pc-soft: rgba(114,255,104,.12);
-            --danger: #ff4d61;
-            --success: #58e88a;
-            --shadow: 0 18px 60px rgba(0,0,0,.34);
+            --text: #f5f7fb;
+            --muted: #8f96a8;
+            --muted-light: #b9bfcc;
+            --ps: #2f8cff;
+            --ps-soft: rgba(47,140,255,.14);
+            --pc: #49e58a;
+            --pc-soft: rgba(73,229,138,.13);
+            --danger: #ff4d67;
+            --danger-soft: rgba(255,77,103,.12);
+            --accent: #9b7cff;
+            --shadow: 0 25px 70px rgba(0,0,0,.42);
             --radius: 18px;
         }
 
@@ -39,18 +41,35 @@
 
         body {
             min-height: 100vh;
-            color: var(--text);
             background:
-                radial-gradient(circle at 10% 0%, rgba(47,128,255,.08), transparent 30%),
-                radial-gradient(circle at 90% 10%, rgba(114,255,104,.045), transparent 28%),
+                radial-gradient(circle at 15% -10%, rgba(47,140,255,.10), transparent 32%),
+                radial-gradient(circle at 90% 5%, rgba(73,229,138,.07), transparent 28%),
                 var(--bg);
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-                BlinkMacSystemFont, "Segoe UI", sans-serif;
-            line-height: 1.6;
+            color: var(--text);
+            font-family:
+                Inter,
+                ui-sans-serif,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+            overflow-x: hidden;
         }
 
-        body.dashboard-open {
-            overflow: hidden;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .22;
+            background-image:
+                linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: linear-gradient(to bottom, black, transparent 85%);
+            z-index: -1;
         }
 
         button,
@@ -62,6 +81,13 @@
 
         button {
             border: 0;
+            cursor: pointer;
+        }
+
+        input,
+        textarea,
+        select {
+            outline: none;
         }
 
         a {
@@ -69,93 +95,181 @@
             text-decoration: none;
         }
 
-        ::selection {
-            color: #fff;
-            background: rgba(47,128,255,.35);
+        .hidden {
+            display: none !important;
         }
 
-        .page-shell {
-            width: min(1180px, calc(100% - 32px));
+        .container {
+            width: min(1400px, calc(100% - 40px));
             margin: 0 auto;
         }
 
         /* =========================
            HEADER
-        ========================== */
+        ========================= */
 
-        .site-header {
+        header {
             position: sticky;
             top: 0;
-            z-index: 50;
+            z-index: 100;
+            height: 76px;
+            display: flex;
+            align-items: center;
             border-bottom: 1px solid var(--border);
-            background: rgba(9,10,15,.88);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(9,10,15,.82);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
         }
 
         .header-inner {
-            min-height: 76px;
+            width: min(1400px, calc(100% - 40px));
+            margin: 0 auto;
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 20px;
         }
 
-        .brand {
-            display: flex;
+        .logo {
+            display: inline-flex;
             align-items: center;
-            gap: 12px;
-            min-width: max-content;
+            gap: 11px;
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: -.8px;
+            user-select: none;
         }
 
-        .brand-mark {
-            width: 42px;
-            height: 42px;
+        .logo-mark {
+            position: relative;
+            width: 34px;
+            height: 34px;
             display: grid;
             place-items: center;
-            border-radius: 12px;
-            color: #fff;
-            background: linear-gradient(135deg,#2f80ff,#1562dc);
-            box-shadow: 0 0 28px rgba(47,128,255,.28);
-            font-weight: 900;
-            font-size: 19px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--ps), var(--accent));
+            box-shadow: 0 0 30px rgba(47,140,255,.32);
+            color: white;
+            font-size: 17px;
         }
 
-        .brand-text {
-            font-size: 21px;
-            font-weight: 900;
-            letter-spacing: -.7px;
+        .logo-mark::after {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            border-radius: 9px;
+            border: 1px solid rgba(255,255,255,.25);
         }
 
-        .brand-text span {
-            color: var(--ps);
+        .logo span {
+            background: linear-gradient(90deg, #fff, #aab5c8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        .header-search {
-            position: relative;
-            width: min(430px, 44vw);
+        .admin-trigger {
             margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 0 16px;
+            border: 1px solid rgba(155,124,255,.30);
+            border-radius: 11px;
+            color: #d9d0ff;
+            background: rgba(155,124,255,.08);
+            transition: .22s ease;
+            font-size: 13px;
+            font-weight: 800;
         }
 
-        .header-search input {
-            width: 100%;
-            height: 44px;
-            padding: 0 16px 0 43px;
-            outline: none;
+        .admin-trigger:hover {
+            color: white;
+            border-color: rgba(155,124,255,.65);
+            background: rgba(155,124,255,.16);
+            box-shadow: 0 0 25px rgba(155,124,255,.13);
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            padding: 62px 0 35px;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 7px 11px;
+            border: 1px solid rgba(47,140,255,.2);
+            border-radius: 999px;
+            background: rgba(47,140,255,.07);
+            color: #77b6ff;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero-label::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--pc);
+            box-shadow: 0 0 12px var(--pc);
+        }
+
+        .hero h1 {
+            max-width: 850px;
+            font-size: clamp(38px, 5vw, 70px);
+            line-height: .98;
+            letter-spacing: -3px;
+            font-weight: 950;
+        }
+
+        .hero h1 strong {
+            background: linear-gradient(100deg, #fff 10%, #8ebfff 55%, #9b7cff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            max-width: 690px;
+            margin-top: 19px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           CONTROLS
+        ========================= */
+
+        .controls {
+            margin-bottom: 35px;
+            padding: 16px;
             border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
-            background: rgba(255,255,255,.035);
-            transition: .2s ease;
+            border-radius: 17px;
+            background: rgba(18,20,28,.72);
+            box-shadow: var(--shadow);
         }
 
-        .header-search input::placeholder {
-            color: #70798b;
+        .controls-top {
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
 
-        .header-search input:focus {
-            border-color: rgba(47,128,255,.55);
-            background: rgba(47,128,255,.045);
-            box-shadow: 0 0 0 3px rgba(47,128,255,.08);
+        .search-wrap {
+            position: relative;
+            flex: 1;
         }
 
         .search-icon {
@@ -163,250 +277,157 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--muted);
+            color: #737b8e;
             font-size: 17px;
             pointer-events: none;
         }
 
-        /* SECRET ADMIN BUTTON */
-
-        .admin-header-button {
-            width: 42px;
-            height: 42px;
-            flex: 0 0 42px;
-            display: grid;
-            place-items: center;
+        .search-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 17px 0 44px;
+            color: var(--text);
             border: 1px solid var(--border);
             border-radius: 12px;
-            color: #7f8797;
-            background: rgba(255,255,255,.035);
-            cursor: pointer;
+            background: #0c0e14;
             transition: .2s ease;
         }
 
-        .admin-header-button:hover {
-            color: #fff;
-            border-color: rgba(47,128,255,.45);
-            background: var(--ps-soft);
-            box-shadow: 0 0 20px rgba(47,128,255,.08);
-            transform: translateY(-1px);
+        .search-input::placeholder {
+            color: #646c7d;
         }
 
-        .gear-icon {
-            width: 19px;
-            height: 19px;
-            display: block;
+        .search-input:focus {
+            border-color: rgba(47,140,255,.55);
+            box-shadow: 0 0 0 4px rgba(47,140,255,.08);
         }
 
-        /* =========================
-           HERO
-        ========================== */
-
-        .hero {
-            padding: 72px 0 36px;
-        }
-
-        .hero-panel {
-            position: relative;
-            overflow: hidden;
-            padding: 46px;
+        .bookmark-filter {
+            height: 48px;
+            padding: 0 16px;
             border: 1px solid var(--border);
-            border-radius: 26px;
-            background:
-                linear-gradient(135deg,rgba(47,128,255,.08),transparent 48%),
-                linear-gradient(315deg,rgba(114,255,104,.035),transparent 45%),
-                var(--card);
-            box-shadow: var(--shadow);
-        }
-
-        .hero-panel::before {
-            content: "";
-            position: absolute;
-            width: 320px;
-            height: 320px;
-            right: -150px;
-            top: -190px;
-            border-radius: 50%;
-            background: rgba(47,128,255,.1);
-            filter: blur(50px);
-            pointer-events: none;
-        }
-
-        .hero-kicker {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
-            color: var(--ps);
+            border-radius: 12px;
+            background: #0c0e14;
+            color: var(--muted-light);
             font-size: 13px;
             font-weight: 800;
-            letter-spacing: 1.3px;
-            text-transform: uppercase;
+            transition: .2s ease;
+            white-space: nowrap;
         }
 
-        .hero-kicker::before {
-            content: "";
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--pc);
-            box-shadow: 0 0 12px rgba(114,255,104,.7);
-        }
-
-        .hero h1 {
-            position: relative;
-            max-width: 780px;
-            font-size: clamp(35px,6vw,66px);
-            line-height: 1.02;
-            letter-spacing: -2.8px;
-            font-weight: 950;
-        }
-
-        .hero h1 span {
-            color: var(--ps);
-        }
-
-        .hero-description {
-            position: relative;
-            max-width: 700px;
-            margin-top: 18px;
-            color: var(--muted-light);
-            font-size: 17px;
-        }
-
-        /* =========================
-           CONTROLS
-        ========================== */
-
-        .controls {
-            padding: 18px 0 34px;
-        }
-
-        .controls-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
+        .bookmark-filter:hover,
+        .bookmark-filter.active {
+            border-color: rgba(255,214,88,.4);
+            color: #ffe28a;
+            background: rgba(255,214,88,.08);
         }
 
         .platform-tabs {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
+            margin-top: 12px;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
 
-        .filter-btn,
-        .bookmark-filter {
-            min-height: 42px;
-            padding: 0 16px;
+        .platform-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .platform-tab {
+            min-height: 38px;
+            padding: 0 14px;
             border: 1px solid var(--border);
-            border-radius: 11px;
-            color: var(--muted-light);
-            background: rgba(255,255,255,.035);
-            cursor: pointer;
+            border-radius: 10px;
+            color: var(--muted);
+            background: rgba(255,255,255,.025);
+            font-size: 12px;
+            font-weight: 850;
             transition: .2s ease;
+            white-space: nowrap;
         }
 
-        .filter-btn:hover,
-        .bookmark-filter:hover {
-            transform: translateY(-1px);
+        .platform-tab:hover {
+            color: white;
             border-color: var(--border-strong);
-            color: #fff;
         }
 
-        .filter-btn.active {
-            color: #fff;
-            border-color: rgba(47,128,255,.55);
-            background: var(--ps-soft);
+        .platform-tab.active {
+            color: white;
+            background: rgba(255,255,255,.07);
+            border-color: rgba(255,255,255,.2);
         }
 
-        .filter-btn[data-platform="PC"].active {
-            border-color: rgba(114,255,104,.45);
+        .platform-tab[data-platform="PC"].active {
+            color: var(--pc);
+            border-color: rgba(73,229,138,.4);
             background: var(--pc-soft);
+            box-shadow: 0 0 22px rgba(73,229,138,.08);
         }
 
-        .bookmark-filter {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-        }
-
-        .bookmark-filter.active {
-            color: #fff;
-            border-color: rgba(255,208,75,.45);
-            background: rgba(255,208,75,.09);
-        }
-
-        .bookmark-star {
-            color: #7f8797;
-        }
-
-        .bookmark-filter.active .bookmark-star {
-            color: #ffd34d;
+        .platform-tab[data-platform="PlayStation"].active {
+            color: var(--ps);
+            border-color: rgba(47,140,255,.4);
+            background: var(--ps-soft);
+            box-shadow: 0 0 22px rgba(47,140,255,.08);
         }
 
         /* =========================
-           NEWS
-        ========================== */
+           NEWS GRID
+        ========================= */
 
-        .section-heading {
+        .feed-header {
             display: flex;
-            align-items: end;
             justify-content: space-between;
-            gap: 15px;
+            align-items: center;
             margin-bottom: 18px;
         }
 
-        .section-heading h2 {
-            font-size: 24px;
-            letter-spacing: -.8px;
+        .feed-title {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -.4px;
         }
 
-        .post-count {
+        .results-count {
             color: var(--muted);
-            font-size: 13px;
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        .posts-grid {
+        .news-grid {
             display: grid;
-            grid-template-columns: repeat(2,minmax(0,1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 20px;
             padding-bottom: 70px;
         }
 
-        .post-card {
+        .news-card {
+            min-width: 0;
             overflow: hidden;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            background: var(--card);
-            box-shadow: 0 10px 35px rgba(0,0,0,.2);
-            animation: postAppear .45s ease both;
-            transition: .25s ease;
+            background: linear-gradient(180deg, #141720, #10121a);
+            box-shadow: 0 16px 45px rgba(0,0,0,.2);
+            transition:
+                transform .28s ease,
+                border-color .28s ease,
+                box-shadow .28s ease;
+            animation: cardIn .45s ease both;
         }
 
-        .post-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-strong);
-            background: var(--card-hover);
+        .news-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,.15);
+            box-shadow: 0 25px 65px rgba(0,0,0,.38);
         }
 
-        @keyframes postAppear {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .news-image-wrap {
+            position: relative;
+            overflow: hidden;
+            background: #0b0d12;
         }
 
-        /*
-         * Требуемый стиль полноценной фотографии-обложки.
-         */
         .news-image {
             display: block;
             width: 100%;
@@ -414,723 +435,737 @@
             object-fit: cover;
             border-radius: 8px;
             margin-bottom: 15px;
-            background: #0d0f14;
-        }
-
-        .post-image-wrap {
-            position: relative;
-            overflow: hidden;
-            padding: 14px 14px 0;
-            background: var(--card);
-        }
-
-        .post-image-wrap .news-image {
-            width: 100%;
-            height: 350px;
-            margin-bottom: 0;
             transition: transform .5s ease;
         }
 
-        .post-card:hover .news-image {
-            transform: scale(1.025);
+        .news-card:hover .news-image {
+            transform: scale(1.035);
         }
 
-        .post-image-overlay {
-            position: absolute;
-            left: 14px;
-            right: 14px;
-            bottom: 0;
-            height: 45%;
-            border-radius: 0 0 8px 8px;
-            background: linear-gradient(
-                to top,
-                rgba(9,10,15,.68),
-                transparent
-            );
-            pointer-events: none;
+        .image-fallback {
+            width: 100%;
+            height: 350px;
+            margin-bottom: 15px;
+            display: grid;
+            place-items: center;
+            color: #697184;
+            background:
+                linear-gradient(135deg, rgba(47,140,255,.08), rgba(155,124,255,.05)),
+                #0b0d12;
+            font-size: 12px;
+            font-weight: 800;
         }
 
         .platform-badge {
             position: absolute;
-            left: 28px;
-            top: 28px;
-            display: inline-flex;
-            align-items: center;
-            min-height: 30px;
-            padding: 0 10px;
-            border-radius: 9px;
-            font-size: 11px;
-            font-weight: 900;
+            left: 15px;
+            top: 15px;
+            z-index: 2;
+            padding: 7px 10px;
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 8px;
+            background: rgba(7,8,12,.76);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-size: 10px;
+            font-weight: 950;
             letter-spacing: .6px;
             text-transform: uppercase;
-            backdrop-filter: blur(10px);
         }
 
         .platform-badge.pc {
-            color: #c9ffc5;
-            border: 1px solid rgba(114,255,104,.35);
-            background: rgba(41,110,37,.72);
+            color: var(--pc);
+            border-color: rgba(73,229,138,.25);
         }
 
         .platform-badge.playstation {
-            color: #c8dcff;
-            border: 1px solid rgba(47,128,255,.4);
-            background: rgba(27,78,156,.75);
+            color: #66aaff;
+            border-color: rgba(47,140,255,.28);
         }
 
-        .bookmark-btn {
-            position: absolute;
-            right: 28px;
-            top: 28px;
-            width: 38px;
-            height: 38px;
-            display: grid;
-            place-items: center;
-            border: 1px solid rgba(255,255,255,.14);
-            border-radius: 10px;
-            color: #fff;
-            background: rgba(9,10,15,.7);
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            transition: .2s ease;
+        .news-body {
+            padding: 0 18px 18px;
         }
 
-        .bookmark-btn:hover {
-            transform: scale(1.05);
-            border-color: rgba(255,211,77,.45);
-        }
-
-        .bookmark-btn.saved {
-            color: #ffd34d;
-            border-color: rgba(255,211,77,.35);
-            background: rgba(255,211,77,.1);
-        }
-
-        .post-body {
-            padding: 21px;
-        }
-
-        .post-meta {
+        .news-meta {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 9px;
+            gap: 8px;
             margin-bottom: 10px;
             color: var(--muted);
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 700;
         }
 
         .meta-separator {
-            opacity: .4;
+            opacity: .45;
         }
 
-        .post-title {
-            margin-bottom: 11px;
-            font-size: 21px;
-            line-height: 1.25;
-            letter-spacing: -.5px;
+        .news-title {
+            margin-bottom: 12px;
+            font-size: 23px;
+            line-height: 1.14;
+            letter-spacing: -.7px;
+            font-weight: 900;
         }
 
-        .post-content {
-            color: var(--muted-light);
+        .news-content {
+            color: #b4bac7;
             font-size: 14px;
-            line-height: 1.75;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
+            line-height: 1.72;
+            word-break: break-word;
         }
 
-        .post-content strong {
-            color: #fff;
-            font-weight: 800;
+        .news-content strong {
+            color: #f4f6fa;
+            font-weight: 850;
         }
 
-        .post-content em {
-            color: #c5cbd6;
+        .news-content em {
+            color: #cbd1dd;
         }
 
-        .post-actions {
+        .news-actions {
             display: flex;
-            justify-content: flex-end;
+            gap: 8px;
             margin-top: 17px;
             padding-top: 14px;
             border-top: 1px solid var(--border);
         }
 
-        .share-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            color: var(--muted);
-            background: transparent;
-            cursor: pointer;
-            font-size: 12px;
+        .card-action {
+            flex: 1;
+            min-height: 38px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--muted-light);
+            background: rgba(255,255,255,.025);
+            font-size: 11px;
+            font-weight: 850;
             transition: .2s ease;
         }
 
-        .share-btn:hover {
-            color: #fff;
+        .card-action:hover {
+            color: white;
+            border-color: rgba(255,255,255,.18);
+            background: rgba(255,255,255,.06);
+        }
+
+        .card-action.bookmarked {
+            color: #ffe08a;
+            border-color: rgba(255,214,88,.35);
+            background: rgba(255,214,88,.07);
+        }
+
+        .card-action.share-success {
+            color: var(--pc);
+            border-color: rgba(73,229,138,.3);
+        }
+
+        .image-note {
+            margin-top: 12px;
+            color: #626a7b;
+            font-size: 9px;
+            line-height: 1.5;
         }
 
         .empty-state {
             grid-column: 1 / -1;
-            padding: 65px 25px;
+            padding: 70px 25px;
             text-align: center;
             border: 1px dashed var(--border-strong);
-            border-radius: var(--radius);
-            color: var(--muted);
+            border-radius: 18px;
             background: rgba(255,255,255,.015);
         }
 
-        .empty-state-icon {
-            margin-bottom: 10px;
+        .empty-icon {
+            margin-bottom: 12px;
             font-size: 35px;
+            opacity: .55;
         }
 
         .empty-state h3 {
-            margin-bottom: 6px;
-            color: var(--text);
+            margin-bottom: 7px;
+            font-size: 18px;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+            font-size: 13px;
         }
 
         /* =========================
            FOOTER
-        ========================== */
+        ========================= */
 
-        .site-footer {
+        footer {
             border-top: 1px solid var(--border);
-            padding: 28px 0 35px;
+            padding: 30px 0 38px;
+            background: rgba(5,6,9,.5);
         }
 
-        .footer-inner {
-            display: flex;
-            flex-direction: column;
-            gap: 17px;
-        }
-
-        .legal-box {
-            padding: 17px 18px;
+        .legal-notice {
+            padding: 18px 20px;
             border: 1px solid var(--border);
-            border-radius: 13px;
-            color: #747d8f;
+            border-radius: 14px;
+            color: #767e90;
             background: rgba(255,255,255,.018);
             font-size: 11px;
-            line-height: 1.65;
-        }
-
-        .footer-bottom {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .copyright {
-            color: #626b7b;
-            font-size: 11px;
+            line-height: 1.7;
         }
 
         /* =========================
-           ADMIN MODAL
-        ========================== */
+           ADMIN LOGIN MODAL
+        ========================= */
 
-        .modal {
+        .login-overlay {
             position: fixed;
             inset: 0;
-            z-index: 100;
-            display: none;
-            align-items: stretch;
-            justify-content: stretch;
-            background: rgba(0,0,0,.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        .modal.open {
-            display: flex;
-            animation: modalFade .2s ease;
-        }
-
-        @keyframes modalFade {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .dashboard {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            background:
-                radial-gradient(
-                    circle at 85% 0%,
-                    rgba(47,128,255,.06),
-                    transparent 28%
-                ),
-                #0b0d13;
-        }
-
-        .dashboard-header {
-            min-height: 76px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            padding: 15px 24px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(14,16,23,.96);
-        }
-
-        .dashboard-title-wrap {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .dashboard-logo {
-            width: 42px;
-            height: 42px;
+            z-index: 1000;
             display: grid;
             place-items: center;
-            border-radius: 11px;
-            color: #fff;
-            background: linear-gradient(135deg,#2f80ff,#175bd0);
-            font-weight: 900;
-        }
-
-        .dashboard-title {
-            font-size: 17px;
-            font-weight: 900;
-        }
-
-        .dashboard-status {
-            margin-top: 1px;
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        .dashboard-header-right {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-        }
-
-        .admin-password {
-            width: 250px;
-            height: 42px;
-            padding: 0 13px;
-            outline: none;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            background: #090b10;
-            font-size: 12px;
-            transition: .2s ease;
-        }
-
-        .admin-password:focus {
-            border-color: rgba(47,128,255,.55);
-            box-shadow: 0 0 0 3px rgba(47,128,255,.08);
-        }
-
-        .close-modal {
-            width: 42px;
-            height: 42px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--muted-light);
-            background: rgba(255,255,255,.035);
-            cursor: pointer;
-            font-size: 21px;
-            transition: .2s ease;
-        }
-
-        .close-modal:hover {
-            color: #fff;
-            border-color: var(--border-strong);
-        }
-
-        .dashboard-tabs {
-            display: flex;
-            gap: 3px;
-            padding: 12px 24px 0;
-            border-bottom: 1px solid var(--border);
-            background: #0d0f15;
-        }
-
-        .dashboard-tab {
-            position: relative;
-            padding: 12px 15px;
-            color: var(--muted);
-            background: transparent;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .dashboard-tab::after {
-            content: "";
-            position: absolute;
-            left: 12px;
-            right: 12px;
-            bottom: -1px;
-            height: 2px;
-            border-radius: 3px 3px 0 0;
-            background: transparent;
-        }
-
-        .dashboard-tab.active {
-            color: #fff;
-        }
-
-        .dashboard-tab.active::after {
-            background: var(--ps);
-            box-shadow: 0 0 12px rgba(47,128,255,.6);
-        }
-
-        .dashboard-content {
-            width: min(1150px,100%);
-            margin: 0 auto;
-            overflow: auto;
-            flex: 1;
-            padding: 28px;
-        }
-
-        .dashboard-section {
-            display: none;
-        }
-
-        .dashboard-section.active {
-            display: block;
-            animation: sectionFade .2s ease;
-        }
-
-        @keyframes sectionFade {
-            from {
-                opacity: 0;
-                transform: translateY(4px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* =========================
-           STATISTICS
-        ========================== */
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3,minmax(0,1fr));
-            gap: 15px;
-        }
-
-        .stat-card {
-            position: relative;
-            overflow: hidden;
-            padding: 24px;
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            background: var(--card);
-        }
-
-        .stat-card::after {
-            content: "";
-            position: absolute;
-            width: 90px;
-            height: 90px;
-            right: -35px;
-            bottom: -45px;
-            border-radius: 50%;
-            background: rgba(47,128,255,.1);
-            filter: blur(20px);
-        }
-
-        .stat-card.pc::after {
-            background: rgba(114,255,104,.08);
-        }
-
-        .stat-label {
-            color: var(--muted);
-            font-size: 11px;
-            letter-spacing: .8px;
-            text-transform: uppercase;
-        }
-
-        .stat-value {
-            margin-top: 5px;
-            font-size: 38px;
-            line-height: 1.1;
-            font-weight: 950;
-        }
-
-        .stat-card.playstation .stat-value {
-            color: var(--ps);
-        }
-
-        .stat-card.pc .stat-value {
-            color: var(--pc);
-        }
-
-        .stats-info {
-            margin-top: 18px;
-            padding: 15px;
-            border: 1px solid var(--border);
-            border-radius: 13px;
-            color: var(--muted);
-            background: rgba(255,255,255,.018);
-            font-size: 12px;
-        }
-
-        /* =========================
-           CREATE FORM
-        ========================== */
-
-        .form-card {
             padding: 20px;
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            background: var(--card);
+            background: rgba(2,3,6,.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            animation: fadeIn .18s ease;
         }
 
-        .form-heading {
-            margin-bottom: 18px;
+        .login-box {
+            width: min(420px, 100%);
+            padding: 26px;
+            border: 1px solid rgba(155,124,255,.25);
+            border-radius: 20px;
+            background:
+                radial-gradient(circle at 50% 0, rgba(155,124,255,.10), transparent 55%),
+                #11131b;
+            box-shadow: 0 35px 100px rgba(0,0,0,.6);
+            animation: modalIn .25s ease;
         }
 
-        .form-heading h3 {
-            font-size: 17px;
-        }
-
-        .form-heading p {
-            margin-top: 3px;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .form-grid {
+        .login-icon {
+            width: 48px;
+            height: 48px;
             display: grid;
-            grid-template-columns: 1fr 190px;
-            gap: 14px;
+            place-items: center;
+            margin-bottom: 16px;
+            border-radius: 13px;
+            background: rgba(155,124,255,.11);
+            border: 1px solid rgba(155,124,255,.25);
+            font-size: 22px;
+        }
+
+        .login-box h2 {
+            margin-bottom: 7px;
+            font-size: 22px;
+        }
+
+        .login-box p {
+            margin-bottom: 20px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .field {
             display: flex;
             flex-direction: column;
-            gap: 7px;
-        }
-
-        .field.full {
-            grid-column: 1 / -1;
+            gap: 8px;
         }
 
         .field label {
-            color: var(--muted-light);
+            color: #aeb5c4;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 850;
+        }
+
+        .field input,
+        .field textarea,
+        .field select,
+        .dashboard-password {
+            width: 100%;
+            color: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #0b0d13;
+            transition: .2s ease;
         }
 
         .field input,
         .field select,
-        .field textarea {
-            width: 100%;
-            outline: none;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            background: #090b10;
-            transition: .2s ease;
-        }
-
-        .field input,
-        .field select {
-            height: 43px;
-            padding: 0 12px;
+        .dashboard-password {
+            height: 44px;
+            padding: 0 13px;
         }
 
         .field textarea {
-            min-height: 260px;
-            padding: 12px;
+            min-height: 250px;
+            padding: 13px;
             resize: vertical;
-            line-height: 1.65;
+            line-height: 1.55;
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder {
+            color: #5f6778;
         }
 
         .field input:focus,
+        .field textarea:focus,
         .field select:focus,
-        .field textarea:focus {
-            border-color: rgba(47,128,255,.5);
-            box-shadow: 0 0 0 3px rgba(47,128,255,.07);
+        .dashboard-password:focus {
+            border-color: rgba(47,140,255,.5);
+            box-shadow: 0 0 0 4px rgba(47,140,255,.07);
         }
 
-        .template-row {
+        .login-actions {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 9px;
+            gap: 9px;
+            margin-top: 16px;
         }
 
+        .primary-btn,
+        .secondary-btn,
+        .danger-btn,
         .template-btn {
-            min-height: 34px;
-            padding: 0 11px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--muted-light);
-            background: rgba(255,255,255,.035);
-            cursor: pointer;
-            font-size: 11px;
+            min-height: 42px;
+            padding: 0 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 900;
             transition: .2s ease;
-        }
-
-        .template-btn:hover {
-            color: #fff;
-            border-color: rgba(47,128,255,.35);
-            background: var(--ps-soft);
-        }
-
-        .bb-hint {
-            color: #697284;
-            font-size: 10px;
-        }
-
-        .form-actions {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .form-message {
-            min-height: 20px;
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        .form-message.success {
-            color: var(--success);
-        }
-
-        .form-message.error {
-            color: var(--danger);
         }
 
         .primary-btn {
-            min-height: 42px;
-            padding: 0 18px;
-            border-radius: 10px;
-            color: #fff;
-            background: linear-gradient(135deg,#2f80ff,#1760d9);
-            box-shadow: 0 7px 22px rgba(47,128,255,.18);
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 12px;
-            transition: .2s ease;
+            flex: 1;
+            color: #06100a;
+            background: var(--pc);
+            box-shadow: 0 0 25px rgba(73,229,138,.15);
         }
 
         .primary-btn:hover {
             transform: translateY(-1px);
+            box-shadow: 0 0 30px rgba(73,229,138,.25);
         }
 
-        .primary-btn:disabled {
-            opacity: .55;
-            cursor: not-allowed;
-            transform: none;
+        .secondary-btn {
+            color: #c0c6d2;
+            background: rgba(255,255,255,.05);
+            border: 1px solid var(--border);
+        }
+
+        .secondary-btn:hover {
+            color: white;
+            background: rgba(255,255,255,.08);
+        }
+
+        .login-error {
+            min-height: 18px;
+            margin-top: 10px;
+            color: var(--danger);
+            font-size: 11px;
+            font-weight: 800;
         }
 
         /* =========================
-           CONTENT MANAGER
-        ========================== */
+           ADMIN DASHBOARD
+        ========================= */
 
-        .manager-card {
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            background: var(--card);
+        .dashboard-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            overflow: auto;
+            background: rgba(4,5,9,.72);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            animation: fadeIn .2s ease;
         }
 
-        .manager-header {
+        .dashboard {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 10% 0, rgba(47,140,255,.08), transparent 25%),
+                radial-gradient(circle at 90% 10%, rgba(155,124,255,.08), transparent 28%),
+                #0a0c12;
+        }
+
+        .dashboard-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            min-height: 76px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 17px 18px;
+            gap: 15px;
+            padding: 12px 28px;
             border-bottom: 1px solid var(--border);
+            background: rgba(10,12,18,.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
-        .manager-header h3 {
+        .dashboard-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: max-content;
+        }
+
+        .dashboard-brand strong {
+            display: block;
             font-size: 15px;
+            font-weight: 950;
         }
 
-        .manager-header span {
+        .dashboard-brand span {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+        }
+
+        .dashboard-lock {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--pc);
+            box-shadow: 0 0 14px rgba(73,229,138,.65);
+        }
+
+        .dashboard-password-wrap {
+            position: relative;
+            flex: 1;
+            max-width: 340px;
+            margin-left: auto;
+        }
+
+        .dashboard-password {
+            padding-right: 80px;
+            font-size: 12px;
+        }
+
+        .password-state {
+            position: absolute;
+            right: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pc);
+            font-size: 9px;
+            font-weight: 900;
+        }
+
+        .dashboard-close {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            border: 1px solid rgba(255,77,103,.22);
+            border-radius: 10px;
+            color: #ff7c8f;
+            background: var(--danger-soft);
+            font-size: 18px;
+            transition: .2s ease;
+        }
+
+        .dashboard-close:hover {
+            color: white;
+            border-color: rgba(255,77,103,.5);
+            background: rgba(255,77,103,.2);
+        }
+
+        .dashboard-content {
+            width: min(1500px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 30px 0 60px;
+        }
+
+        .dashboard-title {
+            margin-bottom: 25px;
+        }
+
+        .dashboard-title h1 {
+            font-size: clamp(25px, 3vw, 37px);
+            letter-spacing: -1.4px;
+        }
+
+        .dashboard-title p {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .dashboard-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+            padding: 6px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: rgba(255,255,255,.025);
+        }
+
+        .dashboard-tab {
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 8px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 11px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .dashboard-tab.active {
+            color: white;
+            background: rgba(255,255,255,.08);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+        }
+
+        .dashboard-panel {
+            animation: panelIn .22s ease;
+        }
+
+        /* Stats */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            min-height: 165px;
+            padding: 23px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: #11141c;
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -65px;
+            bottom: -75px;
+            border-radius: 50%;
+            filter: blur(20px);
+            opacity: .35;
+        }
+
+        .stat-card.total::after {
+            background: var(--accent);
+        }
+
+        .stat-card.pc::after {
+            background: var(--pc);
+        }
+
+        .stat-card.ps::after {
+            background: var(--ps);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+        }
+
+        .stat-number {
+            margin-top: 18px;
+            font-size: 48px;
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: -2px;
+        }
+
+        .stat-card.total .stat-number {
+            color: #c2b2ff;
+        }
+
+        .stat-card.pc .stat-number {
+            color: var(--pc);
+            text-shadow: 0 0 22px rgba(73,229,138,.22);
+        }
+
+        .stat-card.ps .stat-number {
+            color: #62a9ff;
+            text-shadow: 0 0 22px rgba(47,140,255,.22);
+        }
+
+        .stat-description {
+            margin-top: 9px;
+            color: #686f80;
+            font-size: 10px;
+        }
+
+        /* Create post */
+
+        .admin-form-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 18px;
+        }
+
+        .admin-panel-card {
+            padding: 21px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: #11141c;
+        }
+
+        .admin-card-title {
+            margin-bottom: 18px;
+        }
+
+        .admin-card-title h2 {
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .admin-card-title p {
+            margin-top: 5px;
             color: var(--muted);
             font-size: 11px;
         }
 
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 220px;
+            gap: 14px;
+        }
+
+        .full-field {
+            grid-column: 1 / -1;
+        }
+
+        .templates {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .template-btn {
+            width: 100%;
+            text-align: left;
+            color: #c5cbd6;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.025);
+        }
+
+        .template-btn:hover {
+            color: white;
+            border-color: rgba(155,124,255,.35);
+            background: rgba(155,124,255,.07);
+        }
+
+        .form-submit {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-submit .primary-btn {
+            flex: 0 0 auto;
+        }
+
+        .form-status {
+            display: flex;
+            align-items: center;
+            min-height: 42px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        /* Manager */
+
         .manager-list {
             display: flex;
             flex-direction: column;
+            gap: 8px;
         }
 
-        .manager-item {
+        .manager-row {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: 1fr 130px 145px;
             align-items: center;
-            gap: 15px;
-            padding: 13px 18px;
-            border-bottom: 1px solid var(--border);
+            gap: 14px;
+            min-height: 65px;
+            padding: 9px 10px 9px 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: rgba(255,255,255,.018);
         }
 
-        .manager-item:last-child {
-            border-bottom: 0;
-        }
-
-        .manager-post-title {
+        .manager-row-title {
+            min-width: 0;
             overflow: hidden;
-            color: #e8ebf1;
+            color: #dfe3eb;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 850;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        .manager-post-meta {
-            margin-top: 2px;
+        .manager-row-date {
             color: var(--muted);
             font-size: 10px;
+            text-align: center;
         }
 
-        .delete-btn {
-            min-height: 34px;
-            padding: 0 11px;
-            border: 1px solid rgba(255,77,97,.25);
+        .manager-platform {
+            justify-self: center;
+            padding: 5px 8px;
+            border-radius: 7px;
+            font-size: 9px;
+            font-weight: 950;
+            text-transform: uppercase;
+        }
+
+        .manager-platform.pc {
+            color: var(--pc);
+            background: var(--pc-soft);
+        }
+
+        .manager-platform.playstation {
+            color: #64aaff;
+            background: var(--ps-soft);
+        }
+
+        .delete-post {
+            width: 100%;
+            min-height: 35px;
+            padding: 0 8px;
+            border: 1px solid rgba(255,77,103,.25);
             border-radius: 8px;
-            color: #ff7181;
-            background: rgba(255,77,97,.12);
-            cursor: pointer;
+            color: #ff7183;
+            background: var(--danger-soft);
             font-size: 10px;
-            font-weight: 800;
+            font-weight: 900;
             transition: .2s ease;
         }
 
-        .delete-btn:hover {
-            color: #fff;
-            border-color: rgba(255,77,97,.55);
-            background: rgba(255,77,97,.18);
-        }
-
-        .delete-btn:disabled {
-            opacity: .5;
-            cursor: not-allowed;
+        .delete-post:hover {
+            color: white;
+            border-color: rgba(255,77,103,.55);
+            background: rgba(255,77,103,.2);
         }
 
         .manager-empty {
-            padding: 45px 20px;
+            padding: 40px;
+            border: 1px dashed var(--border-strong);
+            border-radius: 13px;
             color: var(--muted);
             text-align: center;
             font-size: 12px;
@@ -1138,13 +1173,13 @@
 
         /* =========================
            TOAST
-        ========================== */
+        ========================= */
 
         .toast-container {
             position: fixed;
-            z-index: 200;
             right: 20px;
             bottom: 20px;
+            z-index: 2000;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -1152,31 +1187,75 @@
         }
 
         .toast {
-            max-width: min(350px,calc(100vw - 40px));
+            max-width: 360px;
             padding: 12px 15px;
-            border: 1px solid var(--border-strong);
-            border-radius: 11px;
-            color: #fff;
-            background: #151821;
-            box-shadow: 0 15px 45px rgba(0,0,0,.4);
-            font-size: 12px;
-            animation: toastIn .25s ease;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #e9edf5;
+            background: rgba(17,20,28,.94);
+            box-shadow: 0 20px 50px rgba(0,0,0,.45);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            font-size: 11px;
+            font-weight: 800;
+            animation: toastIn .25s ease both;
         }
 
         .toast.success {
-            border-color: rgba(88,232,138,.3);
+            border-color: rgba(73,229,138,.3);
         }
 
         .toast.error {
-            border-color: rgba(255,77,97,.35);
+            border-color: rgba(255,77,103,.3);
+        }
+
+        /* =========================
+           ANIMATIONS
+        ========================= */
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes panelIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes toastIn {
             from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1185,135 +1264,99 @@
 
         /* =========================
            RESPONSIVE
-        ========================== */
+        ========================= */
 
-        @media (max-width: 850px) {
-            .hero {
-                padding-top: 45px;
+        @media (max-width: 1100px) {
+            .news-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
-            .hero-panel {
-                padding: 34px;
-            }
-
-            .posts-grid {
+            .admin-form-layout {
                 grid-template-columns: 1fr;
-            }
-
-            .news-image,
-            .post-image-wrap .news-image {
-                height: 350px;
-            }
-
-            .dashboard-header {
-                align-items: flex-start;
-            }
-
-            .dashboard-header-right {
-                flex-wrap: wrap;
-                justify-content: flex-end;
-            }
-
-            .admin-password {
-                width: 210px;
             }
         }
 
-        @media (max-width: 650px) {
-            .page-shell {
-                width: min(100% - 20px,1180px);
-            }
-
+        @media (max-width: 760px) {
+            .container,
             .header-inner {
-                min-height: 68px;
-                gap: 9px;
+                width: min(100% - 24px, 1400px);
             }
 
-            .brand-text {
-                display: none;
+            header {
+                height: 66px;
             }
 
-            .brand-mark {
-                width: 38px;
-                height: 38px;
+            .logo {
+                font-size: 21px;
             }
 
-            .header-search {
+            .logo-mark {
+                width: 31px;
+                height: 31px;
+            }
+
+            .admin-trigger {
+                min-height: 38px;
+                padding: 0 11px;
+                font-size: 11px;
+            }
+
+            .hero {
+                padding: 42px 0 27px;
+            }
+
+            .hero h1 {
+                letter-spacing: -2px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .controls-top {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .bookmark-filter {
                 width: 100%;
             }
 
-            .admin-header-button {
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .news-image,
+            .image-fallback {
+                height: 280px;
+            }
+
+            .dashboard-header {
+                padding: 10px 14px;
+                flex-wrap: wrap;
+            }
+
+            .dashboard-brand {
+                flex: 1;
+            }
+
+            .dashboard-password-wrap {
+                order: 3;
+                flex: 1 0 100%;
+                max-width: none;
+                margin-left: 0;
+            }
+
+            .dashboard-close {
                 width: 38px;
                 height: 38px;
                 flex-basis: 38px;
             }
 
-            .hero {
-                padding: 28px 0 22px;
-            }
-
-            .hero-panel {
-                padding: 28px 22px;
-                border-radius: 20px;
-            }
-
-            .hero h1 {
-                letter-spacing: -1.7px;
-            }
-
-            .hero-description {
-                font-size: 14px;
-            }
-
-            .controls-row {
-                align-items: stretch;
-                flex-direction: column;
-            }
-
-            .platform-tabs {
-                width: 100%;
-            }
-
-            .filter-btn,
-            .bookmark-filter {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .bookmark-filter {
-                width: 100%;
-            }
-
-            .news-image,
-            .post-image-wrap .news-image {
-                height: 350px;
-            }
-
-            .dashboard-header {
-                flex-direction: column;
-            }
-
-            .dashboard-header-right {
-                width: 100%;
-                justify-content: stretch;
-            }
-
-            .admin-password {
-                width: auto;
-                flex: 1;
-            }
-
-            .dashboard-tabs {
-                overflow-x: auto;
-                padding-left: 8px;
-            }
-
-            .dashboard-tab {
-                min-width: max-content;
-            }
-
             .dashboard-content {
-                padding: 14px;
+                width: min(100% - 24px, 1500px);
+                padding-top: 20px;
             }
 
             .stats-grid {
@@ -1324,30 +1367,54 @@
                 grid-template-columns: 1fr;
             }
 
-            .field.full {
+            .full-field {
                 grid-column: auto;
             }
 
-            .form-actions {
-                align-items: stretch;
-                flex-direction: column;
+            .manager-row {
+                grid-template-columns: 1fr auto;
+                gap: 8px;
             }
 
-            .primary-btn {
-                width: 100%;
+            .manager-platform {
+                justify-self: end;
             }
 
-            .manager-item {
-                grid-template-columns: 1fr;
+            .manager-row-date {
+                display: none;
             }
 
-            .delete-btn {
-                width: 100%;
+            .delete-post {
+                grid-column: 1 / -1;
             }
 
-            .footer-bottom {
-                flex-direction: column;
-                align-items: flex-start;
+            .toast-container {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+
+            .toast {
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .news-image,
+            .image-fallback {
+                height: 230px;
+            }
+
+            .news-title {
+                font-size: 21px;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .platform-tabs {
+                margin-right: -4px;
             }
         }
 
@@ -1366,781 +1433,537 @@
 
 <body>
 
-    <!-- =========================
-         HEADER
-    ========================== -->
+<header>
+    <div class="header-inner">
+        <a href="#" class="logo" aria-label="PlayPC">
+            <span class="logo-mark">P</span>
+            <span>PlayPC</span>
+        </a>
 
-    <header class="site-header">
-        <div class="page-shell header-inner">
+        <button
+            type="button"
+            class="admin-trigger"
+            id="adminTrigger"
+            aria-label="Открыть панель администратора"
+        >
+            ⚙️ Панель
+        </button>
+    </div>
+</header>
 
-            <a href="#" class="brand" aria-label="PlayPC">
-                <div class="brand-mark">P</div>
-                <div class="brand-text">Play<span>PC</span></div>
-            </a>
+<main>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-label">Gaming Media</div>
 
-            <div class="header-search">
-                <span class="search-icon">⌕</span>
+            <h1>
+                Всё самое важное из мира
+                <strong>игр.</strong>
+            </h1>
 
-                <input
-                    id="searchInput"
-                    type="search"
-                    placeholder="Поиск по заголовкам и тексту..."
-                    autocomplete="off"
-                    aria-label="Поиск по заголовкам и тексту"
+            <p>
+                Новости, игровые события и материалы для PC и PlayStation
+                в одном современном игровом пространстве.
+            </p>
+        </div>
+    </section>
+
+    <section class="container" aria-label="Фильтры новостей">
+        <div class="controls">
+            <div class="controls-top">
+                <div class="search-wrap">
+                    <span class="search-icon">⌕</span>
+                    <input
+                        type="search"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Поиск по заголовкам и текстам статей..."
+                        autocomplete="off"
+                        spellcheck="false"
+                        aria-label="Поиск новостей"
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    class="bookmark-filter"
+                    id="bookmarkFilter"
+                    aria-pressed="false"
                 >
+                    ☆ Только закладки
+                </button>
+            </div>
+
+            <div class="platform-tabs" role="tablist" aria-label="Фильтр платформы">
+                <button
+                    type="button"
+                    class="platform-tab active"
+                    data-platform="all"
+                    role="tab"
+                    aria-selected="true"
+                >
+                    Все
+                </button>
+
+                <button
+                    type="button"
+                    class="platform-tab"
+                    data-platform="PC"
+                    role="tab"
+                    aria-selected="false"
+                >
+                    PC
+                </button>
+
+                <button
+                    type="button"
+                    class="platform-tab"
+                    data-platform="PlayStation"
+                    role="tab"
+                    aria-selected="false"
+                >
+                    PlayStation
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" aria-label="Лента новостей">
+        <div class="feed-header">
+            <h2 class="feed-title">Последние материалы</h2>
+            <span class="results-count" id="resultsCount">Загрузка...</span>
+        </div>
+
+        <div class="news-grid" id="newsGrid">
+            <div class="empty-state">
+                <div class="empty-icon">◌</div>
+                <h3>Загружаем новости</h3>
+                <p>Подключаем игровую ленту PlayPC...</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="legal-notice">
+            Данный сайт является независимым игровым блогом. Мы не собираем, не обрабатываем и не храним персональные данные пользователей (включая имена, email, телефоны). На сайте полностью отсутствуют cookie-файлы. Никакой регистрации для посетителей не требуется.
+        </div>
+    </div>
+</footer>
+
+<!-- =========================
+     ADMIN LOGIN
+========================= -->
+
+<div
+    class="login-overlay hidden"
+    id="loginOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="loginTitle"
+>
+    <div class="login-box">
+        <div class="login-icon">🔐</div>
+
+        <h2 id="loginTitle">Панель администратора</h2>
+
+        <p>
+            Доступ только для владельца PlayPC.
+            Введите общий пароль администратора.
+        </p>
+
+        <div class="field">
+            <label for="loginPassword">Пароль</label>
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Введите пароль..."
+                autocomplete="current-password"
+                spellcheck="false"
+            >
+        </div>
+
+        <div class="login-error" id="loginError" aria-live="polite"></div>
+
+        <div class="login-actions">
+            <button type="button" class="secondary-btn" id="loginCancel">
+                Отмена
+            </button>
+
+            <button type="button" class="primary-btn" id="loginSubmit">
+                Войти
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- =========================
+     ADMIN DASHBOARD
+========================= -->
+
+<div
+    class="dashboard-overlay hidden"
+    id="dashboardOverlay"
+    aria-hidden="true"
+>
+    <div class="dashboard">
+
+        <div class="dashboard-header">
+            <div class="dashboard-brand">
+                <div class="dashboard-lock"></div>
+
+                <div>
+                    <strong>PlayPC Admin Dashboard</strong>
+                    <span>Защищённая рабочая зона</span>
+                </div>
+            </div>
+
+            <div class="dashboard-password-wrap">
+                <input
+                    type="password"
+                    id="dashboardPassword"
+                    class="dashboard-password"
+                    aria-label="Пароль администратора"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+                <span class="password-state">● ДОСТУП</span>
             </div>
 
             <button
-                class="admin-header-button"
-                id="openAdmin"
                 type="button"
-                title="Управление"
-                aria-label="Открыть панель управления"
+                class="dashboard-close"
+                id="dashboardClose"
+                aria-label="Закрыть панель администратора"
             >
-                <svg
-                    class="gear-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                >
-                    <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"></path>
-                    <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.46 15a1.7 1.7 0 0 0-1.56-1.03H6.7v-2.4h.2A1.7 1.7 0 0 0 8.46 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 12.73 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.7 1.7-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03h.2v2.4h-.2A1.7 1.7 0 0 0 19.4 15Z"></path>
-                </svg>
+                ×
             </button>
-
         </div>
-    </header>
 
-    <!-- =========================
-         MAIN
-    ========================== -->
-
-    <main>
-
-        <section class="hero">
-            <div class="page-shell">
-                <div class="hero-panel">
-
-                    <div class="hero-kicker">
-                        Gaming Media
-                    </div>
-
-                    <h1>
-                        Игровой мир.<br>
-                        <span>Без лишнего шума.</span>
-                    </h1>
-
-                    <p class="hero-description">
-                        Новости, обзоры и материалы о PC и PlayStation —
-                        в одном современном игровом пространстве.
-                    </p>
-
-                </div>
-            </div>
-        </section>
-
-        <section class="controls">
-            <div class="page-shell">
-
-                <div class="controls-row">
-
-                    <div
-                        class="platform-tabs"
-                        role="tablist"
-                        aria-label="Фильтр платформ"
-                    >
-                        <button
-                            class="filter-btn active"
-                            type="button"
-                            data-platform="all"
-                        >
-                            Все
-                        </button>
-
-                        <button
-                            class="filter-btn"
-                            type="button"
-                            data-platform="PC"
-                        >
-                            PC
-                        </button>
-
-                        <button
-                            class="filter-btn"
-                            type="button"
-                            data-platform="PlayStation"
-                        >
-                            PlayStation
-                        </button>
-                    </div>
-
-                    <button
-                        class="bookmark-filter"
-                        id="bookmarksFilter"
-                        type="button"
-                        aria-pressed="false"
-                    >
-                        <span class="bookmark-star">★</span>
-                        <span>Показать только закладки</span>
-                    </button>
-
-                </div>
-            </div>
-        </section>
-
-        <section class="news-section">
-            <div class="page-shell">
-
-                <div class="section-heading">
-                    <h2>Последние публикации</h2>
-                    <div class="post-count" id="postCount">
-                        Загрузка...
-                    </div>
-                </div>
-
-                <div
-                    class="posts-grid"
-                    id="postsContainer"
-                >
-                    <div class="empty-state">
-                        <div class="empty-state-icon">◌</div>
-                        <h3>Загрузка новостей</h3>
-                        <p>Подождите немного...</p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <!-- =========================
-         FOOTER
-    ========================== -->
-
-    <footer class="site-footer">
-        <div class="page-shell footer-inner">
-
-            <div class="legal-box">
-                Данный сайт является независимым игровым блогом. Мы не собираем,
-                не обрабатываем и не храним персональные данные пользователей
-                (включая имена, email, телефоны). На сайте полностью отсутствуют
-                cookie-файлы. Никакой регистрации для посетителей не требуется.
+        <div class="dashboard-content">
+            <div class="dashboard-title">
+                <h1>Рабочий стол администратора</h1>
+                <p>Управляйте игровой лентой PlayPC в реальном времени.</p>
             </div>
 
-            <div class="footer-bottom">
-                <div class="copyright">
-                    © 2026 PlayPC. Независимый игровой блог.
-                </div>
-            </div>
-
-        </div>
-    </footer>
-
-    <!-- =========================
-         ADMIN DASHBOARD
-    ========================== -->
-
-    <div
-        class="modal"
-        id="adminModal"
-        aria-hidden="true"
-    >
-        <div
-            class="dashboard"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="dashboardTitle"
-        >
-
-            <div class="dashboard-header">
-
-                <div class="dashboard-title-wrap">
-
-                    <div class="dashboard-logo">
-                        P
-                    </div>
-
-                    <div>
-                        <div
-                            class="dashboard-title"
-                            id="dashboardTitle"
-                        >
-                            PlayPC Admin Dashboard
-                        </div>
-
-                        <div
-                            class="dashboard-status"
-                            id="adminStatus"
-                        >
-                            Введите пароль администратора
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="dashboard-header-right">
-
-                    <input
-                        class="admin-password"
-                        id="adminPassword"
-                        type="password"
-                        placeholder="Пароль администратора"
-                        autocomplete="off"
-                        spellcheck="false"
-                        aria-label="Пароль администратора"
-                    >
-
-                    <button
-                        class="close-modal"
-                        id="closeAdmin"
-                        type="button"
-                        aria-label="Закрыть панель"
-                    >
-                        ×
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div class="dashboard-tabs">
-
+            <div class="dashboard-tabs" role="tablist">
                 <button
+                    type="button"
                     class="dashboard-tab active"
-                    type="button"
                     data-dashboard-tab="stats"
+                    role="tab"
+                    aria-selected="true"
                 >
-                    Статистика
+                    📊 Живая статистика
                 </button>
 
                 <button
-                    class="dashboard-tab"
                     type="button"
+                    class="dashboard-tab"
                     data-dashboard-tab="create"
+                    role="tab"
+                    aria-selected="false"
                 >
-                    Создать пост
+                    ✚ Управление контентом
                 </button>
 
                 <button
-                    class="dashboard-tab"
                     type="button"
+                    class="dashboard-tab"
                     data-dashboard-tab="manager"
+                    role="tab"
+                    aria-selected="false"
                 >
-                    Менеджер контента
+                    🗂 Менеджер статей
                 </button>
-
             </div>
 
-            <div class="dashboard-content">
-
-                <!-- STATISTICS -->
-
-                <section
-                    class="dashboard-section active"
-                    data-dashboard-section="stats"
-                >
-                    <div class="stats-grid">
-
-                        <div class="stat-card">
-                            <div class="stat-label">
-                                Всего постов
-                            </div>
-
-                            <div
-                                class="stat-value"
-                                id="statTotal"
-                            >
-                                0
-                            </div>
+            <!-- STATS -->
+            <section
+                class="dashboard-panel"
+                id="dashboardStats"
+                data-dashboard-panel="stats"
+            >
+                <div class="stats-grid">
+                    <article class="stat-card total">
+                        <div class="stat-label">Всего статей</div>
+                        <div class="stat-number" id="statTotal">0</div>
+                        <div class="stat-description">
+                            Все опубликованные материалы
                         </div>
+                    </article>
 
-                        <div class="stat-card pc">
-                            <div class="stat-label">
-                                PC
-                            </div>
-
-                            <div
-                                class="stat-value"
-                                id="statPC"
-                            >
-                                0
-                            </div>
+                    <article class="stat-card pc">
+                        <div class="stat-label">PC</div>
+                        <div class="stat-number" id="statPC">0</div>
+                        <div class="stat-description">
+                            Материалы о PC-играх
                         </div>
+                    </article>
 
-                        <div class="stat-card playstation">
-                            <div class="stat-label">
-                                PlayStation
-                            </div>
-
-                            <div
-                                class="stat-value"
-                                id="statPlayStation"
-                            >
-                                0
-                            </div>
+                    <article class="stat-card ps">
+                        <div class="stat-label">PlayStation</div>
+                        <div class="stat-number" id="statPlayStation">0</div>
+                        <div class="stat-description">
+                            Материалы о PlayStation
                         </div>
+                    </article>
+                </div>
+            </section>
 
-                    </div>
-
-                    <div class="stats-info">
-                        Статистика обновляется автоматически после
-                        загрузки, создания и удаления публикаций.
-                    </div>
-                </section>
-
-                <!-- CREATE -->
-
-                <section
-                    class="dashboard-section"
-                    data-dashboard-section="create"
-                >
-                    <div class="form-card">
-
-                        <div class="form-heading">
-                            <h3>
-                                Создание новой публикации
-                            </h3>
-
+            <!-- CREATE -->
+            <section
+                class="dashboard-panel hidden"
+                id="dashboardCreate"
+                data-dashboard-panel="create"
+            >
+                <div class="admin-form-layout">
+                    <div class="admin-panel-card">
+                        <div class="admin-card-title">
+                            <h2>Создание новой статьи</h2>
                             <p>
-                                Заполните данные поста и опубликуйте
-                                его в общей ленте.
+                                Заполните данные и опубликуйте материал в ленте.
                             </p>
                         </div>
 
-                        <form id="postForm">
-
+                        <form id="postForm" novalidate>
                             <div class="form-grid">
-
                                 <div class="field">
-                                    <label for="postTitle">
-                                        Заголовок
-                                    </label>
-
+                                    <label for="postTitle">Заголовок</label>
                                     <input
-                                        id="postTitle"
-                                        name="title"
                                         type="text"
+                                        id="postTitle"
                                         maxlength="180"
-                                        placeholder="Например: Новая игра вышла на PC"
+                                        placeholder="Например: Новая игра раскрыла дату релиза"
                                         required
                                     >
                                 </div>
 
                                 <div class="field">
-                                    <label for="postPlatform">
-                                        Платформа
-                                    </label>
-
-                                    <select
-                                        id="postPlatform"
-                                        name="platform"
-                                        required
-                                    >
-                                        <option value="PC">
-                                            PC
-                                        </option>
-
-                                        <option value="PlayStation">
-                                            PlayStation
-                                        </option>
+                                    <label for="postPlatform">Платформа</label>
+                                    <select id="postPlatform" required>
+                                        <option value="PC">PC</option>
+                                        <option value="PlayStation">PlayStation</option>
                                     </select>
                                 </div>
 
-                                <div class="field full">
+                                <div class="field full-field">
                                     <label for="postImage">
-                                        Ссылка на картинку
+                                        Ссылка на фото
                                     </label>
-
                                     <input
-                                        id="postImage"
-                                        name="imageUrl"
                                         type="url"
+                                        id="postImage"
+                                        maxlength="2000"
                                         placeholder="https://example.com/image.jpg"
                                         required
                                     >
                                 </div>
 
-                                <div class="field full">
+                                <div class="field full-field">
                                     <label for="postContent">
-                                        Текст новости
+                                        Текст статьи
                                     </label>
-
-                                    <div class="template-row">
-
-                                        <button
-                                            class="template-btn"
-                                            type="button"
-                                            id="reviewTemplate"
-                                        >
-                                            Шаблон Обзора
-                                        </button>
-
-                                        <button
-                                            class="template-btn"
-                                            type="button"
-                                            id="newsTemplate"
-                                        >
-                                            Шаблон Новости
-                                        </button>
-
-                                    </div>
-
                                     <textarea
                                         id="postContent"
-                                        name="content"
-                                        placeholder="Введите текст публикации..."
+                                        placeholder="[b]Заголовок блока[/b]
+
+Основной текст статьи...
+
+[i]Важная информация[/i]"
                                         required
                                     ></textarea>
-
-                                    <div class="bb-hint">
-                                        Поддерживаются:
-                                        [b]жирный текст[/b]
-                                        и [i]курсив[/i]
-                                    </div>
                                 </div>
-
                             </div>
 
-                            <div class="form-actions">
-
-                                <div
-                                    class="form-message"
-                                    id="formMessage"
-                                    aria-live="polite"
-                                ></div>
-
+                            <div class="form-submit">
                                 <button
-                                    class="primary-btn"
-                                    id="publishBtn"
                                     type="submit"
+                                    class="primary-btn"
+                                    id="createPostButton"
                                 >
-                                    Опубликовать пост
+                                    🚀 Опубликовать
                                 </button>
 
+                                <div
+                                    class="form-status"
+                                    id="formStatus"
+                                    aria-live="polite"
+                                ></div>
                             </div>
-
                         </form>
                     </div>
-                </section>
 
-                <!-- CONTENT MANAGER -->
-
-                <section
-                    class="dashboard-section"
-                    data-dashboard-section="manager"
-                >
-                    <div class="manager-card">
-
-                        <div class="manager-header">
-                            <h3>
-                                Все публикации
-                            </h3>
-
-                            <span id="managerCount">
-                                0 постов
-                            </span>
+                    <aside class="admin-panel-card">
+                        <div class="admin-card-title">
+                            <h2>Быстрые шаблоны</h2>
+                            <p>Автоматически заполняют поле статьи.</p>
                         </div>
 
-                        <div
-                            class="manager-list"
-                            id="managerList"
-                        >
-                            <div class="manager-empty">
-                                Загрузка списка публикаций...
-                            </div>
-                        </div>
+                        <div class="templates">
+                            <button
+                                type="button"
+                                class="template-btn"
+                                id="reviewTemplate"
+                            >
+                                🎮 Шаблон Обзора игры
+                            </button>
 
+                            <button
+                                type="button"
+                                class="template-btn"
+                                id="newsTemplate"
+                            >
+                                🔥 Шаблон Горячей Новости
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- MANAGER -->
+            <section
+                class="dashboard-panel hidden"
+                id="dashboardManager"
+                data-dashboard-panel="manager"
+            >
+                <div class="admin-panel-card">
+                    <div class="admin-card-title">
+                        <h2>Менеджер статей — Твоё абсолютное право</h2>
+                        <p>
+                            Все опубликованные материалы. Удаление происходит
+                            непосредственно через сервер.
+                        </p>
                     </div>
-                </section>
 
-            </div>
+                    <div class="manager-list" id="managerList">
+                        <div class="manager-empty">
+                            Загружаем список статей...
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
+</div>
 
-    <div
-        class="toast-container"
-        id="toastContainer"
-    ></div>
+<div class="toast-container" id="toastContainer"></div>
 
-    <script>
+<script>
+    (() => {
         "use strict";
 
-        /* =========================================
-           CONFIGURATION
-        ========================================== */
+        const ADMIN_PASSWORD = "AdminPlayPC2026";
+        const BOOKMARKS_KEY = "playpc_bookmarks_v1";
 
-        const BOOKMARK_STORAGE_KEY =
-            "playpc_bookmarks_v1";
+        const state = {
+            posts: [],
+            activePlatform: "all",
+            searchTerm: "",
+            onlyBookmarks: false,
+            bookmarks: [],
+            adminPassword: "",
+            activeDashboardTab: "stats",
+            loading: false
+        };
 
-        let allPosts = [];
-        let activePlatform = "all";
-        let bookmarksOnly = false;
-        let savedBookmarks = new Set();
+        const elements = {
+            newsGrid: document.getElementById("newsGrid"),
+            resultsCount: document.getElementById("resultsCount"),
+            searchInput: document.getElementById("searchInput"),
+            bookmarkFilter: document.getElementById("bookmarkFilter"),
+            platformTabs: document.querySelectorAll(".platform-tab"),
 
-        /* =========================================
-           DOM
-        ========================================== */
+            adminTrigger: document.getElementById("adminTrigger"),
+            loginOverlay: document.getElementById("loginOverlay"),
+            loginPassword: document.getElementById("loginPassword"),
+            loginError: document.getElementById("loginError"),
+            loginCancel: document.getElementById("loginCancel"),
+            loginSubmit: document.getElementById("loginSubmit"),
 
-        const postsContainer =
-            document.getElementById("postsContainer");
+            dashboardOverlay: document.getElementById("dashboardOverlay"),
+            dashboardClose: document.getElementById("dashboardClose"),
+            dashboardPassword: document.getElementById("dashboardPassword"),
+            dashboardTabs: document.querySelectorAll(".dashboard-tab"),
 
-        const postCount =
-            document.getElementById("postCount");
+            dashboardStats: document.getElementById("dashboardStats"),
+            dashboardCreate: document.getElementById("dashboardCreate"),
+            dashboardManager: document.getElementById("dashboardManager"),
 
-        const searchInput =
-            document.getElementById("searchInput");
+            statTotal: document.getElementById("statTotal"),
+            statPC: document.getElementById("statPC"),
+            statPlayStation: document.getElementById("statPlayStation"),
 
-        const bookmarksFilter =
-            document.getElementById("bookmarksFilter");
+            postForm: document.getElementById("postForm"),
+            postTitle: document.getElementById("postTitle"),
+            postPlatform: document.getElementById("postPlatform"),
+            postImage: document.getElementById("postImage"),
+            postContent: document.getElementById("postContent"),
+            createPostButton: document.getElementById("createPostButton"),
+            formStatus: document.getElementById("formStatus"),
 
-        const adminModal =
-            document.getElementById("adminModal");
+            reviewTemplate: document.getElementById("reviewTemplate"),
+            newsTemplate: document.getElementById("newsTemplate"),
 
-        const openAdmin =
-            document.getElementById("openAdmin");
-
-        const closeAdmin =
-            document.getElementById("closeAdmin");
-
-        const adminPassword =
-            document.getElementById("adminPassword");
-
-        const adminStatus =
-            document.getElementById("adminStatus");
-
-        const statTotal =
-            document.getElementById("statTotal");
-
-        const statPC =
-            document.getElementById("statPC");
-
-        const statPlayStation =
-            document.getElementById("statPlayStation");
-
-        const managerList =
-            document.getElementById("managerList");
-
-        const managerCount =
-            document.getElementById("managerCount");
-
-        const postForm =
-            document.getElementById("postForm");
-
-        const postTitle =
-            document.getElementById("postTitle");
-
-        const postPlatform =
-            document.getElementById("postPlatform");
-
-        const postImage =
-            document.getElementById("postImage");
-
-        const postContent =
-            document.getElementById("postContent");
-
-        const formMessage =
-            document.getElementById("formMessage");
-
-        const publishBtn =
-            document.getElementById("publishBtn");
-
-        const reviewTemplate =
-            document.getElementById("reviewTemplate");
-
-        const newsTemplate =
-            document.getElementById("newsTemplate");
-
-        const toastContainer =
-            document.getElementById("toastContainer");
-
-        /* =========================================
-           ADMIN LOGIN
-        ========================================== */
-
-        function requestAdminPassword() {
-            const password =
-                window.prompt("Введите пароль администратора:");
-
-            if (password === null) {
-                return;
-            }
-
-            if (password.trim() === "") {
-                showToast(
-                    "Пароль не введён.",
-                    "error"
-                );
-
-                return;
-            }
-
-            if (password !== "AdminPlayPC2026") {
-                showToast(
-                    "Неверный пароль. Панель управления скрыта.",
-                    "error"
-                );
-
-                return;
-            }
-
-            adminPassword.value = password;
-
-            openDashboard();
-
-            showToast(
-                "Доступ к панели управления разрешён.",
-                "success"
-            );
-        }
-
-        function openDashboard() {
-            adminModal.classList.add("open");
-            adminModal.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-            document.body.classList.add(
-                "dashboard-open"
-            );
-
-            adminStatus.textContent =
-                "Доступ разрешён. Все действия доступны.";
-
-            switchDashboardTab("stats");
-
-            updateDashboardStats();
-            renderManager();
-        }
-
-        function closeDashboard() {
-            adminModal.classList.remove("open");
-            adminModal.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-
-            document.body.classList.remove(
-                "dashboard-open"
-            );
-
-            /*
-             * Пароль удаляется из поля при закрытии Dashboard.
-             */
-            adminPassword.value = "";
-
-            adminStatus.textContent =
-                "Введите пароль администратора";
-        }
-
-        /* =========================================
-           BOOKMARKS
-        ========================================== */
+            managerList: document.getElementById("managerList"),
+            toastContainer: document.getElementById("toastContainer")
+        };
 
         function loadBookmarks() {
             try {
-                const raw =
-                    localStorage.getItem(
-                        BOOKMARK_STORAGE_KEY
-                    );
+                const raw = localStorage.getItem(BOOKMARKS_KEY);
 
                 if (!raw) {
-                    savedBookmarks = new Set();
+                    state.bookmarks = [];
                     return;
                 }
 
                 const parsed = JSON.parse(raw);
 
-                if (!Array.isArray(parsed)) {
-                    savedBookmarks = new Set();
-                    return;
-                }
-
-                savedBookmarks = new Set(
-                    parsed.map(item => String(item))
-                );
+                state.bookmarks = Array.isArray(parsed)
+                    ? parsed.map(String)
+                    : [];
             } catch (error) {
-                console.error(
-                    "Ошибка загрузки закладок:",
-                    error
-                );
-
-                savedBookmarks = new Set();
+                state.bookmarks = [];
             }
         }
 
         function saveBookmarks() {
             try {
                 localStorage.setItem(
-                    BOOKMARK_STORAGE_KEY,
-                    JSON.stringify([...savedBookmarks])
+                    BOOKMARKS_KEY,
+                    JSON.stringify(state.bookmarks)
                 );
             } catch (error) {
-                console.error(
-                    "Ошибка сохранения закладок:",
-                    error
-                );
-
                 showToast(
-                    "Не удалось сохранить закладку.",
+                    "Не удалось сохранить закладки в браузере.",
                     "error"
                 );
             }
         }
 
-        function toggleBookmark(postId) {
-            const id = String(postId);
+        function isBookmarked(id) {
+            return state.bookmarks.includes(String(id));
+        }
 
-            if (savedBookmarks.has(id)) {
-                savedBookmarks.delete(id);
+        function toggleBookmark(id) {
+            const normalizedId = String(id);
 
-                showToast(
-                    "Пост удалён из закладок.",
-                    "success"
+            if (isBookmarked(normalizedId)) {
+                state.bookmarks = state.bookmarks.filter(
+                    bookmarkId => bookmarkId !== normalizedId
                 );
             } else {
-                savedBookmarks.add(id);
-
-                showToast(
-                    "Пост добавлен в закладки.",
-                    "success"
-                );
+                state.bookmarks.push(normalizedId);
             }
 
             saveBookmarks();
-            renderPosts();
+            renderNews();
         }
 
-        function cleanupOldBookmarks() {
-            const existingIds = new Set(
-                allPosts.map(post => String(post.id))
-            );
-
-            let changed = false;
-
-            [...savedBookmarks].forEach(id => {
-                if (!existingIds.has(id)) {
-                    savedBookmarks.delete(id);
-                    changed = true;
-                }
-            });
-
-            if (changed) {
-                saveBookmarks();
-            }
-        }
-
-        /* =========================================
-           SECURITY / BB-CODE
-        ========================================== */
-
-        function escapeHtml(text) {
-            return String(text)
+        function escapeHtml(value) {
+            return String(value ?? "")
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
@@ -2148,11 +1971,8 @@
                 .replace(/'/g, "&#39;");
         }
 
-        function renderBBCode(text) {
-            const escaped =
-                escapeHtml(String(text));
-
-            return escaped
+        function bbCodeToHtml(text) {
+            return escapeHtml(text)
                 .replace(
                     /\[b\]([\s\S]*?)\[\/b\]/gi,
                     "<strong>$1</strong>"
@@ -2160,567 +1980,406 @@
                 .replace(
                     /\[i\]([\s\S]*?)\[\/i\]/gi,
                     "<em>$1</em>"
-                );
+                )
+                .replace(/\r?\n/g, "<br>");
         }
 
-        /* =========================================
-           READING TIME
-        ========================================== */
+        function stripBBCode(text) {
+            return String(text ?? "")
+                .replace(/\[\/?(?:b|i)\]/gi, "")
+                .replace(/\r?\n/g, " ");
+        }
 
         function calculateReadingTime(text) {
-            const cleanText =
-                String(text || "")
-                    .replace(/\[\/?b\]/gi, "")
-                    .replace(/\[\/?i\]/gi, "")
-                    .trim();
+            const cleanText = stripBBCode(text)
+                .replace(/\s+/g, " ")
+                .trim();
 
             if (!cleanText) {
                 return 1;
             }
 
-            const words =
-                cleanText
-                    .split(/\s+/)
-                    .filter(Boolean)
-                    .length;
-
-            return Math.max(
-                1,
-                Math.ceil(words / 200)
-            );
+            const words = cleanText.split(" ").filter(Boolean).length;
+            return Math.max(1, Math.ceil(words / 210));
         }
 
-        /* =========================================
-           DATE
-        ========================================== */
+        function formatDate(value) {
+            const date = new Date(value);
 
-        function formatDate(dateValue) {
-            if (!dateValue) {
-                return "Дата неизвестна";
+            if (Number.isNaN(date.getTime())) {
+                return "Дата не указана";
             }
 
-            const date =
-                new Date(dateValue);
-
-            if (
-                Number.isNaN(
-                    date.getTime()
-                )
-            ) {
-                return "Дата неизвестна";
-            }
-
-            return new Intl.DateTimeFormat(
-                "ru-RU",
-                {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric"
-                }
-            ).format(date);
+            return new Intl.DateTimeFormat("ru-RU", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            }).format(date);
         }
 
-        /* =========================================
-           IMAGE FALLBACK
-        ========================================== */
-
-        function handleImageError(image) {
-            image.onerror = null;
-
-            image.src =
-                "data:image/svg+xml;charset=UTF-8," +
-                encodeURIComponent(`
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1200"
-                        height="700"
-                        viewBox="0 0 1200 700"
-                    >
-                        <rect
-                            width="1200"
-                            height="700"
-                            fill="#0d0f15"
-                        />
-                        <text
-                            x="600"
-                            y="350"
-                            text-anchor="middle"
-                            dominant-baseline="middle"
-                            fill="#596273"
-                            font-family="Arial, sans-serif"
-                            font-size="30"
-                        >
-                            PLAYPC
-                        </text>
-                    </svg>
-                `);
-        }
-
-        /* =========================================
-           FILTERING
-        ========================================== */
-
-        function normalizeSearchValue(value) {
-            return String(value || "")
+        function normalizeSearchText(value) {
+            return String(value ?? "")
                 .toLocaleLowerCase("ru-RU")
-                .trim();
+                .normalize("NFKC");
         }
 
         function getFilteredPosts() {
-            /*
-             * Поиск выполняется при каждом input-событии.
-             * Сравнение регистронезависимое.
-             * Ищем одновременно в title + content.
-             */
-            const searchValue =
-                normalizeSearchValue(
-                    searchInput.value
+            const query = normalizeSearchText(state.searchTerm);
+
+            return state.posts.filter(post => {
+                const platformMatches =
+                    state.activePlatform === "all" ||
+                    String(post.platform) === state.activePlatform;
+
+                if (!platformMatches) {
+                    return false;
+                }
+
+                if (
+                    state.onlyBookmarks &&
+                    !isBookmarked(post.id)
+                ) {
+                    return false;
+                }
+
+                if (!query) {
+                    return true;
+                }
+
+                const title = normalizeSearchText(post.title);
+                const content = normalizeSearchText(
+                    stripBBCode(post.content)
                 );
 
-            return allPosts.filter(post => {
-                const title =
-                    normalizeSearchValue(
-                        post.title
-                    );
-
-                const content =
-                    normalizeSearchValue(
-                        post.content
-                    );
-
-                const matchesSearch =
-                    searchValue === "" ||
-                    title.includes(searchValue) ||
-                    content.includes(searchValue);
-
-                const matchesPlatform =
-                    activePlatform === "all" ||
-                    String(post.platform) ===
-                        activePlatform;
-
-                const matchesBookmark =
-                    !bookmarksOnly ||
-                    savedBookmarks.has(
-                        String(post.id)
-                    );
-
                 return (
-                    matchesSearch &&
-                    matchesPlatform &&
-                    matchesBookmark
+                    title.includes(query) ||
+                    content.includes(query)
                 );
             });
         }
 
-        /* =========================================
-           POST COUNT
-        ========================================== */
+        function createNewsImage(post) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "news-image-wrap";
 
-        function publicationWord(count) {
-            const number =
-                Math.abs(Number(count)) % 100;
+            const badge = document.createElement("span");
+            const isPC = post.platform === "PC";
 
-            const last =
-                number % 10;
+            badge.className =
+                "platform-badge " +
+                (isPC ? "pc" : "playstation");
 
-            if (
-                number >= 11 &&
-                number <= 19
-            ) {
-                return "публикаций";
+            badge.textContent =
+                isPC ? "PC" : "PlayStation";
+
+            wrapper.appendChild(badge);
+
+            const image = document.createElement("img");
+
+            image.className = "news-image";
+            image.alt = String(post.title || "Обложка новости");
+            image.loading = "lazy";
+            image.decoding = "async";
+            image.referrerPolicy = "no-referrer";
+
+            let fallbackShown = false;
+
+            const showFallback = () => {
+                if (fallbackShown) {
+                    return;
+                }
+
+                fallbackShown = true;
+
+                image.remove();
+
+                const fallback = document.createElement("div");
+                fallback.className = "image-fallback";
+                fallback.textContent = "Изображение недоступно";
+
+                wrapper.appendChild(fallback);
+            };
+
+            image.addEventListener("error", showFallback);
+
+            image.src = String(post.imageUrl || "");
+
+            if (!String(post.imageUrl || "").trim()) {
+                showFallback();
             }
 
-            if (last === 1) {
-                return "публикация";
-            }
+            wrapper.appendChild(image);
 
-            if (
-                last >= 2 &&
-                last <= 4
-            ) {
-                return "публикации";
-            }
-
-            return "публикаций";
+            return wrapper;
         }
 
-        /* =========================================
-           RENDER POSTS
-        ========================================== */
+        function createNewsCard(post, index) {
+            const article = document.createElement("article");
+            article.className = "news-card";
+            article.id = `post-${String(post.id)}`;
+            article.style.animationDelay = `${Math.min(index * 45, 300)}ms`;
 
-        function renderPosts() {
-            const filteredPosts =
-                getFilteredPosts();
+            const imageWrapper = createNewsImage(post);
 
-            postCount.textContent =
-                `${filteredPosts.length} ` +
-                publicationWord(
-                    filteredPosts.length
-                );
+            article.appendChild(imageWrapper);
 
-            if (filteredPosts.length === 0) {
-                postsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">⌕</div>
-                        <h3>Ничего не найдено</h3>
-                        <p>
-                            ${
-                                bookmarksOnly
-                                    ? "У вас пока нет сохранённых новостей."
-                                    : "Попробуйте изменить поисковый запрос или фильтр."
-                            }
-                        </p>
-                    </div>
-                `;
+            const body = document.createElement("div");
+            body.className = "news-body";
 
-                return;
-            }
+            const meta = document.createElement("div");
+            meta.className = "news-meta";
 
-            const fragment =
-                document.createDocumentFragment();
+            const date = document.createElement("span");
+            date.textContent = formatDate(post.createdAt);
 
-            filteredPosts.forEach(
-                (post, index) => {
-                    const article =
-                        document.createElement(
-                            "article"
-                        );
+            const separator = document.createElement("span");
+            separator.className = "meta-separator";
+            separator.textContent = "•";
 
-                    article.className =
-                        "post-card";
+            const reading = document.createElement("span");
+            reading.textContent =
+                `⏱ ${calculateReadingTime(post.content)} мин. чтения`;
 
-                    article.id =
-                        `post-${String(post.id)}`;
+            meta.appendChild(date);
+            meta.appendChild(separator);
+            meta.appendChild(reading);
 
-                    article.style.animationDelay =
-                        `${Math.min(
-                            index * 45,
-                            350
-                        )}ms`;
-
-                    const platformClass =
-                        String(post.platform)
-                            .toLowerCase() === "pc"
-                            ? "pc"
-                            : "playstation";
-
-                    const isSaved =
-                        savedBookmarks.has(
-                            String(post.id)
-                        );
-
-                    const readingTime =
-                        calculateReadingTime(
-                            post.content
-                        );
-
-                    /*
-                     * Картинка новости автоматически
-                     * вставляется именно в:
-                     *
-                     * <img src="..." class="news-image">
-                     *
-                     * Значение src предварительно
-                     * экранируется.
-                     */
-                    const safeImageUrl =
-                        escapeHtml(
-                            post.imageUrl || ""
-                        );
-
-                    article.innerHTML = `
-                        <div class="post-image-wrap">
-
-                            <img
-                                src="${safeImageUrl}"
-                                class="news-image"
-                                alt="${escapeHtml(
-                                    post.title || "Изображение новости"
-                                )}"
-                                loading="lazy"
-                                referrerpolicy="no-referrer"
-                            >
-
-                            <div class="post-image-overlay"></div>
-
-                            <div class="platform-badge ${platformClass}">
-                                ${escapeHtml(
-                                    post.platform ||
-                                    "Unknown"
-                                )}
-                            </div>
-
-                            <button
-                                class="bookmark-btn ${
-                                    isSaved
-                                        ? "saved"
-                                        : ""
-                                }"
-                                type="button"
-                                data-bookmark-id="${escapeHtml(
-                                    String(post.id)
-                                )}"
-                                aria-label="${
-                                    isSaved
-                                        ? "Удалить из закладок"
-                                        : "Добавить в закладки"
-                                }"
-                                title="${
-                                    isSaved
-                                        ? "Удалить из закладок"
-                                        : "В закладки"
-                                }"
-                            >
-                                ${
-                                    isSaved
-                                        ? "★"
-                                        : "☆"
-                                }
-                            </button>
-
-                        </div>
-
-                        <div class="post-body">
-
-                            <div class="post-meta">
-                                <span>
-                                    ${escapeHtml(
-                                        formatDate(
-                                            post.createdAt
-                                        )
-                                    )}
-                                </span>
-
-                                <span class="meta-separator">
-                                    •
-                                </span>
-
-                                <span>
-                                    ⏱ ${readingTime}
-                                    мин. чтения
-                                </span>
-                            </div>
-
-                            <h3 class="post-title">
-                                ${escapeHtml(
-                                    post.title ||
-                                    "Без заголовка"
-                                )}
-                            </h3>
-
-                            <div class="post-content"></div>
-
-                            <div class="post-actions">
-                                <button
-                                    class="share-btn"
-                                    type="button"
-                                    data-share-id="${escapeHtml(
-                                        String(post.id)
-                                    )}"
-                                >
-                                    ↗ Поделиться
-                                </button>
-                            </div>
-
-                        </div>
-                    `;
-
-                    const image =
-                        article.querySelector(
-                            ".news-image"
-                        );
-
-                    if (image) {
-                        image.addEventListener(
-                            "error",
-                            () => {
-                                handleImageError(
-                                    image
-                                );
-                            }
-                        );
-                    }
-
-                    const contentElement =
-                        article.querySelector(
-                            ".post-content"
-                        );
-
-                    if (contentElement) {
-                        /*
-                         * Исходный пользовательский HTML
-                         * сначала экранируется.
-                         * Только разрешённые BB-коды
-                         * превращаются в <strong>/<em>.
-                         */
-                        contentElement.innerHTML =
-                            renderBBCode(
-                                post.content || ""
-                            );
-                    }
-
-                    const bookmarkButton =
-                        article.querySelector(
-                            ".bookmark-btn"
-                        );
-
-                    if (bookmarkButton) {
-                        bookmarkButton.addEventListener(
-                            "click",
-                            () => {
-                                toggleBookmark(
-                                    post.id
-                                );
-                            }
-                        );
-                    }
-
-                    const shareButton =
-                        article.querySelector(
-                            ".share-btn"
-                        );
-
-                    if (shareButton) {
-                        shareButton.addEventListener(
-                            "click",
-                            () => {
-                                sharePost(post);
-                            }
-                        );
-                    }
-
-                    fragment.appendChild(
-                        article
-                    );
-                }
+            const title = document.createElement("h2");
+            title.className = "news-title";
+            title.textContent = String(
+                post.title || "Без названия"
             );
 
-            postsContainer.replaceChildren(
-                fragment
+            const content = document.createElement("div");
+            content.className = "news-content";
+            content.innerHTML = bbCodeToHtml(post.content || "");
+
+            const actions = document.createElement("div");
+            actions.className = "news-actions";
+
+            const bookmark = document.createElement("button");
+            bookmark.type = "button";
+            bookmark.className =
+                "card-action" +
+                (isBookmarked(post.id) ? " bookmarked" : "");
+            bookmark.dataset.action = "bookmark";
+            bookmark.dataset.id = String(post.id);
+            bookmark.setAttribute(
+                "aria-pressed",
+                String(isBookmarked(post.id))
+            );
+            bookmark.textContent =
+                isBookmarked(post.id)
+                    ? "★ В закладках"
+                    : "☆ В закладки";
+
+            const share = document.createElement("button");
+            share.type = "button";
+            share.className = "card-action";
+            share.dataset.action = "share";
+            share.dataset.id = String(post.id);
+            share.textContent = "↗ Поделиться";
+
+            actions.appendChild(bookmark);
+            actions.appendChild(share);
+
+            const note = document.createElement("div");
+            note.className = "image-note";
+            note.textContent =
+                "Изображения используются исключительно в ознакомительных целях из открытых медиа-китов правообладателей";
+
+            body.appendChild(meta);
+            body.appendChild(title);
+            body.appendChild(content);
+            body.appendChild(actions);
+            body.appendChild(note);
+
+            article.appendChild(body);
+
+            return article;
+        }
+
+        function renderNews() {
+            const posts = getFilteredPosts();
+
+            elements.newsGrid.innerHTML = "";
+
+            if (!state.posts.length) {
+                const empty = document.createElement("div");
+                empty.className = "empty-state";
+
+                const icon = document.createElement("div");
+                icon.className = "empty-icon";
+                icon.textContent = "◌";
+
+                const title = document.createElement("h3");
+                title.textContent = "Новостей пока нет";
+
+                const text = document.createElement("p");
+                text.textContent =
+                    "Администратор ещё не опубликовал материалы.";
+
+                empty.appendChild(icon);
+                empty.appendChild(title);
+                empty.appendChild(text);
+
+                elements.newsGrid.appendChild(empty);
+                elements.resultsCount.textContent = "0 материалов";
+
+                return;
+            }
+
+            if (!posts.length) {
+                const empty = document.createElement("div");
+                empty.className = "empty-state";
+
+                const icon = document.createElement("div");
+                icon.className = "empty-icon";
+                icon.textContent = "⌕";
+
+                const title = document.createElement("h3");
+                title.textContent = "Ничего не найдено";
+
+                const text = document.createElement("p");
+                text.textContent =
+                    "Попробуйте изменить поисковый запрос или фильтр.";
+
+                empty.appendChild(icon);
+                empty.appendChild(title);
+                empty.appendChild(text);
+
+                elements.newsGrid.appendChild(empty);
+                elements.resultsCount.textContent = "0 материалов";
+
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            posts.forEach((post, index) => {
+                fragment.appendChild(
+                    createNewsCard(post, index)
+                );
+            });
+
+            elements.newsGrid.appendChild(fragment);
+
+            const count = posts.length;
+            const word =
+                count === 1
+                    ? "материал"
+                    : count >= 2 && count <= 4
+                        ? "материала"
+                        : "материалов";
+
+            elements.resultsCount.textContent =
+                `${count} ${word}`;
+        }
+
+        function updateStats() {
+            const total = state.posts.length;
+
+            const pc = state.posts.filter(
+                post => post.platform === "PC"
+            ).length;
+
+            const playstation = state.posts.filter(
+                post => post.platform === "PlayStation"
+            ).length;
+
+            elements.statTotal.textContent = total;
+            elements.statPC.textContent = pc;
+            elements.statPlayStation.textContent = playstation;
+        }
+
+        function renderManager() {
+            elements.managerList.innerHTML = "";
+
+            if (!state.posts.length) {
+                const empty = document.createElement("div");
+                empty.className = "manager-empty";
+                empty.textContent = "Опубликованных статей пока нет.";
+                elements.managerList.appendChild(empty);
+                return;
+            }
+
+            const sortedPosts = [...state.posts].sort(
+                (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
             );
 
-            highlightPostFromHash();
+            const fragment = document.createDocumentFragment();
+
+            sortedPosts.forEach(post => {
+                const row = document.createElement("div");
+                row.className = "manager-row";
+
+                const title = document.createElement("div");
+                title.className = "manager-row-title";
+                title.title = String(post.title || "");
+                title.textContent =
+                    String(post.title || "Без названия");
+
+                const date = document.createElement("div");
+                date.className = "manager-row-date";
+                date.textContent = formatDate(post.createdAt);
+
+                const platform = document.createElement("div");
+                platform.className =
+                    "manager-platform " +
+                    (post.platform === "PC"
+                        ? "pc"
+                        : "playstation");
+                platform.textContent =
+                    post.platform === "PC"
+                        ? "PC"
+                        : "PlayStation";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "delete-post";
+                deleteButton.dataset.action = "delete";
+                deleteButton.dataset.id = String(post.id);
+                deleteButton.textContent = "🗑 Удалить пост";
+
+                row.appendChild(title);
+                row.appendChild(date);
+                row.appendChild(platform);
+                row.appendChild(deleteButton);
+
+                fragment.appendChild(row);
+            });
+
+            elements.managerList.appendChild(fragment);
         }
 
-        /* =========================================
-           SHARE
-        ========================================== */
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
 
-        async function sharePost(post) {
-            const url =
-                `${window.location.origin}` +
-                `${window.location.pathname}` +
-                `#post-${encodeURIComponent(
-                    String(post.id)
-                )}`;
+            elements.toastContainer.appendChild(toast);
 
-            try {
-                if (
-                    navigator.share &&
-                    typeof navigator.share ===
-                        "function"
-                ) {
-                    await navigator.share({
-                        title:
-                            post.title ||
-                            "PlayPC",
-                        text:
-                            "Публикация PlayPC",
-                        url
-                    });
+            window.setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateY(8px)";
 
-                    return;
-                }
-
-                if (
-                    navigator.clipboard &&
-                    typeof navigator.clipboard
-                        .writeText ===
-                        "function"
-                ) {
-                    await navigator.clipboard
-                        .writeText(url);
-
-                    showToast(
-                        "Ссылка скопирована!",
-                        "success"
-                    );
-
-                    return;
-                }
-
-                showToast(
-                    "Не удалось скопировать ссылку.",
-                    "error"
-                );
-            } catch (error) {
-                if (
-                    error &&
-                    error.name ===
-                        "AbortError"
-                ) {
-                    return;
-                }
-
-                console.error(
-                    "Ошибка share:",
-                    error
-                );
-
-                showToast(
-                    "Не удалось поделиться ссылкой.",
-                    "error"
-                );
-            }
+                window.setTimeout(() => {
+                    toast.remove();
+                }, 220);
+            }, 2800);
         }
-
-        function highlightPostFromHash() {
-            const hash =
-                window.location.hash;
-
-            if (
-                !hash.startsWith("#post-")
-            ) {
-                return;
-            }
-
-            const element =
-                document.getElementById(
-                    decodeURIComponent(
-                        hash.slice(1)
-                    )
-                );
-
-            if (!element) {
-                return;
-            }
-
-            setTimeout(() => {
-                element.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-            }, 100);
-        }
-
-        /* =========================================
-           LOAD POSTS
-        ========================================== */
 
         async function loadPosts() {
             try {
-                const response =
-                    await fetch(
-                        "/api/posts",
-                        {
-                            method: "GET",
-                            headers: {
-                                "Accept":
-                                    "application/json"
-                            },
-                            cache: "no-store"
-                        }
-                    );
+                const response = await fetch("/api/posts", {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
+                    },
+                    cache: "no-store"
+                });
 
                 if (!response.ok) {
                     throw new Error(
@@ -2728,329 +2387,366 @@
                     );
                 }
 
-                const data =
-                    await response.json();
+                const data = await response.json();
 
-                if (
-                    !Array.isArray(data)
-                ) {
-                    throw new Error(
-                        "Сервер вернул некорректный список постов."
-                    );
-                }
+                state.posts = Array.isArray(data)
+                    ? data
+                    : [];
 
-                allPosts = data;
-
-                cleanupOldBookmarks();
-                updateDashboardStats();
+                updateStats();
+                renderNews();
                 renderManager();
-                renderPosts();
+
+                return true;
             } catch (error) {
                 console.error(
-                    "Ошибка загрузки публикаций:",
+                    "Ошибка загрузки новостей:",
                     error
                 );
 
-                allPosts = [];
+                state.posts = [];
 
-                postCount.textContent =
-                    "Ошибка загрузки";
+                elements.newsGrid.innerHTML = "";
 
-                postsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">!</div>
-                        <h3>Не удалось загрузить новости</h3>
-                        <p>
-                            Проверьте подключение к серверу
-                            и попробуйте обновить страницу.
-                        </p>
-                    </div>
-                `;
+                const empty = document.createElement("div");
+                empty.className = "empty-state";
 
-                updateDashboardStats();
+                const icon = document.createElement("div");
+                icon.className = "empty-icon";
+                icon.textContent = "⚠";
+
+                const title = document.createElement("h3");
+                title.textContent =
+                    "Не удалось загрузить новости";
+
+                const text = document.createElement("p");
+                text.textContent =
+                    "Проверьте подключение к серверу PlayPC.";
+
+                empty.appendChild(icon);
+                empty.appendChild(title);
+                empty.appendChild(text);
+
+                elements.newsGrid.appendChild(empty);
+                elements.resultsCount.textContent = "Ошибка";
+
+                updateStats();
                 renderManager();
+
+                return false;
             }
         }
 
-        /* =========================================
-           DASHBOARD STATS
-        ========================================== */
+        function openLogin() {
+            elements.loginOverlay.classList.remove("hidden");
+            elements.loginError.textContent = "";
+            elements.loginPassword.value = "";
 
-        function updateDashboardStats() {
-            const total =
-                allPosts.length;
-
-            const pcCount =
-                allPosts.filter(
-                    post =>
-                        String(
-                            post.platform
-                        ) === "PC"
-                ).length;
-
-            const playStationCount =
-                allPosts.filter(
-                    post =>
-                        String(
-                            post.platform
-                        ) === "PlayStation"
-                ).length;
-
-            statTotal.textContent =
-                String(total);
-
-            statPC.textContent =
-                String(pcCount);
-
-            statPlayStation.textContent =
-                String(playStationCount);
+            window.setTimeout(() => {
+                elements.loginPassword.focus();
+            }, 40);
         }
 
-        /* =========================================
-           CONTENT MANAGER
-        ========================================== */
-
-        function pluralizePosts(count) {
-            const number =
-                Math.abs(Number(count)) % 100;
-
-            const last =
-                number % 10;
-
-            if (
-                number >= 11 &&
-                number <= 19
-            ) {
-                return "постов";
-            }
-
-            if (last === 1) {
-                return "пост";
-            }
-
-            if (
-                last >= 2 &&
-                last <= 4
-            ) {
-                return "поста";
-            }
-
-            return "постов";
+        function closeLogin() {
+            elements.loginOverlay.classList.add("hidden");
+            elements.loginError.textContent = "";
+            elements.loginPassword.value = "";
         }
 
-        function renderManager() {
-            managerCount.textContent =
-                `${allPosts.length} ` +
-                pluralizePosts(
-                    allPosts.length
+        function openDashboard(password) {
+            state.adminPassword = password;
+
+            elements.dashboardPassword.value = password;
+
+            elements.loginOverlay.classList.add("hidden");
+            elements.dashboardOverlay.classList.remove("hidden");
+            elements.dashboardOverlay.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.style.overflow = "hidden";
+
+            setDashboardTab("stats");
+
+            updateStats();
+            renderManager();
+        }
+
+        function closeDashboard() {
+            elements.dashboardOverlay.classList.add("hidden");
+            elements.dashboardOverlay.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            state.adminPassword = "";
+            elements.dashboardPassword.value = "";
+
+            document.body.style.overflow = "";
+
+            closeLogin();
+        }
+
+        function setDashboardTab(tabName) {
+            state.activeDashboardTab = tabName;
+
+            elements.dashboardTabs.forEach(tab => {
+                const active =
+                    tab.dataset.dashboardTab === tabName;
+
+                tab.classList.toggle("active", active);
+                tab.setAttribute(
+                    "aria-selected",
+                    String(active)
                 );
+            });
 
-            if (allPosts.length === 0) {
-                managerList.innerHTML = `
-                    <div class="manager-empty">
-                        Публикаций пока нет.
-                    </div>
-                `;
+            const panels = {
+                stats: elements.dashboardStats,
+                create: elements.dashboardCreate,
+                manager: elements.dashboardManager
+            };
 
-                return;
-            }
-
-            const sortedPosts =
-                [...allPosts].sort(
-                    (a,b) => {
-                        const aDate =
-                            new Date(
-                                a.createdAt || 0
-                            ).getTime();
-
-                        const bDate =
-                            new Date(
-                                b.createdAt || 0
-                            ).getTime();
-
-                        return bDate - aDate;
-                    }
-                );
-
-            const fragment =
-                document.createDocumentFragment();
-
-            sortedPosts.forEach(
-                post => {
-                    const item =
-                        document.createElement(
-                            "div"
-                        );
-
-                    item.className =
-                        "manager-item";
-
-                    item.innerHTML = `
-                        <div>
-                            <div class="manager-post-title">
-                                ${escapeHtml(
-                                    post.title ||
-                                    "Без заголовка"
-                                )}
-                            </div>
-
-                            <div class="manager-post-meta">
-                                ${escapeHtml(
-                                    post.platform ||
-                                    "Неизвестно"
-                                )}
-                                ·
-                                ${escapeHtml(
-                                    formatDate(
-                                        post.createdAt
-                                    )
-                                )}
-                            </div>
-                        </div>
-
-                        <button
-                            class="delete-btn"
-                            type="button"
-                            data-delete-id="${escapeHtml(
-                                String(post.id)
-                            )}"
-                        >
-                            Удалить
-                        </button>
-                    `;
-
-                    const deleteButton =
-                        item.querySelector(
-                            ".delete-btn"
-                        );
-
-                    deleteButton.addEventListener(
-                        "click",
-                        () => {
-                            deletePost(
-                                post.id,
-                                deleteButton
-                            );
-                        }
-                    );
-
-                    fragment.appendChild(
-                        item
+            Object.entries(panels).forEach(
+                ([name, panel]) => {
+                    panel.classList.toggle(
+                        "hidden",
+                        name !== tabName
                     );
                 }
             );
 
-            managerList.replaceChildren(
-                fragment
-            );
+            if (tabName === "stats") {
+                updateStats();
+            }
+
+            if (tabName === "manager") {
+                renderManager();
+            }
         }
 
-        /* =========================================
-           DELETE POST
-        ========================================== */
+        async function createPost(event) {
+            event.preventDefault();
 
-        async function deletePost(
-            postId,
-            button
-        ) {
             const password =
-                adminPassword.value.trim();
+                elements.dashboardPassword.value.trim() ||
+                state.adminPassword;
 
-            if (!password) {
-                showToast(
-                    "Введите пароль администратора в шапке Dashboard.",
-                    "error"
-                );
-
-                adminPassword.focus();
+            if (password !== ADMIN_PASSWORD) {
+                elements.formStatus.textContent =
+                    "Неверный пароль администратора.";
+                elements.formStatus.style.color =
+                    "var(--danger)";
                 return;
             }
 
-            const post =
-                allPosts.find(
-                    item =>
-                        String(item.id) ===
-                        String(postId)
+            const title =
+                elements.postTitle.value.trim();
+
+            const platform =
+                elements.postPlatform.value;
+
+            const imageUrl =
+                elements.postImage.value.trim();
+
+            const content =
+                elements.postContent.value.trim();
+
+            if (!title || !platform || !imageUrl || !content) {
+                elements.formStatus.textContent =
+                    "Заполните все поля.";
+                elements.formStatus.style.color =
+                    "var(--danger)";
+                return;
+            }
+
+            let parsedImageUrl;
+
+            try {
+                parsedImageUrl = new URL(imageUrl);
+
+                if (
+                    parsedImageUrl.protocol !== "http:" &&
+                    parsedImageUrl.protocol !== "https:"
+                ) {
+                    throw new Error("Недопустимый протокол");
+                }
+            } catch (error) {
+                elements.formStatus.textContent =
+                    "Введите корректную HTTP/HTTPS ссылку на фото.";
+                elements.formStatus.style.color =
+                    "var(--danger)";
+                return;
+            }
+
+            state.loading = true;
+
+            elements.createPostButton.disabled = true;
+            elements.createPostButton.textContent =
+                "⏳ Публикация...";
+            elements.formStatus.textContent =
+                "Отправляем статью на сервер...";
+            elements.formStatus.style.color =
+                "var(--muted)";
+
+            try {
+                const response = await fetch(
+                    "/api/posts",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title,
+                            platform,
+                            imageUrl: parsedImageUrl.href,
+                            content,
+                            password
+                        })
+                    }
                 );
+
+                const data = await response.json()
+                    .catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error ||
+                        `HTTP ${response.status}`
+                    );
+                }
+
+                state.adminPassword = password;
+
+                elements.postForm.reset();
+
+                elements.postPlatform.value = "PC";
+
+                elements.formStatus.textContent =
+                    "Статья успешно опубликована.";
+                elements.formStatus.style.color =
+                    "var(--pc)";
+
+                showToast(
+                    "Новая статья опубликована!",
+                    "success"
+                );
+
+                await loadPosts();
+
+                setDashboardTab("manager");
+            } catch (error) {
+                console.error(
+                    "Ошибка создания поста:",
+                    error
+                );
+
+                elements.formStatus.textContent =
+                    error.message ||
+                    "Не удалось создать статью.";
+
+                elements.formStatus.style.color =
+                    "var(--danger)";
+
+                showToast(
+                    "Ошибка публикации статьи.",
+                    "error"
+                );
+            } finally {
+                state.loading = false;
+
+                elements.createPostButton.disabled = false;
+                elements.createPostButton.textContent =
+                    "🚀 Опубликовать";
+            }
+        }
+
+        async function deletePost(id) {
+            const password =
+                elements.dashboardPassword.value.trim() ||
+                state.adminPassword;
+
+            if (password !== ADMIN_PASSWORD) {
+                showToast(
+                    "Неверный пароль администратора.",
+                    "error"
+                );
+                return;
+            }
+
+            const post = state.posts.find(
+                item => String(item.id) === String(id)
+            );
 
             if (!post) {
                 showToast(
-                    "Пост уже отсутствует.",
+                    "Статья уже отсутствует.",
                     "error"
                 );
-
                 return;
             }
 
-            const confirmed =
-                window.confirm(
-                    `Удалить пост «${post.title}»?`
-                );
+            const confirmed = window.confirm(
+                `Удалить статью «${String(post.title)}»?`
+            );
 
             if (!confirmed) {
                 return;
             }
 
-            button.disabled = true;
-            button.textContent =
-                "Удаление...";
+            const button =
+                elements.managerList.querySelector(
+                    `[data-action="delete"][data-id="${CSS.escape(String(id))}"]`
+                );
+
+            if (button) {
+                button.disabled = true;
+                button.textContent = "Удаление...";
+            }
 
             try {
-                const response =
-                    await fetch(
-                        `/api/posts/${encodeURIComponent(
-                            String(postId)
-                        )}`,
-                        {
-                            method: "DELETE",
-                            headers: {
-                                "Content-Type":
-                                    "application/json",
-                                "Accept":
-                                    "application/json"
-                            },
-                            body:
-                                JSON.stringify({
-                                    password
-                                })
-                        }
-                    );
+                const response = await fetch(
+                    `/api/posts/${encodeURIComponent(String(id))}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        body: JSON.stringify({
+                            password
+                        })
+                    }
+                );
 
-                let result = {};
-
-                try {
-                    result =
-                        await response.json();
-                } catch {
-                    result = {};
-                }
+                const data = await response.json()
+                    .catch(() => ({}));
 
                 if (!response.ok) {
                     throw new Error(
-                        result.error ||
+                        data.error ||
                         `HTTP ${response.status}`
                     );
                 }
 
-                allPosts =
-                    allPosts.filter(
-                        item =>
-                            String(item.id) !==
-                            String(postId)
-                    );
-
-                savedBookmarks.delete(
-                    String(postId)
+                state.posts = state.posts.filter(
+                    item => String(item.id) !== String(id)
                 );
+
+                state.bookmarks =
+                    state.bookmarks.filter(
+                        bookmarkId =>
+                            bookmarkId !== String(id)
+                    );
 
                 saveBookmarks();
 
-                updateDashboardStats();
+                updateStats();
+                renderNews();
                 renderManager();
-                renderPosts();
-
-                adminStatus.textContent =
-                    "Удаление выполнено успешно.";
 
                 showToast(
                     "Пост успешно удалён.",
@@ -3062,9 +2758,11 @@
                     error
                 );
 
-                button.disabled = false;
-                button.textContent =
-                    "Удалить";
+                if (button) {
+                    button.disabled = false;
+                    button.textContent =
+                        "🗑 Удалить пост";
+                }
 
                 showToast(
                     error.message ||
@@ -3074,466 +2772,336 @@
             }
         }
 
-        /* =========================================
-           CREATE POST
-        ========================================== */
-
-        async function createPost(event) {
-            event.preventDefault();
-
-            const password =
-                adminPassword.value.trim();
-
-            if (!password) {
-                showFormMessage(
-                    "Введите пароль администратора в шапке Dashboard.",
-                    "error"
-                );
-
-                adminPassword.focus();
-                return;
-            }
-
-            const title =
-                postTitle.value.trim();
-
-            const platform =
-                postPlatform.value.trim();
-
-            const imageUrl =
-                postImage.value.trim();
-
-            const content =
-                postContent.value.trim();
-
-            if (
-                !title ||
-                !platform ||
-                !imageUrl ||
-                !content
-            ) {
-                showFormMessage(
-                    "Заполните все поля.",
-                    "error"
-                );
-
-                return;
-            }
-
-            publishBtn.disabled = true;
-            publishBtn.textContent =
-                "Публикация...";
-
-            showFormMessage(
-                "",
-                ""
-            );
+        async function sharePost(id, button) {
+            const url =
+                `${window.location.origin}${window.location.pathname}#post-${encodeURIComponent(String(id))}`;
 
             try {
-                const response =
-                    await fetch(
-                        "/api/posts",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type":
-                                    "application/json",
-                                "Accept":
-                                    "application/json"
-                            },
-                            body:
-                                JSON.stringify({
-                                    title,
-                                    platform,
-                                    imageUrl,
-                                    content,
-                                    password
-                                })
-                        }
-                    );
+                if (
+                    navigator.clipboard &&
+                    typeof navigator.clipboard.writeText === "function"
+                ) {
+                    await navigator.clipboard.writeText(url);
+                } else {
+                    const textarea =
+                        document.createElement("textarea");
 
-                let result = {};
+                    textarea.value = url;
+                    textarea.style.position = "fixed";
+                    textarea.style.opacity = "0";
 
-                try {
-                    result =
-                        await response.json();
-                } catch {
-                    result = {};
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+
+                    document.execCommand("copy");
+                    textarea.remove();
                 }
 
-                if (!response.ok) {
-                    throw new Error(
-                        result.error ||
-                        `HTTP ${response.status}`
+                const previousText = button.textContent;
+
+                button.textContent =
+                    "✓ Ссылка скопирована!";
+                button.classList.add(
+                    "share-success"
+                );
+
+                window.setTimeout(() => {
+                    button.textContent = previousText;
+                    button.classList.remove(
+                        "share-success"
                     );
+                }, 1800);
+            } catch (error) {
+                showToast(
+                    "Не удалось скопировать ссылку.",
+                    "error"
+                );
+            }
+        }
+
+        function applyTemplate(type) {
+            if (type === "review") {
+                elements.postContent.value =
+`[b]Обзор игры[/b]
+
+[i]Кратко о проекте[/i]
+Здесь рассказываем, что представляет собой игра, кто её разработчик и чем она выделяется.
+
+[b]Геймплей[/b]
+Разбираем основные механики, управление, боевую систему и особенности прохождения.
+
+[b]Графика и звук[/b]
+Описываем визуальный стиль, производительность, окружение и аудиосоставляющую.
+
+[b]Итог[/b]
+Краткий вывод о главных особенностях игры.`;
+            }
+
+            if (type === "news") {
+                elements.postContent.value =
+`[b]Горячая новость[/b]
+
+[i]Что произошло?[/i]
+Кратко рассказываем о главном событии.
+
+[b]Главные детали[/b]
+Здесь размещаем ключевые факты, официальные заявления и важные подробности.
+
+[b]Что дальше?[/b]
+Рассказываем о дальнейших планах разработчиков, датах и ожидаемых событиях.`;
+            }
+
+            elements.postContent.focus();
+
+            elements.formStatus.textContent =
+                "Шаблон вставлен в текст статьи.";
+            elements.formStatus.style.color =
+                "var(--muted-light)";
+        }
+
+        function handleKeyboard(event) {
+            if (event.key === "Escape") {
+                if (
+                    !elements.loginOverlay.classList.contains(
+                        "hidden"
+                    )
+                ) {
+                    closeLogin();
+                    return;
                 }
 
                 if (
-                    !result ||
-                    typeof result !==
-                        "object"
+                    !elements.dashboardOverlay.classList.contains(
+                        "hidden"
+                    )
                 ) {
-                    throw new Error(
-                        "Сервер вернул некорректный ответ."
-                    );
+                    closeDashboard();
                 }
-
-                allPosts.push(result);
-
-                updateDashboardStats();
-                renderManager();
-                renderPosts();
-
-                postForm.reset();
-
-                postPlatform.value =
-                    "PC";
-
-                showFormMessage(
-                    "Пост успешно опубликован.",
-                    "success"
-                );
-
-                adminStatus.textContent =
-                    "Публикация успешно создана.";
-
-                showToast(
-                    "Новая публикация добавлена.",
-                    "success"
-                );
-            } catch (error) {
-                console.error(
-                    "Ошибка создания поста:",
-                    error
-                );
-
-                showFormMessage(
-                    error.message ||
-                    "Не удалось создать публикацию.",
-                    "error"
-                );
-            } finally {
-                publishBtn.disabled = false;
-                publishBtn.textContent =
-                    "Опубликовать пост";
-            }
-        }
-
-        /* =========================================
-           FORM MESSAGE
-        ========================================== */
-
-        function showFormMessage(
-            message,
-            type
-        ) {
-            formMessage.textContent =
-                message;
-
-            formMessage.className =
-                `form-message ${type || ""}`;
-        }
-
-        /* =========================================
-           TEMPLATES
-        ========================================== */
-
-        const reviewTemplateText =
-`[b]Обзор игры[/b]
-
-[i]Короткое вступление о проекте и первом впечатлении.[/i]
-
-[b]Геймплей[/b]
-Расскажите об управлении, боевой системе, исследовании мира и основных механиках.
-
-[b]Графика и звук[/b]
-Опишите визуальную часть, производительность, музыку и звуковое оформление.
-
-[b]Сюжет[/b]
-Кратко расскажите о завязке без крупных спойлеров.
-
-[b]Итог[/b]
-Главные особенности игры и основные впечатления.`;
-
-        const newsTemplateText =
-`[b]Главное[/b]
-
-[i]Короткое описание главной новости.[/i]
-
-[b]Что произошло?[/b]
-Расскажите о событии, анонсе или обновлении.
-
-[b]Подробности[/b]
-Добавьте ключевые факты, даты и другую важную информацию.
-
-[b]Что дальше?[/b]
-Расскажите о следующих шагах разработчиков или ожидаемых событиях.`;
-
-        function insertTemplate(text) {
-            postContent.value =
-                text;
-
-            postContent.focus();
-
-            postContent.selectionStart =
-                postContent.value.length;
-
-            postContent.selectionEnd =
-                postContent.value.length;
-        }
-
-        /* =========================================
-           DASHBOARD TABS
-        ========================================== */
-
-        function switchDashboardTab(
-            tabName
-        ) {
-            document
-                .querySelectorAll(
-                    ".dashboard-tab"
-                )
-                .forEach(button => {
-                    button.classList.toggle(
-                        "active",
-                        button.dataset
-                            .dashboardTab ===
-                            tabName
-                    );
-                });
-
-            document
-                .querySelectorAll(
-                    ".dashboard-section"
-                )
-                .forEach(section => {
-                    section.classList.toggle(
-                        "active",
-                        section.dataset
-                            .dashboardSection ===
-                            tabName
-                    );
-                });
-
-            if (
-                tabName ===
-                "stats"
-            ) {
-                updateDashboardStats();
             }
 
             if (
-                tabName ===
-                "manager"
+                event.key === "Enter" &&
+                !elements.loginOverlay.classList.contains(
+                    "hidden"
+                ) &&
+                document.activeElement ===
+                    elements.loginPassword
             ) {
-                renderManager();
+                event.preventDefault();
+                authenticate();
             }
         }
 
-        /* =========================================
-           TOAST
-        ========================================== */
+        function authenticate() {
+            const password =
+                elements.loginPassword.value;
 
-        function showToast(
-            message,
-            type = ""
-        ) {
-            const toast =
-                document.createElement(
-                    "div"
-                );
+            if (!password) {
+                elements.loginError.textContent =
+                    "Введите пароль.";
+                return;
+            }
 
-            toast.className =
-                `toast ${type}`;
+            if (password !== ADMIN_PASSWORD) {
+                elements.loginError.textContent =
+                    "Неверный пароль.";
+                elements.loginPassword.select();
+                return;
+            }
 
-            toast.textContent =
-                String(message);
-
-            toastContainer.appendChild(
-                toast
-            );
-
-            setTimeout(() => {
-                toast.style.opacity =
-                    "0";
-
-                toast.style.transform =
-                    "translateY(6px)";
-
-                setTimeout(() => {
-                    toast.remove();
-                }, 200);
-            }, 3000);
+            openDashboard(password);
         }
 
-        /* =========================================
-           EVENT LISTENERS
-        ========================================== */
-
-        /*
-         * Секретная кнопка в правом верхнем углу.
-         * Сначала запрашивается пароль.
-         * При неверном пароле Dashboard не открывается.
-         */
-        openAdmin.addEventListener(
+        elements.adminTrigger.addEventListener(
             "click",
-            requestAdminPassword
+            openLogin
         );
 
-        closeAdmin.addEventListener(
+        elements.loginCancel.addEventListener(
+            "click",
+            closeLogin
+        );
+
+        elements.loginSubmit.addEventListener(
+            "click",
+            authenticate
+        );
+
+        elements.dashboardClose.addEventListener(
             "click",
             closeDashboard
         );
 
-        /*
-         * Клик по затемнению закрывает Dashboard.
-         */
-        adminModal.addEventListener(
-            "click",
-            event => {
-                if (
-                    event.target ===
-                    adminModal
-                ) {
-                    closeDashboard();
-                }
-            }
-        );
-
-        /*
-         * Escape закрывает Dashboard.
-         */
-        document.addEventListener(
-            "keydown",
-            event => {
-                if (
-                    event.key ===
-                    "Escape" &&
-                    adminModal.classList.contains(
-                        "open"
-                    )
-                ) {
-                    closeDashboard();
-                }
-            }
-        );
-
-        /*
-         * Чёткий живой поиск:
-         * input срабатывает на каждый символ.
-         * Ищет и в title, и в content.
-         */
-        searchInput.addEventListener(
-            "input",
-            () => {
-                renderPosts();
-            }
-        );
-
-        document
-            .querySelectorAll(
-                ".filter-btn"
-            )
-            .forEach(button => {
-                button.addEventListener(
-                    "click",
-                    () => {
-                        activePlatform =
-                            button.dataset
-                                .platform;
-
-                        document
-                            .querySelectorAll(
-                                ".filter-btn"
-                            )
-                            .forEach(
-                                item => {
-                                    item.classList.toggle(
-                                        "active",
-                                        item ===
-                                            button
-                                    );
-                                }
-                            );
-
-                        renderPosts();
-                    }
+        elements.dashboardTabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                setDashboardTab(
+                    tab.dataset.dashboardTab
                 );
             });
+        });
 
-        bookmarksFilter.addEventListener(
-            "click",
-            () => {
-                bookmarksOnly =
-                    !bookmarksOnly;
-
-                bookmarksFilter.classList.toggle(
-                    "active",
-                    bookmarksOnly
-                );
-
-                bookmarksFilter.setAttribute(
-                    "aria-pressed",
-                    String(
-                        bookmarksOnly
-                    )
-                );
-
-                renderPosts();
+        elements.searchInput.addEventListener(
+            "input",
+            event => {
+                state.searchTerm =
+                    event.target.value;
+                renderNews();
             }
         );
 
-        document
-            .querySelectorAll(
-                ".dashboard-tab"
-            )
-            .forEach(button => {
-                button.addEventListener(
-                    "click",
-                    () => {
-                        switchDashboardTab(
-                            button.dataset
-                                .dashboardTab
+        elements.bookmarkFilter.addEventListener(
+            "click",
+            () => {
+                state.onlyBookmarks =
+                    !state.onlyBookmarks;
+
+                elements.bookmarkFilter.classList.toggle(
+                    "active",
+                    state.onlyBookmarks
+                );
+
+                elements.bookmarkFilter.setAttribute(
+                    "aria-pressed",
+                    String(state.onlyBookmarks)
+                );
+
+                elements.bookmarkFilter.textContent =
+                    state.onlyBookmarks
+                        ? "★ Только закладки"
+                        : "☆ Только закладки";
+
+                renderNews();
+            }
+        );
+
+        elements.platformTabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                const platform =
+                    tab.dataset.platform;
+
+                state.activePlatform = platform;
+
+                elements.platformTabs.forEach(
+                    currentTab => {
+                        const active =
+                            currentTab === tab;
+
+                        currentTab.classList.toggle(
+                            "active",
+                            active
+                        );
+
+                        currentTab.setAttribute(
+                            "aria-selected",
+                            String(active)
                         );
                     }
                 );
+
+                renderNews();
             });
+        });
 
-        reviewTemplate.addEventListener(
+        elements.newsGrid.addEventListener(
             "click",
-            () => {
-                insertTemplate(
-                    reviewTemplateText
-                );
+            event => {
+                const button =
+                    event.target.closest(
+                        "[data-action]"
+                    );
+
+                if (!button) {
+                    return;
+                }
+
+                const action =
+                    button.dataset.action;
+
+                const id =
+                    button.dataset.id;
+
+                if (action === "bookmark") {
+                    toggleBookmark(id);
+                }
+
+                if (action === "share") {
+                    sharePost(id, button);
+                }
             }
         );
 
-        newsTemplate.addEventListener(
+        elements.managerList.addEventListener(
             "click",
-            () => {
-                insertTemplate(
-                    newsTemplateText
-                );
+            event => {
+                const button =
+                    event.target.closest(
+                        '[data-action="delete"]'
+                    );
+
+                if (!button) {
+                    return;
+                }
+
+                deletePost(button.dataset.id);
             }
         );
 
-        postForm.addEventListener(
+        elements.postForm.addEventListener(
             "submit",
             createPost
         );
 
-        window.addEventListener(
-            "hashchange",
-            highlightPostFromHash
+        elements.reviewTemplate.addEventListener(
+            "click",
+            () => applyTemplate("review")
         );
 
-        /* =========================================
-           INITIALIZATION
-        ========================================== */
+        elements.newsTemplate.addEventListener(
+            "click",
+            () => applyTemplate("news")
+        );
+
+        elements.loginOverlay.addEventListener(
+            "click",
+            event => {
+                if (
+                    event.target ===
+                    elements.loginOverlay
+                ) {
+                    closeLogin();
+                }
+            }
+        );
+
+        document.addEventListener(
+            "keydown",
+            handleKeyboard
+        );
 
         loadBookmarks();
-        loadPosts();
-    </script>
+
+        loadPosts().then(() => {
+            const hash = window.location.hash;
+
+            if (hash.startsWith("#post-")) {
+                window.setTimeout(() => {
+                    const target =
+                        document.getElementById(
+                            hash.substring(1)
+                        );
+
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+                    }
+                }, 150);
+            }
+        });
+    })();
+</script>
 
 </body>
 </html>
