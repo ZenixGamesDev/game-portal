@@ -1,0 +1,16 @@
+{
+  "name": "game-portal",
+  "version": "1.0.0",
+  "description": "Игровой новостной портал PC и PlayStation",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
