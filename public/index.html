@@ -2,95 +2,68 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="theme-color" content="#05070d">
-    <meta name="description" content="PlayPC — независимый игровой блог о PC и PlayStation">
-    <title>PlayPC — Gaming Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#07090d">
+    <meta name="description" content="PlayPC — игровой портал о PC и PlayStation. Новости, релизы, голосования и игровой календарь.">
+    <title>PlayPC — Игровой портал</title>
 
     <style>
         :root {
-            --bg-main: #05070d;
-            --bg-secondary: #090d16;
-            --bg-card: #0c111c;
-            --bg-card-hover: #101827;
-            --bg-panel: #080c14;
-            --bg-input: #070b12;
-            --text-main: #f4f7ff;
-            --text-secondary: #9ba8bd;
-            --text-muted: #647189;
+            --bg: #07090d;
+            --bg-soft: #0a0e14;
+            --panel: #0d121a;
+            --panel-2: #111822;
+            --panel-3: #151d29;
+            --text: #f4f7fb;
+            --muted: #8d9aaa;
+            --border: rgba(255, 255, 255, 0.09);
+            --border-strong: rgba(0, 229, 255, 0.32);
             --accent: #00e5ff;
             --accent-rgb: 0, 229, 255;
-            --accent-secondary: #8a2be2;
-            --accent-secondary-rgb: 138, 43, 226;
-            --success: #00ff88;
-            --success-rgb: 0, 255, 136;
-            --danger: #ff3b69;
-            --danger-rgb: 255, 59, 105;
-            --gold: #ffd84d;
-            --gold-rgb: 255, 216, 77;
-            --border: rgba(255,255,255,0.08);
-            --shadow: 0 15px 50px rgba(0,0,0,0.35);
+            --accent-2: #a855f7;
+            --success: #2cff8c;
+            --danger: #ff426d;
+            --gold: #ffd166;
+            --shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
             --radius: 16px;
-        }
-
-        * {
-            box-sizing: border-box;
+            --header-height: 76px;
         }
 
         html {
             scroll-behavior: smooth;
+            background: var(--bg);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
             background:
-                radial-gradient(circle at 10% 0%, rgba(var(--accent-rgb), 0.07), transparent 28%),
-                radial-gradient(circle at 90% 15%, rgba(var(--accent-secondary-rgb), 0.07), transparent 25%),
-                var(--bg-main);
-            color: var(--text-main);
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                Arial,
-                sans-serif;
-            transition:
-                background 0.3s ease,
-                color 0.3s ease;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.18;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-            background-size: 45px 45px;
+                radial-gradient(circle at 10% 0%, rgba(var(--accent-rgb), 0.08), transparent 30%),
+                radial-gradient(circle at 90% 10%, rgba(168, 85, 247, 0.07), transparent 28%),
+                var(--bg);
+            color: var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.55;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         body.light-theme {
-            --bg-main: #eef2f7;
-            --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
-            --bg-card-hover: #f5f8fc;
-            --bg-panel: #ffffff;
-            --bg-input: #f1f4f8;
-            --text-main: #111827;
-            --text-secondary: #526071;
-            --text-muted: #6b7280;
-            --border: rgba(15,23,42,0.10);
-            --shadow: 0 15px 45px rgba(15,23,42,0.10);
-        }
-
-        body.light-theme::before {
-            opacity: 0.07;
+            --bg: #eef2f7;
+            --bg-soft: #f5f7fa;
+            --panel: #ffffff;
+            --panel-2: #f7f9fc;
+            --panel-3: #edf2f7;
+            --text: #101722;
+            --muted: #647184;
+            --border: rgba(15, 23, 42, 0.1);
+            --border-strong: rgba(var(--accent-rgb), 0.35);
+            --shadow: 0 15px 40px rgba(15, 23, 42, 0.1);
         }
 
         button,
@@ -106,222 +79,296 @@
 
         a {
             color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
         }
 
         ::selection {
             background: var(--accent);
-            color: #000;
+            color: #001015;
         }
 
         .scroll-progress {
             position: fixed;
+            z-index: 9999;
             top: 0;
             left: 0;
             width: 0;
             height: 3px;
-            z-index: 10000;
-            background: linear-gradient(
-                90deg,
-                var(--accent),
-                var(--accent-secondary)
-            );
-            box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.8);
-            transition: width 0.05s linear;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            box-shadow: 0 0 14px var(--accent);
         }
 
-        header {
+        .top-header {
             position: sticky;
             top: 0;
             z-index: 1000;
+            min-height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 12px clamp(14px, 3vw, 42px);
+            background: rgba(7, 9, 13, 0.84);
             border-bottom: 1px solid var(--border);
-            background: color-mix(in srgb, var(--bg-main) 88%, transparent);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-        }
-
-        .header-inner {
-            width: min(1450px, calc(100% - 32px));
-            min-height: 76px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: max-content;
-            text-decoration: none;
-            font-size: 25px;
-            font-weight: 950;
-            letter-spacing: -1.2px;
-        }
-
-        .logo-mark {
-            width: 36px;
-            height: 36px;
-            display: grid;
-            place-items: center;
-            border-radius: 10px;
-            color: #000;
-            background: var(--accent);
-            box-shadow:
-                0 0 15px rgba(var(--accent-rgb), 0.55),
-                inset 0 0 10px rgba(255,255,255,0.25);
-        }
-
-        .logo span {
-            color: var(--accent);
-        }
-
-        .server-status {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            padding: 9px 14px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--bg-secondary);
-            box-shadow: var(--shadow);
-        }
-
-        .server-title {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 800;
-        }
-
-        .server-items {
-            display: flex;
-            gap: 12px;
-        }
-
-        .server-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 800;
-        }
-
-        .online-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 10px rgba(var(--success-rgb), 0.9);
-            animation: pulse 1.8s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.45;
-            }
-        }
-
-        .header-actions {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .icon-btn,
-        .admin-btn {
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            background: var(--bg-secondary);
-            border-radius: 11px;
-            min-height: 42px;
-            padding: 0 13px;
-            transition: 0.2s ease;
-        }
-
-        .icon-btn {
-            min-width: 42px;
-            padding: 0;
-            font-size: 18px;
-        }
-
-        .icon-btn:hover,
-        .admin-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-1px);
-            box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.14);
-        }
-
-        .admin-btn {
-            font-weight: 850;
-        }
-
-        .page {
-            width: min(1450px, calc(100% - 32px));
-            margin: 0 auto;
-        }
-
-        .hero {
-            padding: 52px 0 28px;
-        }
-
-        .hero-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 11px;
-            border: 1px solid rgba(var(--accent-rgb), 0.28);
-            border-radius: 999px;
-            color: var(--accent);
-            background: rgba(var(--accent-rgb), 0.05);
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 1.3px;
-            text-transform: uppercase;
-        }
-
-        .hero h1 {
-            margin: 16px 0 9px;
-            font-size: clamp(34px, 5vw, 64px);
-            line-height: 0.98;
-            letter-spacing: -3px;
-            max-width: 850px;
-        }
-
-        .hero h1 span {
-            color: var(--accent);
-            text-shadow: 0 0 30px rgba(var(--accent-rgb), 0.22);
-        }
-
-        .hero p {
-            max-width: 720px;
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin: 0;
-        }
-
-        .toolbar {
-            position: sticky;
-            top: 76px;
-            z-index: 800;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 0;
-            background: color-mix(in srgb, var(--bg-main) 90%, transparent);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
         }
 
-        .search-wrap {
+        body.light-theme .top-header {
+            background: rgba(255, 255, 255, 0.86);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: max-content;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            background: rgba(var(--accent-rgb), 0.08);
+            color: var(--accent);
+            font-size: 22px;
+            box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.12);
+        }
+
+        .brand-name {
+            font-size: clamp(20px, 3vw, 27px);
+            font-weight: 900;
+            letter-spacing: -0.8px;
+        }
+
+        .brand-name span {
+            color: var(--accent);
+            text-shadow: 0 0 18px rgba(var(--accent-rgb), 0.35);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 9px;
+        }
+
+        .network-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 11px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: var(--panel);
+            font-size: 12px;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .network-status strong {
+            color: var(--text);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 11px var(--success);
+        }
+
+        .header-button {
+            min-height: 42px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: var(--panel);
+            color: var(--text);
+            padding: 0 13px;
+            transition: 0.2s ease;
+        }
+
+        .header-button:hover {
+            transform: translateY(-1px);
+            border-color: var(--border-strong);
+            color: var(--accent);
+            box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.1);
+        }
+
+        .page-shell {
+            width: min(1500px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 30px 0 42px;
+        }
+
+        .hero {
             position: relative;
-            flex: 1;
+            overflow: hidden;
+            padding: clamp(22px, 4vw, 45px);
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background:
+                linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), transparent 45%),
+                linear-gradient(135deg, rgba(168, 85, 247, 0.08), transparent 75%),
+                var(--panel);
+            box-shadow: var(--shadow);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            right: -90px;
+            bottom: -120px;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            border: 1px solid rgba(var(--accent-rgb), 0.15);
+            box-shadow:
+                0 0 0 30px rgba(var(--accent-rgb), 0.025),
+                0 0 0 60px rgba(var(--accent-rgb), 0.02);
+            pointer-events: none;
+        }
+
+        .hero-kicker {
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .hero h1 {
+            max-width: 800px;
+            font-size: clamp(30px, 5vw, 58px);
+            line-height: 1.04;
+            letter-spacing: -2px;
+            margin-bottom: 13px;
+        }
+
+        .hero p {
+            max-width: 780px;
+            color: var(--muted);
+            font-size: clamp(14px, 2vw, 17px);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(250px, 320px) minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: calc(var(--header-height) + 18px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .side-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--panel);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .side-card-header {
+            padding: 15px 16px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.07), transparent);
+        }
+
+        .side-card-header h2 {
+            font-size: 15px;
+            line-height: 1.3;
+        }
+
+        .side-card-body {
+            padding: 14px;
+        }
+
+        .release-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .release-item {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--panel-2);
+            transition: 0.2s ease;
+        }
+
+        .release-item:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-1px);
+        }
+
+        .release-title {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 3px;
+            overflow-wrap: anywhere;
+        }
+
+        .release-date {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .release-countdown {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .release-countdown.released {
+            color: var(--success);
+            text-shadow: 0 0 12px rgba(44, 255, 140, 0.25);
+        }
+
+        .loading,
+        .empty-state,
+        .error-state {
+            color: var(--muted);
+            text-align: center;
+            padding: 18px 8px;
+            font-size: 13px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 46px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            background: var(--panel-2);
+            color: var(--text);
+            padding: 0 13px 0 42px;
+            transition: 0.2s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08);
         }
 
         .search-icon {
@@ -329,83 +376,58 @@
             left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
+            color: var(--muted);
             pointer-events: none;
-        }
-
-        .search-input {
-            width: 100%;
-            min-height: 46px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            outline: none;
-            padding: 0 15px 0 43px;
-            background: var(--bg-secondary);
-            color: var(--text-main);
-            transition: 0.2s ease;
-        }
-
-        .search-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08);
         }
 
         .filters {
             display: flex;
-            gap: 6px;
-            padding: 4px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: var(--bg-secondary);
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
         }
 
-        .filter-btn {
-            border: 0;
-            border-radius: 9px;
-            padding: 9px 13px;
-            color: var(--text-secondary);
-            background: transparent;
+        .filter-button {
+            flex: 1;
+            min-width: 70px;
+            min-height: 38px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--panel);
+            color: var(--muted);
             font-size: 12px;
-            font-weight: 850;
+            font-weight: 800;
             transition: 0.2s ease;
         }
 
-        .filter-btn.active,
-        .filter-btn:hover {
-            color: #000;
-            background: var(--accent);
-        }
-
-        .content-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 330px;
-            gap: 24px;
-            align-items: start;
-            padding-bottom: 60px;
+        .filter-button:hover,
+        .filter-button.active {
+            color: var(--text);
+            border-color: var(--accent);
+            background: rgba(var(--accent-rgb), 0.09);
+            box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.08);
         }
 
         .feed {
             min-width: 0;
         }
 
-        .feed-heading {
+        .feed-topbar {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin: 10px 0 16px;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 15px;
         }
 
-        .feed-heading h2,
-        .sidebar-heading {
-            margin: 0;
-            font-size: 19px;
-            letter-spacing: -0.4px;
+        .feed-title {
+            font-size: 21px;
+            font-weight: 900;
         }
 
         .post-count {
-            color: var(--text-muted);
-            font-size: 12px;
-            font-weight: 750;
+            color: var(--muted);
+            font-size: 13px;
         }
 
         .news-grid {
@@ -416,141 +438,110 @@
 
         .news-card {
             position: relative;
-            overflow: hidden;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            background: var(--bg-card);
+            background: var(--panel);
+            overflow: hidden;
             box-shadow: var(--shadow);
-            transition:
-                transform 0.25s ease,
-                border-color 0.25s ease,
-                box-shadow 0.25s ease;
+            transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
         }
 
         .news-card:hover {
             transform: translateY(-3px);
-            border-color: rgba(var(--accent-rgb), 0.38);
+            border-color: var(--border-strong);
             box-shadow:
                 var(--shadow),
-                0 0 30px rgba(var(--accent-rgb), 0.06);
+                0 0 28px rgba(var(--accent-rgb), 0.06);
         }
 
         .news-card.pinned {
-            border-color: rgba(var(--gold-rgb), 0.8);
+            border-color: rgba(255, 209, 102, 0.65);
             box-shadow:
                 var(--shadow),
-                0 0 30px rgba(var(--gold-rgb), 0.12);
-        }
-
-        .news-card.pinned::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            border-radius: inherit;
-            box-shadow: inset 0 0 35px rgba(var(--gold-rgb), 0.055);
+                0 0 25px rgba(255, 209, 102, 0.08);
         }
 
         .pinned-badge {
             position: absolute;
-            top: 13px;
-            left: 13px;
-            z-index: 5;
-            padding: 6px 9px;
-            border: 1px solid rgba(var(--gold-rgb), 0.75);
+            z-index: 3;
+            top: 12px;
+            left: 12px;
+            padding: 5px 8px;
             border-radius: 7px;
-            background: rgba(0,0,0,0.76);
-            color: var(--gold);
+            color: #1b1400;
+            background: var(--gold);
             font-size: 10px;
             font-weight: 950;
-            letter-spacing: 0.8px;
-            backdrop-filter: blur(8px);
+            letter-spacing: 0.7px;
         }
 
         .news-image-wrap {
             position: relative;
-            overflow: hidden;
-            background: #06080d;
+            background: var(--panel-3);
         }
 
         .news-image {
             display: block;
             width: 100%;
-            height: 350px;
+            height: 300px;
             object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            transition: transform 0.45s ease;
+            background: var(--panel-3);
         }
 
-        .news-card:hover .news-image {
-            transform: scale(1.025);
-        }
-
-        .news-image-wrap .news-image {
-            margin-bottom: 0;
-            border-radius: 0;
-        }
-
-        .news-image-placeholder {
-            height: 350px;
-            display: grid;
-            place-items: center;
-            color: var(--text-muted);
-            background:
-                linear-gradient(135deg, rgba(var(--accent-rgb),0.07), transparent),
-                #070a10;
-            font-size: 13px;
-            font-weight: 800;
+        .platform-badge {
+            position: absolute;
+            right: 11px;
+            bottom: 11px;
+            padding: 5px 8px;
+            border-radius: 7px;
+            background: rgba(0, 0, 0, 0.72);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 900;
+            backdrop-filter: blur(8px);
         }
 
         .news-body {
-            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 17px;
         }
 
         .news-meta {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 11px;
-        }
-
-        .platform-badge {
-            display: inline-flex;
-            padding: 5px 9px;
-            border-radius: 7px;
-            color: var(--accent);
-            border: 1px solid rgba(var(--accent-rgb), 0.25);
-            background: rgba(var(--accent-rgb), 0.07);
-            font-size: 10px;
-            font-weight: 950;
-            text-transform: uppercase;
-        }
-
-        .news-date {
-            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 8px;
+            color: var(--muted);
             font-size: 11px;
-            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .news-meta span:not(:last-child)::after {
+            content: "•";
+            margin-left: 8px;
+            opacity: 0.5;
         }
 
         .news-title {
-            margin: 0 0 11px;
-            font-size: 23px;
-            line-height: 1.12;
-            letter-spacing: -0.8px;
+            font-size: clamp(18px, 2vw, 23px);
+            line-height: 1.2;
+            letter-spacing: -0.35px;
+            margin-bottom: 10px;
         }
 
         .news-content {
-            color: var(--text-secondary);
+            color: var(--muted);
             font-size: 14px;
-            line-height: 1.72;
             overflow-wrap: anywhere;
         }
 
         .news-content strong {
-            color: var(--text-main);
-            font-weight: 900;
+            color: var(--text);
         }
 
         .news-content em {
@@ -559,892 +550,609 @@
 
         .spoiler-text {
             display: inline-block;
-            min-width: 70px;
-            padding: 2px 7px;
+            padding: 1px 6px;
             border-radius: 5px;
             background: #000;
-            color: #000;
-            cursor: pointer;
+            color: transparent;
             user-select: none;
+            cursor: pointer;
             transition: 0.2s ease;
+        }
+
+        .spoiler-text::after {
+            content: "Нажмите, чтобы раскрыть";
+            color: #777;
+            font-size: 11px;
         }
 
         .spoiler-text.revealed {
             color: #fff;
-            background: #151922;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
         }
 
-        .waiting-rating {
-            margin-top: 18px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border);
+        .spoiler-text.revealed::after {
+            display: none;
         }
 
-        .waiting-title {
-            margin-bottom: 9px;
-            color: var(--text-muted);
-            font-size: 10px;
-            font-weight: 950;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .vote-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .news-actions {
+            display: flex;
+            flex-wrap: wrap;
             gap: 8px;
+            margin-top: auto;
+            padding-top: 16px;
         }
 
-        .vote-btn {
-            min-height: 40px;
+        .vote-button,
+        .action-button {
+            min-height: 38px;
             border: 1px solid var(--border);
             border-radius: 9px;
-            color: var(--text-secondary);
-            background: var(--bg-secondary);
+            background: var(--panel-2);
+            color: var(--text);
+            padding: 0 11px;
             font-size: 11px;
-            font-weight: 850;
+            font-weight: 800;
             transition: 0.2s ease;
         }
 
-        .vote-btn:hover {
+        .vote-button:hover,
+        .action-button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
             transform: translateY(-1px);
         }
 
-        .vote-btn.will:hover,
-        .vote-btn.voted.will {
-            border-color: rgba(var(--success-rgb), 0.55);
+        .vote-button:disabled {
+            cursor: wait;
+            opacity: 0.6;
+        }
+
+        .vote-button.play:hover {
+            border-color: var(--success);
             color: var(--success);
-            background: rgba(var(--success-rgb), 0.07);
         }
 
-        .vote-btn.wont:hover,
-        .vote-btn.voted.wont {
-            border-color: rgba(var(--danger-rgb), 0.55);
+        .vote-button.skip:hover {
+            border-color: var(--danger);
             color: var(--danger);
-            background: rgba(var(--danger-rgb), 0.07);
         }
 
-        .vote-btn:disabled {
-            cursor: default;
-            opacity: 0.72;
-        }
-
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 16px;
-            padding-top: 13px;
-            border-top: 1px solid var(--border);
-        }
-
-        .reading-time {
-            color: var(--text-muted);
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-        .share-btn,
-        .bookmark-btn {
-            border: 0;
-            color: var(--text-secondary);
-            background: transparent;
-            font-size: 11px;
-            font-weight: 850;
-            transition: 0.2s ease;
-        }
-
-        .share-btn:hover,
-        .bookmark-btn:hover,
-        .bookmark-btn.saved {
-            color: var(--accent);
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 140px;
-        }
-
-        .sidebar-card {
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--bg-card);
-            box-shadow: var(--shadow);
-        }
-
-        .sidebar-card + .sidebar-card {
-            margin-top: 16px;
-        }
-
-        .sidebar-header {
-            padding: 17px;
-            border-bottom: 1px solid var(--border);
-            background:
-                linear-gradient(
-                    90deg,
-                    rgba(var(--accent-rgb),0.07),
-                    transparent
-                );
-        }
-
-        .sidebar-subtitle {
-            margin: 5px 0 0;
-            color: var(--text-muted);
-            font-size: 11px;
-            line-height: 1.5;
-        }
-
-        .release-list {
-            padding: 5px 0;
-        }
-
-        .release-item {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 12px;
-            padding: 15px 17px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .release-item:last-child {
-            border-bottom: 0;
-        }
-
-        .release-name {
-            margin-bottom: 4px;
-            font-size: 13px;
-            font-weight: 900;
-        }
-
-        .release-date {
-            color: var(--text-muted);
-            font-size: 10px;
-        }
-
-        .days-left {
-            align-self: center;
-            padding: 6px 8px;
-            border: 1px solid rgba(var(--accent-rgb),0.24);
-            border-radius: 7px;
-            color: var(--accent);
-            background: rgba(var(--accent-rgb),0.06);
-            white-space: nowrap;
-            font-size: 10px;
-            font-weight: 950;
-        }
-
-        .days-left.today {
+        .bookmark-button.saved {
             color: var(--gold);
-            border-color: rgba(var(--gold-rgb),0.35);
-            background: rgba(var(--gold-rgb),0.07);
+            border-color: rgba(255, 209, 102, 0.45);
         }
 
-        .days-left.passed {
-            color: var(--text-muted);
-            border-color: var(--border);
-            background: transparent;
-        }
-
-        .mini-info {
-            padding: 17px;
-        }
-
-        .mini-info p {
-            margin: 0;
-            color: var(--text-secondary);
-            font-size: 12px;
-            line-height: 1.65;
-        }
-
-        .empty-state {
-            padding: 60px 20px;
+        .no-results {
+            grid-column: 1 / -1;
             border: 1px dashed var(--border);
             border-radius: var(--radius);
+            padding: 45px 20px;
             text-align: center;
-            color: var(--text-muted);
+            color: var(--muted);
+            background: var(--panel);
         }
 
-        .empty-state strong {
-            display: block;
-            margin-bottom: 7px;
-            color: var(--text-main);
-            font-size: 16px;
-        }
-
-        .loading {
-            padding: 50px;
-            color: var(--text-muted);
-            text-align: center;
-        }
-
-        footer {
+        .footer {
+            width: min(1500px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 25px 0 45px;
             border-top: 1px solid var(--border);
-            padding: 30px 0 40px;
-            color: var(--text-muted);
+            color: var(--muted);
+            text-align: center;
+            font-size: 11px;
         }
 
-        .footer-inner {
-            width: min(1450px, calc(100% - 32px));
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 25px;
-        }
-
-        .legal {
+        .legal-notice {
             max-width: 900px;
-            font-size: 11px;
-            line-height: 1.65;
+            margin: 0 auto;
         }
 
-        .back-top {
-            flex: 0 0 auto;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 14px;
-            color: var(--text-secondary);
-            background: var(--bg-secondary);
-            font-size: 11px;
-            font-weight: 850;
-            transition: 0.2s ease;
-        }
-
-        .back-top:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .modal-overlay {
+        .back-to-top {
             position: fixed;
-            inset: 0;
+            z-index: 900;
+            right: 20px;
+            bottom: 20px;
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            background: var(--panel);
+            color: var(--accent);
+            box-shadow: var(--shadow);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: 0.25s ease;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* ADMIN */
+
+        .admin-overlay {
+            position: fixed;
             z-index: 5000;
+            inset: 0;
             display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(0,0,0,0.72);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(0, 0, 0, 0.76);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow-y: auto;
         }
 
-        .modal-overlay.open {
-            display: flex;
+        .admin-overlay.active {
+            display: block;
         }
 
-        .modal {
-            width: min(440px, 100%);
-            border: 1px solid var(--border);
+        .admin-login {
+            width: min(430px, calc(100% - 30px));
+            margin: 12vh auto;
+            padding: 25px;
+            border: 1px solid var(--border-strong);
             border-radius: 18px;
-            background: var(--bg-panel);
-            box-shadow:
-                0 30px 100px rgba(0,0,0,0.5),
-                0 0 50px rgba(var(--accent-rgb),0.08);
-            animation: modalIn 0.2s ease;
+            background: var(--panel);
+            box-shadow: 0 25px 90px rgba(0, 0, 0, 0.55);
         }
 
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: translateY(12px) scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        .admin-login h2 {
+            margin-bottom: 8px;
         }
 
-        .modal-header {
+        .admin-login p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        .admin-dashboard {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(var(--accent-rgb), 0.07), transparent 25%),
+                var(--bg);
+        }
+
+        .dashboard-header {
+            position: sticky;
+            z-index: 20;
+            top: 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 20px;
+            gap: 15px;
+            padding: 14px clamp(14px, 3vw, 35px);
             border-bottom: 1px solid var(--border);
+            background: rgba(7, 9, 13, 0.92);
+            backdrop-filter: blur(16px);
         }
 
-        .modal-header h3 {
-            margin: 0;
-            font-size: 17px;
-        }
-
-        .close-btn {
-            border: 0;
-            color: var(--text-muted);
-            background: transparent;
-            font-size: 22px;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .field {
-            margin-bottom: 14px;
-        }
-
-        .field label {
-            display: block;
-            margin-bottom: 7px;
-            color: var(--text-secondary);
-            font-size: 11px;
-            font-weight: 850;
-        }
-
-        .field input,
-        .field textarea,
-        .field select {
-            width: 100%;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            outline: none;
-            padding: 12px;
-            color: var(--text-main);
-            background: var(--bg-input);
-        }
-
-        .field input:focus,
-        .field textarea:focus,
-        .field select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.07);
-        }
-
-        .field textarea {
-            min-height: 140px;
-            resize: vertical;
-        }
-
-        .modal-error {
-            display: none;
-            margin-bottom: 12px;
-            padding: 10px;
-            border: 1px solid rgba(var(--danger-rgb),0.25);
-            border-radius: 9px;
-            color: var(--danger);
-            background: rgba(var(--danger-rgb),0.06);
-            font-size: 11px;
-            font-weight: 750;
-        }
-
-        .modal-error.show {
-            display: block;
-        }
-
-        .primary-btn {
-            width: 100%;
-            min-height: 44px;
-            border: 0;
-            border-radius: 10px;
-            color: #000;
-            background: var(--accent);
-            font-weight: 950;
-            box-shadow: 0 0 20px rgba(var(--accent-rgb),0.18);
-        }
-
-        .dashboard-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 6000;
-            display: none;
-            overflow-y: auto;
-            background:
-                radial-gradient(
-                    circle at 15% 0%,
-                    rgba(var(--accent-rgb),0.08),
-                    transparent 28%
-                ),
-                var(--bg-main);
-        }
-
-        .dashboard-overlay.open {
-            display: block;
-        }
-
-        .dashboard {
-            width: min(1450px, calc(100% - 32px));
-            margin: 0 auto;
-            padding: 25px 0 60px;
-        }
-
-        .dashboard-top {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 0;
-            background: color-mix(in srgb, var(--bg-main) 91%, transparent);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
+        body.light-theme .dashboard-header {
+            background: rgba(255, 255, 255, 0.92);
         }
 
         .dashboard-title {
-            margin-right: auto;
-        }
-
-        .dashboard-title h2 {
-            margin: 0;
-            font-size: 22px;
+            font-size: clamp(18px, 3vw, 25px);
+            font-weight: 900;
         }
 
         .dashboard-title span {
-            color: var(--text-muted);
-            font-size: 10px;
-            font-weight: 800;
-        }
-
-        .dashboard-password {
-            width: 230px;
-            min-height: 40px;
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            outline: none;
-            padding: 0 11px;
-            color: var(--text-main);
-            background: var(--bg-input);
-        }
-
-        .dashboard-close {
-            min-height: 40px;
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            padding: 0 12px;
-            color: var(--text-secondary);
-            background: var(--bg-secondary);
-            font-weight: 850;
-        }
-
-        .dashboard-close:hover {
-            color: var(--danger);
-            border-color: var(--danger);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            margin: 24px 0;
-        }
-
-        .stat-card {
-            padding: 20px;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            background: var(--bg-card);
-        }
-
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-value {
-            margin-top: 8px;
             color: var(--accent);
-            font-size: 32px;
-            line-height: 1;
-            font-weight: 950;
+        }
+
+        .dashboard-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .password-input {
+            width: 190px;
+        }
+
+        .dashboard {
+            width: min(1500px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 25px 0 50px;
         }
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
         }
 
-        .dashboard-panel {
+        .dashboard-card {
+            min-width: 0;
             border: 1px solid var(--border);
             border-radius: 16px;
-            background: var(--bg-card);
+            background: var(--panel);
             box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .dashboard-panel.full {
-            grid-column: 1 / -1;
-        }
-
-        .panel-header {
-            padding: 17px 18px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .panel-header h3 {
-            margin: 0;
-            font-size: 15px;
-        }
-
-        .panel-header p {
-            margin: 5px 0 0;
-            color: var(--text-muted);
-            font-size: 10px;
-        }
-
-        .panel-body {
             padding: 18px;
         }
 
-        .admin-form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .admin-form-grid .full-field {
+        .dashboard-card.full-width {
             grid-column: 1 / -1;
         }
 
-        .template-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 7px;
-            margin-bottom: 12px;
+        .dashboard-card h3 {
+            font-size: 16px;
+            margin-bottom: 14px;
         }
 
-        .template-btn {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 7px 9px;
-            color: var(--text-secondary);
-            background: var(--bg-secondary);
-            font-size: 10px;
-            font-weight: 800;
-        }
-
-        .template-btn:hover {
+        .stat-number {
+            display: block;
+            font-size: 31px;
+            line-height: 1;
             color: var(--accent);
-            border-color: var(--accent);
+            margin-bottom: 6px;
+            font-weight: 950;
         }
 
-        .pin-check {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            margin: 3px 0 14px;
-            color: var(--text-secondary);
+        .stat-label {
+            color: var(--muted);
             font-size: 12px;
-            font-weight: 800;
-            cursor: pointer;
         }
 
-        .pin-check input {
-            width: 17px;
-            height: 17px;
-            accent-color: var(--gold);
-        }
-
-        .admin-post-list {
+        .form-grid {
             display: grid;
-            gap: 9px;
+            grid-template-columns: 1fr 1fr;
+            gap: 11px;
         }
 
-        .admin-post {
+        .form-field {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg-secondary);
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .admin-post-info {
-            min-width: 0;
-            flex: 1;
+        .form-field.full {
+            grid-column: 1 / -1;
         }
 
-        .admin-post-title {
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            font-size: 12px;
-            font-weight: 900;
-        }
-
-        .admin-post-meta {
-            margin-top: 4px;
-            color: var(--text-muted);
-            font-size: 9px;
-        }
-
-        .delete-btn {
-            flex: 0 0 auto;
-            border: 1px solid rgba(var(--danger-rgb),0.22);
-            border-radius: 8px;
-            padding: 8px 10px;
-            color: var(--danger);
-            background: rgba(var(--danger-rgb),0.05);
-            font-size: 10px;
-            font-weight: 900;
-        }
-
-        .delete-btn:hover {
-            background: rgba(var(--danger-rgb),0.12);
-        }
-
-        .skins {
-            display: grid;
-            gap: 9px;
-        }
-
-        .skin-btn {
-            min-height: 44px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-secondary);
-            background: var(--bg-secondary);
-            text-align: left;
-            padding: 0 13px;
+        .form-field label {
+            color: var(--muted);
             font-size: 11px;
-            font-weight: 850;
+            font-weight: 800;
+        }
+
+        .admin-input,
+        .admin-textarea,
+        .admin-select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: var(--panel-2);
+            color: var(--text);
+            padding: 11px 12px;
             transition: 0.2s ease;
         }
 
-        .skin-btn:hover {
-            transform: translateX(2px);
+        .admin-input:focus,
+        .admin-textarea:focus,
+        .admin-select:focus {
             border-color: var(--accent);
-            color: var(--text-main);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.07);
         }
 
-        .skin-btn.active {
-            border-color: var(--accent);
-            color: var(--accent);
-            box-shadow: inset 3px 0 0 var(--accent);
+        .admin-textarea {
+            min-height: 145px;
+            resize: vertical;
         }
 
-        .dashboard-message {
-            display: none;
-            margin-top: 12px;
-            padding: 10px;
-            border-radius: 9px;
+        .checkbox-field {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--text);
+            font-size: 12px;
+            margin: 12px 0;
+        }
+
+        .checkbox-field input {
+            accent-color: var(--accent);
+        }
+
+        .primary-button,
+        .danger-button,
+        .skin-button {
+            min-height: 40px;
+            border-radius: 10px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 900;
+            transition: 0.2s ease;
         }
 
-        .dashboard-message.show {
-            display: block;
+        .primary-button {
+            background: rgba(var(--accent-rgb), 0.1);
+            border-color: var(--border-strong);
+            color: var(--accent);
         }
 
-        .dashboard-message.success {
-            color: var(--success);
-            border: 1px solid rgba(var(--success-rgb),0.2);
-            background: rgba(var(--success-rgb),0.05);
+        .primary-button:hover {
+            background: rgba(var(--accent-rgb), 0.17);
         }
 
-        .dashboard-message.error {
+        .danger-button {
+            background: rgba(255, 66, 109, 0.08);
+            border-color: rgba(255, 66, 109, 0.35);
             color: var(--danger);
-            border: 1px solid rgba(var(--danger-rgb),0.2);
-            background: rgba(var(--danger-rgb),0.05);
         }
 
-        .toast {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            z-index: 10000;
-            max-width: 330px;
-            padding: 12px 15px;
+        .danger-button:hover {
+            background: rgba(255, 66, 109, 0.16);
+        }
+
+        .skin-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skin-button {
+            background: var(--panel-2);
+            color: var(--muted);
+        }
+
+        .skin-button.active {
+            color: var(--text);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.1);
+        }
+
+        .admin-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 390px;
+            overflow-y: auto;
+        }
+
+        .admin-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 11px 12px;
             border: 1px solid var(--border);
             border-radius: 10px;
-            color: var(--text-main);
-            background: var(--bg-panel);
-            box-shadow: var(--shadow);
-            font-size: 11px;
+            background: var(--panel-2);
+        }
+
+        .admin-list-item-main {
+            min-width: 0;
+        }
+
+        .admin-list-item-title {
+            font-size: 12px;
             font-weight: 800;
-            opacity: 0;
-            transform: translateY(10px);
-            pointer-events: none;
-            transition: 0.25s ease;
+            overflow-wrap: anywhere;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
+        .admin-list-item-meta {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 2px;
         }
 
-        body.dashboard-open {
-            overflow: hidden;
+        .release-admin-list {
+            max-height: 350px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .release-admin-item {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--panel-2);
+        }
+
+        .release-admin-title {
+            font-size: 12px;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .release-admin-date {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .admin-message {
+            min-height: 20px;
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .admin-message.success {
+            color: var(--success);
+        }
+
+        .admin-message.error {
+            color: var(--danger);
         }
 
         @media (max-width: 1100px) {
-            .content-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: static;
-                order: -1;
-            }
-
-            .sidebar-card:first-child {
-                max-height: none;
-            }
-
-            .release-list {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .release-item:nth-child(odd) {
-                border-right: 1px solid var(--border);
-            }
-        }
-
-        @media (max-width: 900px) {
-            .server-status {
-                display: none;
+            .dashboard-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             .news-grid {
                 grid-template-columns: 1fr;
             }
 
+            .news-image {
+                height: 360px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            :root {
+                --header-height: 66px;
+            }
+
+            .top-header {
+                padding: 9px 12px;
+            }
+
+            .network-status {
+                display: none;
+            }
+
+            .brand-mark {
+                width: 38px;
+                height: 38px;
+            }
+
+            .brand-name {
+                font-size: 20px;
+            }
+
+            .header-button {
+                min-height: 38px;
+                padding: 0 10px;
+            }
+
+            .page-shell {
+                width: min(100% - 18px, 700px);
+                padding-top: 18px;
+            }
+
+            .hero {
+                border-radius: 17px;
+                padding: 24px 18px;
+            }
+
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                order: 2;
+            }
+
+            .feed {
+                order: 1;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .news-image {
+                height: 250px;
+            }
+
+            .footer {
+                width: min(100% - 18px, 700px);
+            }
+
+            .dashboard {
+                width: min(100% - 18px, 700px);
+            }
+
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
 
-            .dashboard-panel.full {
+            .dashboard-card.full-width {
                 grid-column: auto;
             }
 
-            .dashboard-password {
-                width: 180px;
-            }
-        }
-
-        @media (max-width: 700px) {
-            .header-inner,
-            .page,
-            .footer-inner,
-            .dashboard {
-                width: min(100% - 20px, 1450px);
-            }
-
-            .header-inner {
-                min-height: 64px;
-            }
-
-            .toolbar {
-                top: 64px;
-                display: block;
-            }
-
-            .filters {
-                margin-top: 8px;
-                width: 100%;
-            }
-
-            .filter-btn {
-                flex: 1;
-            }
-
-            .hero {
-                padding-top: 35px;
-            }
-
-            .hero h1 {
-                letter-spacing: -1.8px;
-            }
-
-            .release-list {
-                grid-template-columns: 1fr;
-            }
-
-            .release-item:nth-child(odd) {
-                border-right: 0;
-            }
-
-            .news-image,
-            .news-image-placeholder {
-                height: 230px;
-            }
-
-            .admin-btn {
-                padding: 0 9px;
-                font-size: 11px;
-            }
-
-            .dashboard-top {
-                flex-wrap: wrap;
-            }
-
-            .dashboard-title {
-                width: 100%;
-            }
-
-            .dashboard-password {
-                flex: 1;
-                width: auto;
-            }
-
-            .admin-form-grid,
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-inner {
+            .dashboard-header {
                 align-items: flex-start;
                 flex-direction: column;
             }
+
+            .dashboard-header-actions {
+                width: 100%;
+            }
+
+            .password-input {
+                flex: 1;
+                width: auto;
+            }
         }
 
-        @media (max-width: 450px) {
-            .logo {
-                font-size: 21px;
-            }
-
-            .logo-mark {
-                width: 32px;
-                height: 32px;
-            }
-
-            .header-actions {
+        @media (max-width: 520px) {
+            .header-controls {
                 gap: 5px;
             }
 
-            .icon-btn {
-                min-width: 38px;
-                min-height: 38px;
+            .header-button {
+                font-size: 0;
+                width: 40px;
+                padding: 0;
             }
 
-            .admin-btn {
-                min-height: 38px;
+            .header-button::first-letter {
+                font-size: 17px;
             }
 
-            .news-title {
-                font-size: 20px;
-            }
-
-            .vote-row {
-                grid-template-columns: 1fr;
+            .news-image {
+                height: 210px;
             }
 
             .news-body {
-                padding: 15px;
+                padding: 14px;
+            }
+
+            .news-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .action-button,
+            .vote-button {
+                width: 100%;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-field.full {
+                grid-column: auto;
+            }
+
+            .release-admin-item {
+                grid-template-columns: 1fr;
+            }
+
+            .release-admin-item .danger-button {
+                width: 100%;
             }
         }
 
         @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
             *,
             *::before,
             *::after {
-                scroll-behavior: auto !important;
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
             }
         }
     </style>
@@ -1453,445 +1161,357 @@
 <body>
     <div class="scroll-progress" id="scrollProgress"></div>
 
-    <header id="top">
-        <div class="header-inner">
-            <a class="logo" href="#top" aria-label="PlayPC">
-                <span class="logo-mark">P</span>
-                Play<span>PC</span>
-            </a>
+    <header class="top-header">
+        <a class="brand" href="#" aria-label="PlayPC">
+            <div class="brand-mark">🎮</div>
+            <div class="brand-name">Play<span>PC</span></div>
+        </a>
 
-            <div class="server-status" aria-label="Статус серверов">
-                <div class="server-title">Серверы</div>
-
-                <div class="server-items">
-                    <div class="server-item">
-                        <span class="online-dot"></span>
-                        PSN
-                        <span style="color:var(--success);font-size:10px;">Online</span>
-                    </div>
-
-                    <div class="server-item">
-                        <span class="online-dot"></span>
-                        Steam
-                        <span style="color:var(--success);font-size:10px;">Online</span>
-                    </div>
-                </div>
+        <div class="header-controls">
+            <div class="network-status" aria-label="Статус игровых сетей">
+                <span class="status-dot"></span>
+                <span>PSN <strong>Online</strong></span>
+                <span>•</span>
+                <span>Steam <strong>Online</strong></span>
             </div>
 
-            <div class="header-actions">
-                <button
-                    class="icon-btn"
-                    id="themeToggle"
-                    type="button"
-                    title="Переключить День/Ночь"
-                    aria-label="Переключить День/Ночь"
-                >🌓</button>
+            <button class="header-button" id="themeToggle" type="button" title="День/ночь">
+                🌓
+            </button>
 
-                <button
-                    class="admin-btn"
-                    id="openAdminButton"
-                    type="button"
-                >⚙️ Панель</button>
-            </div>
+            <button class="header-button" id="adminOpenButton" type="button">
+                ⚙️ Панель
+            </button>
         </div>
     </header>
 
-    <main>
-        <div class="page">
-            <section class="hero">
-                <div class="hero-label">⚡ Независимый игровой портал</div>
+    <div class="page-shell">
+        <section class="hero">
+            <div class="hero-kicker">Gaming News • PC • PlayStation</div>
+            <h1>Игровые новости без лишнего шума.</h1>
+            <p>
+                Новости, релизы, голосования и календарь самых ожидаемых игр.
+                Следи за играми, которые действительно хочется запускать.
+            </p>
+        </section>
 
-                <h1>
-                    Игровые новости.<br>
-                    <span>Без лишнего шума.</span>
-                </h1>
-
-                <p>
-                    Новости, релизы и материалы о PC и PlayStation.
-                    Следи за играми, голосуй за самые ожидаемые проекты
-                    и сохраняй интересные статьи.
-                </p>
-            </section>
-
-            <section class="toolbar" aria-label="Поиск и фильтры">
-                <div class="search-wrap">
-                    <span class="search-icon">⌕</span>
-                    <input
-                        id="searchInput"
-                        class="search-input"
-                        type="search"
-                        autocomplete="off"
-                        placeholder="Поиск по новостям..."
-                        aria-label="Поиск по новостям"
-                    >
-                </div>
-
-                <div class="filters">
-                    <button
-                        class="filter-btn active"
-                        data-filter="all"
-                        type="button"
-                    >Все</button>
-
-                    <button
-                        class="filter-btn"
-                        data-filter="PC"
-                        type="button"
-                    >PC</button>
-
-                    <button
-                        class="filter-btn"
-                        data-filter="PlayStation"
-                        type="button"
-                    >PlayStation</button>
-                </div>
-            </section>
-
-            <div class="content-layout">
-                <section class="feed">
-                    <div class="feed-heading">
-                        <h2>Последние новости</h2>
-                        <span class="post-count" id="postCount">Загрузка...</span>
+        <div class="content-grid">
+            <aside class="sidebar">
+                <section class="side-card">
+                    <div class="side-card-header">
+                        <h2>🔎 Поиск и фильтры</h2>
                     </div>
 
-                    <div id="newsGrid" class="news-grid">
-                        <div class="loading">Загрузка новостей...</div>
+                    <div class="side-card-body">
+                        <div class="search-box">
+                            <span class="search-icon">⌕</span>
+                            <input
+                                id="searchInput"
+                                type="search"
+                                autocomplete="off"
+                                placeholder="Найти новость..."
+                                aria-label="Поиск новостей"
+                            >
+                        </div>
+
+                        <div class="filters">
+                            <button class="filter-button active" type="button" data-filter="all">Все</button>
+                            <button class="filter-button" type="button" data-filter="PC">PC</button>
+                            <button class="filter-button" type="button" data-filter="PlayStation">PlayStation</button>
+                        </div>
                     </div>
                 </section>
 
-                <aside class="sidebar">
-                    <div class="sidebar-card">
-                        <div class="sidebar-header">
-                            <h2 class="sidebar-heading">📅 Календарь релизов</h2>
-                            <p class="sidebar-subtitle">
-                                Осень 2026 · обратный отсчёт обновляется автоматически
-                            </p>
-                        </div>
+                <section class="side-card">
+                    <div class="side-card-header">
+                        <h2>📅 Календарь релизов игр</h2>
+                    </div>
 
+                    <div class="side-card-body">
                         <div class="release-list" id="releaseList">
+                            <div class="loading">Загрузка релизов...</div>
                         </div>
                     </div>
+                </section>
+            </aside>
 
-                    <div class="sidebar-card">
-                        <div class="sidebar-header">
-                            <h2 class="sidebar-heading">🎮 PlayPC Radar</h2>
-                        </div>
-
-                        <div class="mini-info">
-                            <p>
-                                Отслеживай новости, фильтруй материалы по платформе
-                                и участвуй в рейтинге ожидания каждой публикации.
-                            </p>
-                        </div>
-                    </div>
-                </aside>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <div class="footer-inner">
-            <div class="legal">
-                Сайт является независимым блогом. Мы не собираем и не обрабатываем персональные данные. Cookie-файлы отсутствуют. Регистрация не требуется.
-            </div>
-
-            <button
-                class="back-top"
-                id="backTop"
-                type="button"
-            >▲ Наверх</button>
-        </div>
-    </footer>
-
-    <!-- ADMIN LOGIN -->
-    <div
-        class="modal-overlay"
-        id="loginModal"
-        aria-hidden="true"
-    >
-        <div
-            class="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="loginTitle"
-        >
-            <div class="modal-header">
-                <h3 id="loginTitle">🔐 Админ-доступ</h3>
-
-                <button
-                    class="close-btn"
-                    id="closeLoginButton"
-                    type="button"
-                    aria-label="Закрыть"
-                >×</button>
-            </div>
-
-            <div class="modal-body">
-                <div
-                    class="modal-error"
-                    id="loginError"
-                ></div>
-
-                <div class="field">
-                    <label for="adminLoginPassword">Пароль администратора</label>
-
-                    <input
-                        id="adminLoginPassword"
-                        type="password"
-                        autocomplete="current-password"
-                        placeholder="Введите пароль"
-                    >
+            <main class="feed">
+                <div class="feed-topbar">
+                    <h2 class="feed-title">Последние новости</h2>
+                    <div class="post-count" id="postCount">Загрузка...</div>
                 </div>
 
-                <button
-                    class="primary-btn"
-                    id="loginButton"
-                    type="button"
-                >Войти в рабочий стол</button>
-            </div>
+                <section class="news-grid" id="newsGrid" aria-live="polite">
+                    <div class="loading">Загрузка новостей...</div>
+                </section>
+            </main>
         </div>
     </div>
 
-    <!-- ADMIN DASHBOARD -->
-    <div
-        class="dashboard-overlay"
-        id="dashboardOverlay"
-        aria-hidden="true"
-    >
-        <div class="dashboard">
-            <div class="dashboard-top">
+    <footer class="footer">
+        <div class="legal-notice">
+            Сайт является независимым блогом. Мы не собираем и не обрабатываем персональные данные. Cookie-файлы отсутствуют. Регистрация не требуется.
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" type="button" aria-label="Наверх">
+        ▲
+    </button>
+
+    <!-- ADMIN OVERLAY -->
+    <div class="admin-overlay" id="adminOverlay" aria-hidden="true">
+        <div class="admin-login" id="adminLogin">
+            <h2>⚙️ Панель администратора</h2>
+            <p>Введите пароль администратора для доступа к Dashboard.</p>
+
+            <input
+                class="admin-input"
+                id="loginPassword"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Пароль"
+            >
+
+            <button
+                class="primary-button"
+                id="loginButton"
+                type="button"
+                style="width:100%; margin-top:10px;"
+            >
+                Войти в Dashboard
+            </button>
+
+            <div class="admin-message" id="loginMessage"></div>
+        </div>
+
+        <div class="admin-dashboard" id="adminDashboard" hidden>
+            <header class="dashboard-header">
                 <div class="dashboard-title">
-                    <h2>⚙️ Рабочий стол PlayPC</h2>
-                    <span>Управление контентом и оформлением</span>
+                    PlayPC <span>Dashboard</span>
                 </div>
 
-                <input
-                    id="dashboardPassword"
-                    class="dashboard-password"
-                    type="password"
-                    autocomplete="off"
-                    placeholder="Пароль администратора"
-                >
+                <div class="dashboard-header-actions">
+                    <input
+                        class="admin-input password-input"
+                        id="adminPasswordInput"
+                        type="password"
+                        autocomplete="off"
+                        placeholder="Пароль админа"
+                    >
 
-                <button
-                    class="dashboard-close"
-                    id="closeDashboardButton"
-                    type="button"
-                >✕ Закрыть</button>
-            </div>
+                    <button class="header-button" id="dashboardThemeButton" type="button" title="День/ночь">
+                        🌓
+                    </button>
 
-            <section class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Всего публикаций</div>
-                    <div class="stat-value" id="statTotal">0</div>
+                    <button class="header-button" id="closeDashboardButton" type="button">
+                        ✕ Закрыть
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard">
+                <div class="dashboard-grid">
+                    <section class="dashboard-card">
+                        <span class="stat-number" id="statTotal">0</span>
+                        <span class="stat-label">Всего новостей</span>
+                    </section>
+
+                    <section class="dashboard-card">
+                        <span class="stat-number" id="statPC">0</span>
+                        <span class="stat-label">PC новостей</span>
+                    </section>
+
+                    <section class="dashboard-card">
+                        <span class="stat-number" id="statPS">0</span>
+                        <span class="stat-label">PlayStation новостей</span>
+                    </section>
+
+                    <section class="dashboard-card">
+                        <span class="stat-number" id="statReleases">0</span>
+                        <span class="stat-label">Релизов в календаре</span>
+                    </section>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-label">PC</div>
-                    <div class="stat-value" id="statPC">0</div>
-                </div>
+                <div class="dashboard-grid">
+                    <section class="dashboard-card full-width">
+                        <h3>📝 Создать новость</h3>
 
-                <div class="stat-card">
-                    <div class="stat-label">PlayStation</div>
-                    <div class="stat-value" id="statPlayStation">0</div>
-                </div>
-            </section>
-
-            <div class="dashboard-grid">
-                <section class="dashboard-panel">
-                    <div class="panel-header">
-                        <h3>✍️ Менеджер контента</h3>
-                        <p>Создание новой публикации</p>
-                    </div>
-
-                    <div class="panel-body">
-                        <form id="createPostForm">
-                            <div class="admin-form-grid">
-                                <div class="field">
+                        <form id="postForm">
+                            <div class="form-grid">
+                                <div class="form-field">
                                     <label for="postTitle">Заголовок</label>
                                     <input
+                                        class="admin-input"
                                         id="postTitle"
-                                        name="title"
                                         type="text"
                                         maxlength="180"
                                         required
-                                        placeholder="Например: Новый трейлер игры"
+                                        placeholder="Например: Новая игра уже близко"
                                     >
                                 </div>
 
-                                <div class="field">
+                                <div class="form-field">
                                     <label for="postPlatform">Платформа</label>
-                                    <select
-                                        id="postPlatform"
-                                        name="platform"
-                                        required
-                                    >
+                                    <select class="admin-select" id="postPlatform">
                                         <option value="PC">PC</option>
                                         <option value="PlayStation">PlayStation</option>
                                     </select>
                                 </div>
 
-                                <div class="field full-field">
-                                    <label for="postImageUrl">URL изображения</label>
+                                <div class="form-field full">
+                                    <label for="postImage">URL обложки</label>
                                     <input
-                                        id="postImageUrl"
-                                        name="imageUrl"
+                                        class="admin-input"
+                                        id="postImage"
                                         type="url"
-                                        required
                                         placeholder="https://..."
                                     >
                                 </div>
 
-                                <div class="field full-field">
+                                <div class="form-field full">
                                     <label for="postContent">Текст новости</label>
-
-                                    <div class="template-row">
-                                        <button
-                                            class="template-btn"
-                                            type="button"
-                                            data-template="review"
-                                        >Шаблон Обзора игры</button>
-
-                                        <button
-                                            class="template-btn"
-                                            type="button"
-                                            data-template="hot"
-                                        >Шаблон Горячей Новости</button>
-                                    </div>
-
                                     <textarea
+                                        class="admin-textarea"
                                         id="postContent"
-                                        name="content"
                                         required
-                                        placeholder="Используй [b]жирный текст[/b], [i]курсив[/i] и [spoiler]скрытый текст[/spoiler]"
+                                        placeholder="Текст новости. Можно использовать [b]жирный[/b], [i]курсив[/i] и [spoiler]скрытый текст[/spoiler]."
                                     ></textarea>
                                 </div>
                             </div>
 
-                            <label class="pin-check">
-                                <input
-                                    id="postPinned"
-                                    name="pinned"
-                                    type="checkbox"
-                                >
-                                <span>📌 Закрепить новость на главной</span>
+                            <label class="checkbox-field">
+                                <input id="postPinned" type="checkbox">
+                                📌 Закрепить новость на главной
                             </label>
 
-                            <button
-                                class="primary-btn"
-                                type="submit"
-                            >🚀 Опубликовать новость</button>
+                            <button class="primary-button" type="submit">
+                                Опубликовать новость
+                            </button>
 
-                            <div
-                                class="dashboard-message"
-                                id="createMessage"
-                            ></div>
+                            <div class="admin-message" id="postMessage"></div>
                         </form>
-                    </div>
-                </section>
+                    </section>
 
-                <section class="dashboard-panel">
-                    <div class="panel-header">
-                        <h3>🎨 Скины сайта</h3>
-                        <p>Переключатель тем оформления PlayPC</p>
-                    </div>
+                    <section class="dashboard-card">
+                        <h3>🎨 Скин сайта</h3>
 
-                    <div class="panel-body">
-                        <div class="skins">
-                            <button
-                                class="skin-btn active"
-                                data-skin="cyberpunk"
-                                type="button"
-                            >⚡ Стандарт (Cyberpunk)</button>
+                        <div class="skin-buttons">
+                            <button class="skin-button active" type="button" data-skin="standard">
+                                Стандарт
+                            </button>
 
-                            <button
-                                class="skin-btn"
-                                data-skin="playstation"
-                                type="button"
-                            >🎮 Стиль PlayStation</button>
+                            <button class="skin-button" type="button" data-skin="playstation">
+                                PlayStation
+                            </button>
 
-                            <button
-                                class="skin-btn"
-                                data-skin="pc"
-                                type="button"
-                            >💻 Стиль ПК</button>
+                            <button class="skin-button" type="button" data-skin="pc">
+                                ПК
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="dashboard-card" style="grid-column: span 3;">
+                        <h3>🗂️ Управление контентом</h3>
+
+                        <div class="admin-list" id="adminPostList">
+                            <div class="loading">Загрузка...</div>
+                        </div>
+                    </section>
+
+                    <section class="dashboard-card full-width">
+                        <h3>📅 Управление релизами</h3>
+
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="releaseTitle">Название игры</label>
+                                <input
+                                    class="admin-input"
+                                    id="releaseTitle"
+                                    type="text"
+                                    maxlength="180"
+                                    required
+                                    placeholder="Например: Grand Theft Auto VI"
+                                >
+                            </div>
+
+                            <div class="form-field">
+                                <label for="releaseDate">Дата выхода</label>
+                                <input
+                                    class="admin-input"
+                                    id="releaseDate"
+                                    type="date"
+                                    required
+                                >
+                            </div>
                         </div>
 
-                        <div
-                            class="dashboard-message"
-                            id="skinMessage"
-                        ></div>
-                    </div>
-                </section>
-
-                <section class="dashboard-panel full">
-                    <div class="panel-header">
-                        <h3>🗂️ Менеджер статей</h3>
-                        <p>Твоё абсолютное право управления публикациями</p>
-                    </div>
-
-                    <div class="panel-body">
-                        <div
-                            class="admin-post-list"
-                            id="adminPostList"
+                        <button
+                            class="primary-button"
+                            id="addReleaseButton"
+                            type="button"
+                            style="margin-top:12px;"
                         >
-                            <div class="loading">Загрузка публикаций...</div>
+                            ➕ Добавить хит
+                        </button>
+
+                        <div class="admin-message" id="releaseMessage"></div>
+
+                        <div class="release-admin-list" id="adminReleaseList">
+                            <div class="loading">Загрузка релизов...</div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
             </div>
         </div>
     </div>
-
-    <div
-        class="toast"
-        id="toast"
-        role="status"
-        aria-live="polite"
-    ></div>
 
     <script>
         "use strict";
 
         const ADMIN_PASSWORD = "AdminPlayPC2026";
 
-        let allPosts = [];
-        let currentFilter = "all";
-        let currentSearch = "";
-        let currentAdminPassword = "";
+        const state = {
+            posts: [],
+            releases: [],
+            filter: "all",
+            search: "",
+            adminPassword: "",
+            theme: localStorage.getItem("playpc-theme") || "dark",
+            skin: localStorage.getItem("playpc-skin") || "standard"
+        };
 
-        const VOTE_STORAGE_KEY = "playpc_voted_posts";
-        const BOOKMARK_STORAGE_KEY = "playpc_bookmarks";
-        const SKIN_STORAGE_KEY = "playpc_skin";
-        const THEME_STORAGE_KEY = "playpc_theme";
-
-        const releaseGames = [
-            {
-                name: "GTA VI",
-                date: "2026-11-19"
-            },
-            {
-                name: "Новая игра во вселенной Ведьмака",
-                date: "2026-10-15"
-            },
-            {
-                name: "Эксклюзив PS5",
-                date: "2026-10-30"
-            },
-            {
-                name: "Крупный PC-релиз",
-                date: "2026-11-06"
-            }
-        ];
-
-        const newsGrid = document.getElementById("newsGrid");
-        const postCount = document.getElementById("postCount");
-        const searchInput = document.getElementById("searchInput");
-        const loginModal = document.getElementById("loginModal");
-        const dashboardOverlay = document.getElementById("dashboardOverlay");
-        const loginPassword = document.getElementById("adminLoginPassword");
-        const dashboardPassword = document.getElementById("dashboardPassword");
-        const toast = document.getElementById("toast");
+        const elements = {
+            body: document.body,
+            newsGrid: document.getElementById("newsGrid"),
+            postCount: document.getElementById("postCount"),
+            releaseList: document.getElementById("releaseList"),
+            searchInput: document.getElementById("searchInput"),
+            themeToggle: document.getElementById("themeToggle"),
+            dashboardThemeButton: document.getElementById("dashboardThemeButton"),
+            adminOpenButton: document.getElementById("adminOpenButton"),
+            adminOverlay: document.getElementById("adminOverlay"),
+            adminLogin: document.getElementById("adminLogin"),
+            adminDashboard: document.getElementById("adminDashboard"),
+            loginPassword: document.getElementById("loginPassword"),
+            loginButton: document.getElementById("loginButton"),
+            loginMessage: document.getElementById("loginMessage"),
+            adminPasswordInput: document.getElementById("adminPasswordInput"),
+            closeDashboardButton: document.getElementById("closeDashboardButton"),
+            postForm: document.getElementById("postForm"),
+            postMessage: document.getElementById("postMessage"),
+            adminPostList: document.getElementById("adminPostList"),
+            statTotal: document.getElementById("statTotal"),
+            statPC: document.getElementById("statPC"),
+            statPS: document.getElementById("statPS"),
+            statReleases: document.getElementById("statReleases"),
+            releaseTitle: document.getElementById("releaseTitle"),
+            releaseDate: document.getElementById("releaseDate"),
+            addReleaseButton: document.getElementById("addReleaseButton"),
+            releaseMessage: document.getElementById("releaseMessage"),
+            adminReleaseList: document.getElementById("adminReleaseList"),
+            scrollProgress: document.getElementById("scrollProgress"),
+            backToTop: document.getElementById("backToTop")
+        };
 
         function escapeHtml(value) {
             return String(value ?? "")
@@ -1902,335 +1522,579 @@
                 .replace(/'/g, "&#39;");
         }
 
-        function stripBBCode(text) {
-            return String(text ?? "")
-                .replace(/\[\/?b\]/gi, "")
-                .replace(/\[\/?i\]/gi, "")
-                .replace(/\[spoiler\]/gi, "")
-                .replace(/\[\/spoiler\]/gi, "");
+        function stripBBCode(value) {
+            return String(value ?? "")
+                .replace(/\[\/?(?:b|i|spoiler)\]/gi, "")
+                .replace(/\s+/g, " ")
+                .trim();
         }
 
-        function bbCodeToHtml(text) {
-            return escapeHtml(text)
-                .replace(
-                    /\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi,
-                    '<span class="spoiler-text" onclick="this.classList.toggle(\'revealed\')" role="button" tabindex="0">$1</span>'
-                )
-                .replace(
-                    /\[b\]([\s\S]*?)\[\/b\]/gi,
-                    "<strong>$1</strong>"
-                )
-                .replace(
-                    /\[i\]([\s\S]*?)\[\/i\]/gi,
-                    "<em>$1</em>"
-                )
-                .replace(
-                    /\r?\n/g,
-                    "<br>"
-                );
+        function bbCodeToHtml(value) {
+            let safe = escapeHtml(value);
+
+            safe = safe.replace(
+                /\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi,
+                '<span class="spoiler-text" role="button" tabindex="0">$1</span>'
+            );
+
+            safe = safe.replace(
+                /\[b\]([\s\S]*?)\[\/b\]/gi,
+                "<strong>$1</strong>"
+            );
+
+            safe = safe.replace(
+                /\[i\]([\s\S]*?)\[\/i\]/gi,
+                "<em>$1</em>"
+            );
+
+            return safe.replace(/\r?\n/g, "<br>");
         }
 
-        function formatDate(value) {
-            const date = new Date(value);
+        function getPostId(post) {
+            return post && (post.id ?? post._id ?? post.postId);
+        }
 
-            if (Number.isNaN(date.getTime())) {
-                return "Дата неизвестна";
+        function getReleaseId(release) {
+            return release && (release.id ?? release._id ?? release.releaseId);
+        }
+
+        function normalizePlatform(platform) {
+            const value = String(platform ?? "").trim().toLowerCase();
+
+            if (
+                value === "playstation" ||
+                value === "ps" ||
+                value === "ps5" ||
+                value === "ps4"
+            ) {
+                return "PlayStation";
+            }
+
+            return "PC";
+        }
+
+        function formatDate(dateValue) {
+            if (!dateValue) {
+                return "Дата не указана";
+            }
+
+            const date = parseDateOnly(dateValue);
+
+            if (!date) {
+                return String(dateValue);
             }
 
             return new Intl.DateTimeFormat("ru-RU", {
                 day: "2-digit",
-                month: "long",
+                month: "2-digit",
                 year: "numeric"
             }).format(date);
         }
 
-        function calculateReadingTime(text) {
-            const plainText = stripBBCode(text)
-                .replace(/\s+/g, " ")
-                .trim();
+        function parseDateOnly(value) {
+            const text = String(value ?? "").trim();
 
-            const words = plainText
-                ? plainText.split(" ").length
-                : 0;
+            const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+            if (match) {
+                const year = Number(match[1]);
+                const month = Number(match[2]);
+                const day = Number(match[3]);
+
+                const date = new Date(year, month - 1, day);
+
+                if (
+                    date.getFullYear() === year &&
+                    date.getMonth() === month - 1 &&
+                    date.getDate() === day
+                ) {
+                    date.setHours(0, 0, 0, 0);
+                    return date;
+                }
+            }
+
+            const parsed = new Date(text);
+
+            if (Number.isNaN(parsed.getTime())) {
+                return null;
+            }
+
+            parsed.setHours(0, 0, 0, 0);
+            return parsed;
+        }
+
+        function getTodayAtMidnight() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return today;
+        }
+
+        function getDaysUntilRelease(dateValue) {
+            const releaseDate = parseDateOnly(dateValue);
+
+            if (!releaseDate) {
+                return null;
+            }
+
+            const today = getTodayAtMidnight();
+            const millisecondsPerDay = 24 * 60 * 60 * 1000;
+
+            return Math.round(
+                (releaseDate.getTime() - today.getTime()) / millisecondsPerDay
+            );
+        }
+
+        function compareReleases(a, b) {
+            const daysA = getDaysUntilRelease(a.releaseDate);
+            const daysB = getDaysUntilRelease(b.releaseDate);
+
+            if (daysA === null && daysB === null) {
+                return String(a.title || "").localeCompare(
+                    String(b.title || ""),
+                    "ru"
+                );
+            }
+
+            if (daysA === null) {
+                return 1;
+            }
+
+            if (daysB === null) {
+                return -1;
+            }
+
+            const aFuture = daysA > 0;
+            const bFuture = daysB > 0;
+
+            if (aFuture && bFuture) {
+                return daysA - daysB;
+            }
+
+            if (!aFuture && !bFuture) {
+                return daysB - daysA;
+            }
+
+            return aFuture ? -1 : 1;
+        }
+
+        function applyTheme() {
+            const isLight = state.theme === "light";
+
+            elements.body.classList.toggle("light-theme", isLight);
+
+            const icon = isLight ? "🌙" : "☀️";
+
+            elements.themeToggle.textContent = icon;
+            elements.dashboardThemeButton.textContent = icon;
+        }
+
+        function setTheme(theme) {
+            state.theme = theme === "light" ? "light" : "dark";
+            localStorage.setItem("playpc-theme", state.theme);
+            applyTheme();
+        }
+
+        function toggleTheme() {
+            setTheme(state.theme === "dark" ? "light" : "dark");
+        }
+
+        function applySkin() {
+            const root = document.documentElement;
+
+            if (state.skin === "playstation") {
+                root.style.setProperty("--accent", "#4aa8ff");
+                root.style.setProperty("--accent-rgb", "74, 168, 255");
+                root.style.setProperty("--accent-2", "#00439c");
+            } else if (state.skin === "pc") {
+                root.style.setProperty("--accent", "#7cff00");
+                root.style.setProperty("--accent-rgb", "124, 255, 0");
+                root.style.setProperty("--accent-2", "#00ff88");
+            } else {
+                root.style.setProperty("--accent", "#00e5ff");
+                root.style.setProperty("--accent-rgb", "0, 229, 255");
+                root.style.setProperty("--accent-2", "#a855f7");
+            }
+
+            document.querySelectorAll(".skin-button").forEach(button => {
+                button.classList.toggle(
+                    "active",
+                    button.dataset.skin === state.skin
+                );
+            });
+        }
+
+        function setSkin(skin) {
+            if (!["standard", "playstation", "pc"].includes(skin)) {
+                skin = "standard";
+            }
+
+            state.skin = skin;
+            localStorage.setItem("playpc-skin", state.skin);
+            applySkin();
+        }
+
+        function getReadingTime(text) {
+            const clean = stripBBCode(text);
+
+            if (!clean) {
+                return 1;
+            }
+
+            const words = clean
+                .split(/\s+/)
+                .filter(Boolean)
+                .length;
 
             return Math.max(1, Math.ceil(words / 180));
-        }
-
-        function getVotes(post) {
-            const willPlay =
-                typeof post.votesWillPlay === "number" &&
-                Number.isFinite(post.votesWillPlay)
-                    ? post.votesWillPlay
-                    : 0;
-
-            const wontPlay =
-                typeof post.votesWontPlay === "number" &&
-                Number.isFinite(post.votesWontPlay)
-                    ? post.votesWontPlay
-                    : 0;
-
-            return {
-                willPlay,
-                wontPlay
-            };
-        }
-
-        function getVotedPosts() {
-            try {
-                const value = JSON.parse(
-                    localStorage.getItem(VOTE_STORAGE_KEY) || "{}"
-                );
-
-                return value && typeof value === "object"
-                    ? value
-                    : {};
-            } catch {
-                return {};
-            }
-        }
-
-        function setVotedPost(postId, type) {
-            const voted = getVotedPosts();
-            voted[String(postId)] = type;
-
-            localStorage.setItem(
-                VOTE_STORAGE_KEY,
-                JSON.stringify(voted)
-            );
         }
 
         function getBookmarks() {
             try {
                 const value = JSON.parse(
-                    localStorage.getItem(BOOKMARK_STORAGE_KEY) || "[]"
+                    localStorage.getItem("playpc-bookmarks") || "[]"
                 );
 
-                return Array.isArray(value)
-                    ? value.map(String)
-                    : [];
+                return Array.isArray(value) ? value.map(String) : [];
             } catch {
                 return [];
             }
         }
 
-        function toggleBookmark(postId) {
-            const id = String(postId);
-            let bookmarks = getBookmarks();
-
-            if (bookmarks.includes(id)) {
-                bookmarks = bookmarks.filter(item => item !== id);
-                showToast("Закладка удалена");
-            } else {
-                bookmarks.push(id);
-                showToast("Новость сохранена");
-            }
-
+        function saveBookmarks(bookmarks) {
             localStorage.setItem(
-                BOOKMARK_STORAGE_KEY,
+                "playpc-bookmarks",
                 JSON.stringify(bookmarks)
             );
+        }
 
+        function isBookmarked(id) {
+            return getBookmarks().includes(String(id));
+        }
+
+        function toggleBookmark(id) {
+            const bookmarks = getBookmarks();
+            const stringId = String(id);
+            const index = bookmarks.indexOf(stringId);
+
+            if (index >= 0) {
+                bookmarks.splice(index, 1);
+            } else {
+                bookmarks.push(stringId);
+            }
+
+            saveBookmarks(bookmarks);
             renderPosts();
         }
 
-        function isBookmarked(postId) {
-            return getBookmarks().includes(String(postId));
+        function fallbackCopyText(text) {
+            const textarea = document.createElement("textarea");
+
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.left = "-9999px";
+            textarea.style.top = "0";
+
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+
+            let success = false;
+
+            try {
+                success = document.execCommand("copy");
+            } catch {
+                success = false;
+            }
+
+            textarea.remove();
+
+            return success;
+        }
+
+        async function sharePost(post, button) {
+            const url = window.location.href.split("#")[0] + "#post-" + getPostId(post);
+            const title = String(post.title || "Новость PlayPC");
+
+            try {
+                if (navigator.share) {
+                    await navigator.share({
+                        title,
+                        text: title,
+                        url
+                    });
+
+                    return;
+                }
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(url);
+                } else {
+                    if (!fallbackCopyText(url)) {
+                        throw new Error("Не удалось скопировать");
+                    }
+                }
+
+                const oldText = button.textContent;
+                button.textContent = "✓ Ссылка скопирована";
+
+                setTimeout(() => {
+                    button.textContent = oldText;
+                }, 1800);
+            } catch (error) {
+                if (error && error.name === "AbortError") {
+                    return;
+                }
+
+                const oldText = button.textContent;
+                button.textContent = "⚠ Не удалось";
+
+                setTimeout(() => {
+                    button.textContent = oldText;
+                }, 1800);
+            }
+        }
+
+        function createImageElement(imageUrl, title) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "news-image-wrap";
+
+            if (imageUrl) {
+                const image = document.createElement("img");
+
+                image.className = "news-image";
+                image.loading = "lazy";
+                image.alt = title || "Обложка новости";
+                image.src = String(imageUrl);
+
+                image.addEventListener("error", () => {
+                    wrapper.innerHTML = `
+                        <div class="news-image" style="
+                            display:grid;
+                            place-items:center;
+                            color:var(--muted);
+                            background:
+                                linear-gradient(135deg, rgba(var(--accent-rgb),.08), transparent),
+                                var(--panel-3);
+                        ">
+                            🎮 Нет изображения
+                        </div>
+                    `;
+                }, { once: true });
+
+                wrapper.appendChild(image);
+            } else {
+                wrapper.innerHTML = `
+                    <div class="news-image" style="
+                        display:grid;
+                        place-items:center;
+                        color:var(--muted);
+                        background:
+                            linear-gradient(135deg, rgba(var(--accent-rgb),.08), transparent),
+                            var(--panel-3);
+                    ">
+                        🎮 PlayPC
+                    </div>
+                `;
+            }
+
+            return wrapper;
+        }
+
+        function createPostCard(post) {
+            const id = getPostId(post);
+            const title = String(post.title || "Без названия");
+            const platform = normalizePlatform(post.platform);
+            const content = String(post.content || post.text || "");
+            const imageUrl = String(post.imageUrl || post.image || "").trim();
+
+            const willPlay = Number(
+                post.willPlay ?? post.votes?.willPlay ?? post.playVotes ?? 0
+            );
+
+            const wontPlay = Number(
+                post.wontPlay ?? post.votes?.wontPlay ?? post.skipVotes ?? 0
+            );
+
+            const dateValue =
+                post.createdAt ||
+                post.date ||
+                post.created_at ||
+                null;
+
+            const pinned = Boolean(post.pinned);
+            const bookmarked = isBookmarked(id);
+
+            const article = document.createElement("article");
+
+            article.className = "news-card" + (pinned ? " pinned" : "");
+            article.id = "post-" + id;
+
+            if (pinned) {
+                const badge = document.createElement("div");
+
+                badge.className = "pinned-badge";
+                badge.textContent = "ЗАКРЕПЛЕНО";
+
+                article.appendChild(badge);
+            }
+
+            article.appendChild(createImageElement(imageUrl, title));
+
+            const platformBadge = document.createElement("div");
+
+            platformBadge.className = "platform-badge";
+            platformBadge.textContent = platform;
+
+            const imageWrap = article.querySelector(".news-image-wrap");
+
+            if (imageWrap) {
+                imageWrap.appendChild(platformBadge);
+            }
+
+            const body = document.createElement("div");
+
+            body.className = "news-body";
+
+            body.innerHTML = `
+                <div class="news-meta">
+                    <span>${escapeHtml(formatDate(dateValue))}</span>
+                    <span>⏱ ${getReadingTime(content)} мин. чтения</span>
+                </div>
+
+                <h2 class="news-title">${escapeHtml(title)}</h2>
+
+                <div class="news-content">${bbCodeToHtml(content)}</div>
+
+                <div class="news-actions">
+                    <button class="vote-button play" type="button" data-action="vote-play">
+                        🎮 Буду играть (${willPlay})
+                    </button>
+
+                    <button class="vote-button skip" type="button" data-action="vote-skip">
+                        ❌ Пропущу (${wontPlay})
+                    </button>
+
+                    <button class="action-button" type="button" data-action="share">
+                        ↗ Поделиться
+                    </button>
+
+                    <button class="action-button bookmark-button ${bookmarked ? "saved" : ""}" type="button" data-action="bookmark">
+                        ${bookmarked ? "★ Сохранено" : "☆ Сохранить"}
+                    </button>
+                </div>
+            `;
+
+            body.querySelectorAll(".spoiler-text").forEach(spoiler => {
+                const reveal = () => {
+                    spoiler.classList.toggle("revealed");
+                };
+
+                spoiler.addEventListener("click", reveal);
+
+                spoiler.addEventListener("keydown", event => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        reveal();
+                    }
+                });
+            });
+
+            const playButton = body.querySelector('[data-action="vote-play"]');
+            const skipButton = body.querySelector('[data-action="vote-skip"]');
+            const shareButton = body.querySelector('[data-action="share"]');
+            const bookmarkButton = body.querySelector('[data-action="bookmark"]');
+
+            playButton.addEventListener("click", () => {
+                votePost(id, "willPlay", playButton, skipButton);
+            });
+
+            skipButton.addEventListener("click", () => {
+                votePost(id, "wontPlay", skipButton, playButton);
+            });
+
+            shareButton.addEventListener("click", () => {
+                sharePost(post, shareButton);
+            });
+
+            bookmarkButton.addEventListener("click", () => {
+                toggleBookmark(id);
+            });
+
+            article.appendChild(body);
+
+            return article;
         }
 
         function getFilteredPosts() {
-            const search = currentSearch
-                .trim()
-                .toLowerCase();
+            const query = state.search.trim().toLowerCase();
 
-            return allPosts.filter(post => {
-                const matchesFilter =
-                    currentFilter === "all" ||
-                    String(post.platform) === currentFilter;
+            return state.posts.filter(post => {
+                const platform = normalizePlatform(post.platform);
 
-                if (!matchesFilter) {
+                if (
+                    state.filter !== "all" &&
+                    platform !== state.filter
+                ) {
                     return false;
                 }
 
-                if (!search) {
+                if (!query) {
                     return true;
                 }
 
                 const title = String(post.title || "").toLowerCase();
                 const content = stripBBCode(
-                    String(post.content || "")
+                    String(post.content || post.text || "")
                 ).toLowerCase();
 
-                return (
-                    title.includes(search) ||
-                    content.includes(search)
-                );
+                return title.includes(query) || content.includes(query);
             });
         }
 
         function renderPosts() {
             const posts = getFilteredPosts();
 
-            postCount.textContent =
-                `${posts.length} ${getPostWord(posts.length)}`;
+            elements.newsGrid.innerHTML = "";
+
+            elements.postCount.textContent =
+                posts.length === state.posts.length
+                    ? `${posts.length} ${getRussianNewsWord(posts.length)}`
+                    : `${posts.length} из ${state.posts.length}`;
 
             if (!posts.length) {
-                newsGrid.innerHTML = `
-                    <div class="empty-state">
-                        <strong>Ничего не найдено</strong>
-                        Попробуй изменить поисковый запрос или фильтр.
-                    </div>
-                `;
+                const empty = document.createElement("div");
+
+                empty.className = "no-results";
+                empty.textContent = state.posts.length
+                    ? "🔎 По вашему запросу ничего не найдено."
+                    : "📰 Новостей пока нет.";
+
+                elements.newsGrid.appendChild(empty);
                 return;
             }
 
-            newsGrid.innerHTML = posts.map(post => {
-                const votes = getVotes(post);
-                const votedPosts = getVotedPosts();
-                const votedType = votedPosts[String(post.id)] || "";
-                const bookmarked = isBookmarked(post.id);
-                const pinned = post.pinned === true;
-
-                const imageUrl = String(
-                    post.imageUrl || ""
-                ).trim();
-
-                const safeTitle = escapeHtml(post.title || "");
-                const safePlatform = escapeHtml(
-                    post.platform || ""
-                );
-
-                const imageHtml = imageUrl
-                    ? `
-                        <div class="news-image-wrap">
-                            <img
-                                class="news-image"
-                                src="${escapeHtml(imageUrl)}"
-                                alt="${safeTitle}"
-                                loading="lazy"
-                                onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
-                            >
-                            <div
-                                class="news-image-placeholder"
-                                style="display:none;"
-                            >
-                                Изображение недоступно
-                            </div>
-                        </div>
-                    `
-                    : `
-                        <div class="news-image-wrap">
-                            <div class="news-image-placeholder">
-                                Изображение отсутствует
-                            </div>
-                        </div>
-                    `;
-
-                return `
-                    <article
-                        class="news-card ${pinned ? "pinned" : ""}"
-                        data-post-id="${escapeHtml(post.id)}"
-                    >
-                        ${
-                            pinned
-                                ? '<div class="pinned-badge">📌 ЗАКРЕПЛЕНО</div>'
-                                : ""
-                        }
-
-                        ${imageHtml}
-
-                        <div class="news-body">
-                            <div class="news-meta">
-                                <span class="platform-badge">
-                                    ${safePlatform}
-                                </span>
-
-                                <span class="news-date">
-                                    ${formatDate(post.createdAt)}
-                                </span>
-                            </div>
-
-                            <h2 class="news-title">
-                                ${safeTitle}
-                            </h2>
-
-                            <div class="news-content">
-                                ${bbCodeToHtml(post.content || "")}
-                            </div>
-
-                            <div class="waiting-rating">
-                                <div class="waiting-title">
-                                    Рейтинг ожидания
-                                </div>
-
-                                <div class="vote-row">
-                                    <button
-                                        class="vote-btn will ${votedType === "willPlay" ? "voted" : ""}"
-                                        data-vote-id="${escapeHtml(post.id)}"
-                                        data-vote-type="willPlay"
-                                        type="button"
-                                        ${votedType ? "disabled" : ""}
-                                    >
-                                        🎮 Буду играть (${votes.willPlay})
-                                    </button>
-
-                                    <button
-                                        class="vote-btn wont ${votedType === "wontPlay" ? "voted" : ""}"
-                                        data-vote-id="${escapeHtml(post.id)}"
-                                        data-vote-type="wontPlay"
-                                        type="button"
-                                        ${votedType ? "disabled" : ""}
-                                    >
-                                        ❌ Пропущу (${votes.wontPlay})
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="card-footer">
-                                <span class="reading-time">
-                                    ⏱ ${calculateReadingTime(post.content)} мин. чтения
-                                </span>
-
-                                <div class="card-actions">
-                                    <button
-                                        class="bookmark-btn ${bookmarked ? "saved" : ""}"
-                                        data-bookmark-id="${escapeHtml(post.id)}"
-                                        type="button"
-                                    >
-                                        ${bookmarked ? "★ Сохранено" : "☆ Сохранить"}
-                                    </button>
-
-                                    <button
-                                        class="share-btn"
-                                        data-share-id="${escapeHtml(post.id)}"
-                                        type="button"
-                                    >
-                                        ↗ Поделиться
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                `;
-            }).join("");
+            posts.forEach(post => {
+                elements.newsGrid.appendChild(createPostCard(post));
+            });
         }
 
-        function getPostWord(number) {
+        function getRussianNewsWord(number) {
             const n = Math.abs(number) % 100;
-            const last = n % 10;
+            const n1 = n % 10;
 
-            if (n >= 11 && n <= 19) {
-                return "публикаций";
+            if (n > 10 && n < 20) {
+                return "новостей";
             }
 
-            if (last === 1) {
-                return "публикация";
+            if (n1 === 1) {
+                return "новость";
             }
 
-            if (last >= 2 && last <= 4) {
-                return "публикации";
+            if (n1 >= 2 && n1 <= 4) {
+                return "новости";
             }
 
-            return "публикаций";
+            return "новостей";
         }
 
         async function loadPosts() {
@@ -2244,57 +2108,40 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(
-                        `HTTP ${response.status}`
-                    );
+                    throw new Error("HTTP " + response.status);
                 }
 
                 const data = await response.json();
 
-                allPosts = Array.isArray(data)
+                state.posts = Array.isArray(data)
                     ? data
-                    : [];
+                    : Array.isArray(data.posts)
+                        ? data.posts
+                        : [];
 
                 renderPosts();
                 updateAdminStats();
                 renderAdminPosts();
             } catch (error) {
-                console.error(
-                    "Ошибка загрузки публикаций:",
-                    error
-                );
+                console.error("Ошибка загрузки новостей:", error);
 
-                newsGrid.innerHTML = `
-                    <div class="empty-state">
-                        <strong>Не удалось загрузить новости</strong>
-                        Проверь соединение с сервером и попробуй обновить страницу.
+                elements.newsGrid.innerHTML = `
+                    <div class="no-results">
+                        ⚠ Не удалось загрузить новости.
                     </div>
                 `;
 
-                postCount.textContent = "Ошибка";
+                elements.postCount.textContent = "Ошибка загрузки";
             }
         }
 
-        async function votePost(postId, type) {
-            const id = String(postId);
-            const votedPosts = getVotedPosts();
-
-            if (votedPosts[id]) {
-                showToast("Ты уже голосовал за эту новость");
+        async function votePost(id, type, clickedButton, otherButton) {
+            if (clickedButton.disabled) {
                 return;
             }
 
-            const card = document.querySelector(
-                `.news-card[data-post-id="${CSS.escape(id)}"]`
-            );
-
-            const buttons = card
-                ? card.querySelectorAll(".vote-btn")
-                : [];
-
-            buttons.forEach(button => {
-                button.disabled = true;
-            });
+            clickedButton.disabled = true;
+            otherButton.disabled = true;
 
             try {
                 const response = await fetch(
@@ -2305,543 +2152,523 @@
                             "Content-Type": "application/json",
                             "Accept": "application/json"
                         },
-                        body: JSON.stringify({
-                            type
-                        })
+                        body: JSON.stringify({ type })
                     }
                 );
 
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
+                }
+
                 const data = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(
-                        data.error || "Не удалось сохранить голос"
-                    );
-                }
-
-                const index = allPosts.findIndex(
-                    post => String(post.id) === id
+                const updatedPost = state.posts.find(
+                    post => String(getPostId(post)) === String(id)
                 );
 
-                if (index !== -1) {
-                    allPosts[index] = {
-                        ...allPosts[index],
-                        votesWillPlay: data.votesWillPlay,
-                        votesWontPlay: data.votesWontPlay
-                    };
-                }
+                if (updatedPost) {
+                    if (
+                        data &&
+                        (
+                            Object.prototype.hasOwnProperty.call(data, "willPlay") ||
+                            Object.prototype.hasOwnProperty.call(data, "wontPlay")
+                        )
+                    ) {
+                        if (Object.prototype.hasOwnProperty.call(data, "willPlay")) {
+                            updatedPost.willPlay = Number(data.willPlay);
+                        }
 
-                setVotedPost(id, type);
+                        if (Object.prototype.hasOwnProperty.call(data, "wontPlay")) {
+                            updatedPost.wontPlay = Number(data.wontPlay);
+                        }
+                    } else if (data && data.post) {
+                        Object.assign(updatedPost, data.post);
+                    } else {
+                        if (type === "willPlay") {
+                            updatedPost.willPlay =
+                                Number(updatedPost.willPlay || 0) + 1;
+                        } else {
+                            updatedPost.wontPlay =
+                                Number(updatedPost.wontPlay || 0) + 1;
+                        }
+                    }
+                }
 
                 renderPosts();
-
-                showToast(
-                    type === "willPlay"
-                        ? "Голос «Буду играть» учтён"
-                        : "Голос «Пропущу» учтён"
-                );
-
-                updateAdminStats();
-                renderAdminPosts();
             } catch (error) {
-                console.error(
-                    "Ошибка голосования:",
-                    error
-                );
+                console.error("Ошибка голосования:", error);
 
-                buttons.forEach(button => {
-                    button.disabled = false;
-                });
+                clickedButton.disabled = false;
+                otherButton.disabled = false;
 
-                showToast(
-                    error.message ||
-                    "Не удалось отправить голос"
-                );
+                alert("Не удалось отправить голос. Попробуйте ещё раз.");
             }
         }
 
-        async function sharePost(postId) {
-            const id = String(postId);
-            const url = new URL(
-                `${window.location.pathname}#post-${encodeURIComponent(id)}`,
-                window.location.origin
-            ).href;
+        function renderReleases() {
+            const releases = [...state.releases].sort(compareReleases);
 
-            try {
-                if (
-                    navigator.share &&
-                    /Mobi|Android|iPhone|iPad/i.test(
-                        navigator.userAgent
-                    )
-                ) {
-                    await navigator.share({
-                        title: "PlayPC",
-                        text: "Интересная новость на PlayPC",
-                        url
-                    });
+            elements.releaseList.innerHTML = "";
 
-                    return;
-                }
-
-                if (
-                    navigator.clipboard &&
-                    window.isSecureContext
-                ) {
-                    await navigator.clipboard.writeText(url);
-                    showToast("Ссылка скопирована");
-                    return;
-                }
-
-                const textarea =
-                    document.createElement("textarea");
-
-                textarea.value = url;
-                textarea.style.position = "fixed";
-                textarea.style.opacity = "0";
-
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand("copy");
-                textarea.remove();
-
-                showToast("Ссылка скопирована");
-            } catch (error) {
-                console.error(
-                    "Ошибка копирования ссылки:",
-                    error
-                );
-
-                showToast("Не удалось скопировать ссылку");
-            }
-        }
-
-        function renderReleaseCalendar() {
-            const container =
-                document.getElementById("releaseList");
-
-            const now = new Date();
-
-            container.innerHTML = releaseGames.map(game => {
-                const releaseDate = new Date(
-                    `${game.date}T00:00:00`
-                );
-
-                const today = new Date(
-                    now.getFullYear(),
-                    now.getMonth(),
-                    now.getDate()
-                );
-
-                const target = new Date(
-                    releaseDate.getFullYear(),
-                    releaseDate.getMonth(),
-                    releaseDate.getDate()
-                );
-
-                const difference =
-                    target.getTime() -
-                    today.getTime();
-
-                const days = Math.ceil(
-                    difference / 86400000
-                );
-
-                let label = "";
-                let className = "days-left";
-
-                if (days > 0) {
-                    label = `Осталось: ${days} дн.`;
-                } else if (days === 0) {
-                    label = "Сегодня";
-                    className += " today";
-                } else {
-                    label = "Дата прошла";
-                    className += " passed";
-                }
-
-                return `
-                    <div class="release-item">
-                        <div>
-                            <div class="release-name">
-                                ${escapeHtml(game.name)}
-                            </div>
-
-                            <div class="release-date">
-                                ${formatDate(game.date)}
-                            </div>
-                        </div>
-
-                        <div class="${className}">
-                            ${label}
-                        </div>
-                    </div>
-                `;
-            }).join("");
-        }
-
-        function updateScrollProgress() {
-            const scrollTop =
-                window.scrollY ||
-                document.documentElement.scrollTop;
-
-            const scrollHeight =
-                document.documentElement.scrollHeight -
-                document.documentElement.clientHeight;
-
-            const progress =
-                scrollHeight > 0
-                    ? (scrollTop / scrollHeight) * 100
-                    : 0;
-
-            document.getElementById(
-                "scrollProgress"
-            ).style.width = `${Math.min(100, Math.max(0, progress))}%`;
-        }
-
-        function showToast(message) {
-            toast.textContent = message;
-            toast.classList.add("show");
-
-            window.clearTimeout(
-                showToast.timeout
-            );
-
-            showToast.timeout =
-                window.setTimeout(() => {
-                    toast.classList.remove("show");
-                }, 2600);
-        }
-
-        function openLoginModal() {
-            loginModal.classList.add("open");
-            loginModal.setAttribute("aria-hidden", "false");
-
-            loginPassword.value = "";
-            hideLoginError();
-
-            window.setTimeout(() => {
-                loginPassword.focus();
-            }, 50);
-        }
-
-        function closeLoginModal() {
-            loginModal.classList.remove("open");
-            loginModal.setAttribute("aria-hidden", "true");
-        }
-
-        function showLoginError(message) {
-            const element =
-                document.getElementById("loginError");
-
-            element.textContent = message;
-            element.classList.add("show");
-        }
-
-        function hideLoginError() {
-            const element =
-                document.getElementById("loginError");
-
-            element.textContent = "";
-            element.classList.remove("show");
-        }
-
-        function openDashboard() {
-            closeLoginModal();
-
-            currentAdminPassword =
-                loginPassword.value.trim();
-
-            dashboardPassword.value =
-                currentAdminPassword;
-
-            dashboardOverlay.classList.add("open");
-            dashboardOverlay.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-            document.body.classList.add(
-                "dashboard-open"
-            );
-
-            updateAdminStats();
-            renderAdminPosts();
-        }
-
-        function closeDashboard() {
-            dashboardOverlay.classList.remove("open");
-            dashboardOverlay.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-
-            document.body.classList.remove(
-                "dashboard-open"
-            );
-
-            currentAdminPassword = "";
-            dashboardPassword.value = "";
-        }
-
-        function updateAdminStats() {
-            const total = allPosts.length;
-
-            const pc = allPosts.filter(
-                post => post.platform === "PC"
-            ).length;
-
-            const playstation = allPosts.filter(
-                post => post.platform === "PlayStation"
-            ).length;
-
-            document.getElementById(
-                "statTotal"
-            ).textContent = total;
-
-            document.getElementById(
-                "statPC"
-            ).textContent = pc;
-
-            document.getElementById(
-                "statPlayStation"
-            ).textContent = playstation;
-        }
-
-        function renderAdminPosts() {
-            const container =
-                document.getElementById("adminPostList");
-
-            if (!allPosts.length) {
-                container.innerHTML = `
+            if (!releases.length) {
+                elements.releaseList.innerHTML = `
                     <div class="empty-state">
-                        <strong>Публикаций пока нет</strong>
-                        Создай первую новость через форму слева.
+                        Пока нет добавленных релизов.
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = allPosts.map(post => {
-                const votes = getVotes(post);
+            releases.forEach(release => {
+                const item = document.createElement("div");
 
-                return `
-                    <div
-                        class="admin-post"
-                        data-admin-post-id="${escapeHtml(post.id)}"
-                    >
-                        <div class="admin-post-info">
-                            <div class="admin-post-title">
-                                ${post.pinned ? "📌 " : ""}
-                                ${escapeHtml(post.title || "Без названия")}
-                            </div>
+                item.className = "release-item";
 
-                            <div class="admin-post-meta">
-                                ${escapeHtml(post.platform || "")}
-                                ·
-                                👍 ${votes.willPlay}
-                                ·
-                                👎 ${votes.wontPlay}
-                                ·
-                                ${formatDate(post.createdAt)}
-                            </div>
-                        </div>
+                const days = getDaysUntilRelease(release.releaseDate);
+                const released = days !== null && days <= 0;
 
-                        <button
-                            class="delete-btn"
-                            data-delete-id="${escapeHtml(post.id)}"
-                            type="button"
-                        >Удалить</button>
+                let countdown = "Дата не указана";
+
+                if (released) {
+                    countdown = "🎮 Уже в продаже!";
+                } else if (days !== null) {
+                    countdown = `Осталось: ${days} ${getDayWord(days)}`;
+                }
+
+                item.innerHTML = `
+                    <div class="release-title">${escapeHtml(release.title || "Без названия")}</div>
+                    <div class="release-date">${escapeHtml(formatDate(release.releaseDate))}</div>
+                    <div class="release-countdown ${released ? "released" : ""}">
+                        ${escapeHtml(countdown)}
                     </div>
                 `;
-            }).join("");
+
+                elements.releaseList.appendChild(item);
+            });
         }
 
-        function showDashboardMessage(
-            elementId,
-            message,
-            type
-        ) {
-            const element =
-                document.getElementById(elementId);
+        function getDayWord(days) {
+            const n = Math.abs(Number(days)) % 100;
+            const n1 = n % 10;
 
-            element.textContent = message;
-            element.className =
-                `dashboard-message show ${type}`;
+            if (n > 10 && n < 20) {
+                return "дней";
+            }
 
-            window.clearTimeout(
-                element._timeout
+            if (n1 === 1) {
+                return "день";
+            }
+
+            if (n1 >= 2 && n1 <= 4) {
+                return "дня";
+            }
+
+            return "дней";
+        }
+
+        async function loadReleases() {
+            try {
+                const response = await fetch("/api/releases", {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
+                    },
+                    cache: "no-store"
+                });
+
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
+                }
+
+                const data = await response.json();
+
+                state.releases = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data.releases)
+                        ? data.releases
+                        : [];
+
+                renderReleases();
+                renderAdminReleases();
+                updateAdminStats();
+            } catch (error) {
+                console.error("Ошибка загрузки релизов:", error);
+
+                elements.releaseList.innerHTML = `
+                    <div class="error-state">
+                        ⚠ Не удалось загрузить календарь.
+                    </div>
+                `;
+
+                elements.adminReleaseList.innerHTML = `
+                    <div class="error-state">
+                        ⚠ Не удалось загрузить релизы.
+                    </div>
+                `;
+
+                elements.statReleases.textContent = "—";
+            }
+        }
+
+        function updateAdminStats() {
+            const total = state.posts.length;
+
+            const pc = state.posts.filter(
+                post => normalizePlatform(post.platform) === "PC"
+            ).length;
+
+            const ps = state.posts.filter(
+                post => normalizePlatform(post.platform) === "PlayStation"
+            ).length;
+
+            elements.statTotal.textContent = String(total);
+            elements.statPC.textContent = String(pc);
+            elements.statPS.textContent = String(ps);
+            elements.statReleases.textContent = String(state.releases.length);
+        }
+
+        function renderAdminPosts() {
+            elements.adminPostList.innerHTML = "";
+
+            if (!state.posts.length) {
+                elements.adminPostList.innerHTML = `
+                    <div class="empty-state">Новостей пока нет.</div>
+                `;
+                return;
+            }
+
+            state.posts.forEach(post => {
+                const item = document.createElement("div");
+
+                item.className = "admin-list-item";
+
+                const title = String(post.title || "Без названия");
+                const platform = normalizePlatform(post.platform);
+                const pinned = post.pinned ? " • 📌 Закреплено" : "";
+
+                item.innerHTML = `
+                    <div class="admin-list-item-main">
+                        <div class="admin-list-item-title">${escapeHtml(title)}</div>
+                        <div class="admin-list-item-meta">
+                            ${escapeHtml(platform)}${escapeHtml(pinned)}
+                        </div>
+                    </div>
+
+                    <button class="danger-button" type="button" data-delete-post="${escapeHtml(getPostId(post))}">
+                        🗑 Удалить
+                    </button>
+                `;
+
+                const deleteButton = item.querySelector(
+                    "[data-delete-post]"
+                );
+
+                deleteButton.addEventListener("click", () => {
+                    deletePost(getPostId(post), deleteButton);
+                });
+
+                elements.adminPostList.appendChild(item);
+            });
+        }
+
+        function renderAdminReleases() {
+            const releases = [...state.releases].sort(compareReleases);
+
+            elements.adminReleaseList.innerHTML = "";
+
+            if (!releases.length) {
+                elements.adminReleaseList.innerHTML = `
+                    <div class="empty-state">
+                        В календаре пока нет игр.
+                    </div>
+                `;
+                return;
+            }
+
+            releases.forEach(release => {
+                const id = getReleaseId(release);
+                const item = document.createElement("div");
+
+                item.className = "release-admin-item";
+
+                item.innerHTML = `
+                    <div>
+                        <div class="release-admin-title">
+                            ${escapeHtml(release.title || "Без названия")}
+                        </div>
+                        <div class="release-admin-date">
+                            ${escapeHtml(formatDate(release.releaseDate))}
+                        </div>
+                    </div>
+
+                    <button
+                        class="danger-button"
+                        type="button"
+                        data-delete-release
+                    >
+                        🗑 Удалить
+                    </button>
+                `;
+
+                item
+                    .querySelector("[data-delete-release]")
+                    .addEventListener("click", () => {
+                        deleteRelease(id);
+                    });
+
+                elements.adminReleaseList.appendChild(item);
+            });
+        }
+
+        function getAdminPassword() {
+            return (
+                elements.adminPasswordInput.value.trim() ||
+                state.adminPassword ||
+                ADMIN_PASSWORD
             );
+        }
 
-            element._timeout =
-                window.setTimeout(() => {
-                    element.classList.remove("show");
-                }, 3500);
+        function setAdminMessage(element, text, type = "") {
+            element.textContent = text;
+            element.className = "admin-message" + (type ? ` ${type}` : "");
+        }
+
+        function openAdminPanel() {
+            elements.adminOverlay.classList.add("active");
+            elements.adminOverlay.setAttribute("aria-hidden", "false");
+
+            elements.adminLogin.hidden = false;
+            elements.adminDashboard.hidden = true;
+
+            elements.loginPassword.value = "";
+            setAdminMessage(elements.loginMessage, "");
+
+            setTimeout(() => {
+                elements.loginPassword.focus();
+            }, 50);
+        }
+
+        function closeAdminPanel() {
+            elements.adminOverlay.classList.remove("active");
+            elements.adminOverlay.setAttribute("aria-hidden", "true");
+        }
+
+        function loginAdmin() {
+            const password = elements.loginPassword.value;
+
+            if (password !== ADMIN_PASSWORD) {
+                setAdminMessage(
+                    elements.loginMessage,
+                    "❌ Неверный пароль.",
+                    "error"
+                );
+
+                elements.loginPassword.select();
+                return;
+            }
+
+            state.adminPassword = password;
+            elements.adminPasswordInput.value = password;
+
+            elements.adminLogin.hidden = true;
+            elements.adminDashboard.hidden = false;
+
+            setAdminMessage(elements.loginMessage, "");
+
+            updateAdminStats();
+            renderAdminPosts();
+            renderAdminReleases();
         }
 
         async function createPost(event) {
             event.preventDefault();
 
-            const form =
-                document.getElementById("createPostForm");
+            const password = getAdminPassword();
 
-            const title =
-                document.getElementById("postTitle")
-                    .value
-                    .trim();
+            const payload = {
+                title: elements.postForm.querySelector("#postTitle").value.trim(),
+                platform: elements.postForm.querySelector("#postPlatform").value,
+                imageUrl: elements.postForm.querySelector("#postImage").value.trim(),
+                content: elements.postForm.querySelector("#postContent").value,
+                pinned: elements.postForm.querySelector("#postPinned").checked,
+                password
+            };
 
-            const platform =
-                document.getElementById("postPlatform")
-                    .value;
-
-            const imageUrl =
-                document.getElementById("postImageUrl")
-                    .value
-                    .trim();
-
-            const content =
-                document.getElementById("postContent")
-                    .value
-                    .trim();
-
-            const pinned =
-                document.getElementById("postPinned")
-                    .checked;
-
-            const password =
-                dashboardPassword.value.trim() ||
-                currentAdminPassword;
-
-            if (!password) {
-                showDashboardMessage(
-                    "createMessage",
-                    "Введите пароль администратора.",
+            if (!payload.title || !payload.content) {
+                setAdminMessage(
+                    elements.postMessage,
+                    "Заполните заголовок и текст.",
                     "error"
                 );
                 return;
             }
 
-            const submitButton =
-                form.querySelector(
-                    'button[type="submit"]'
-                );
-
-            submitButton.disabled = true;
-            submitButton.textContent =
-                "Публикация...";
-
             try {
-                const response = await fetch(
-                    "/api/posts",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
-                        body: JSON.stringify({
-                            title,
-                            platform,
-                            imageUrl,
-                            content,
-                            password,
-                            pinned
-                        })
-                    }
-                );
-
-                const data = await response.json();
+                const response = await fetch("/api/posts", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
 
                 if (!response.ok) {
+                    const data = await response.json().catch(() => null);
                     throw new Error(
-                        data.error ||
-                        "Не удалось создать публикацию"
+                        data?.error ||
+                        data?.message ||
+                        `HTTP ${response.status}`
                     );
                 }
 
-                allPosts = [
-                    data,
-                    ...allPosts.filter(
-                        post =>
-                            String(post.id) !==
-                            String(data.id)
-                    )
-                ];
-
-                form.reset();
-
-                updateAdminStats();
-                renderAdminPosts();
-                renderPosts();
-
-                showDashboardMessage(
-                    "createMessage",
-                    pinned
-                        ? "Новость опубликована и закреплена на главной."
-                        : "Новость успешно опубликована.",
+                setAdminMessage(
+                    elements.postMessage,
+                    "✓ Новость успешно опубликована.",
                     "success"
                 );
 
-                showToast("Публикация создана");
-            } catch (error) {
-                console.error(
-                    "Ошибка создания поста:",
-                    error
-                );
+                elements.postForm.reset();
 
-                showDashboardMessage(
-                    "createMessage",
-                    error.message ||
-                    "Ошибка сервера.",
+                await loadPosts();
+            } catch (error) {
+                console.error("Ошибка создания новости:", error);
+
+                setAdminMessage(
+                    elements.postMessage,
+                    "❌ " + error.message,
                     "error"
                 );
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent =
-                    "🚀 Опубликовать новость";
             }
         }
 
-        async function deletePost(postId) {
-            const password =
-                dashboardPassword.value.trim() ||
-                currentAdminPassword;
-
-            if (!password) {
-                showToast(
-                    "Введите пароль администратора"
-                );
+        async function deletePost(id, button) {
+            if (!confirm("Удалить эту новость?")) {
                 return;
             }
 
-            const post = allPosts.find(
-                item =>
-                    String(item.id) ===
-                    String(postId)
-            );
-
-            if (!post) {
-                showToast("Пост не найден");
-                return;
-            }
-
-            const confirmed =
-                window.confirm(
-                    `Удалить новость «${post.title}»?`
-                );
-
-            if (!confirmed) {
-                return;
-            }
+            button.disabled = true;
 
             try {
                 const response = await fetch(
-                    `/api/posts/${encodeURIComponent(postId)}`,
+                    `/api/posts/${encodeURIComponent(id)}`,
                     {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json",
                             "Accept": "application/json",
-                            "X-Admin-Password": password
+                            "X-Admin-Password": getAdminPassword()
+                        },
+                        body: JSON.stringify({
+                            password: getAdminPassword()
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    const data = await response.json().catch(() => null);
+
+                    throw new Error(
+                        data?.error ||
+                        data?.message ||
+                        `HTTP ${response.status}`
+                    );
+                }
+
+                await loadPosts();
+            } catch (error) {
+                console.error("Ошибка удаления новости:", error);
+                alert("Не удалось удалить новость: " + error.message);
+                button.disabled = false;
+            }
+        }
+
+        async function createRelease() {
+            const title = elements.releaseTitle.value.trim();
+            const releaseDate = elements.releaseDate.value;
+            const password = getAdminPassword();
+
+            if (!title || !releaseDate) {
+                setAdminMessage(
+                    elements.releaseMessage,
+                    "Заполните название игры и дату выхода.",
+                    "error"
+                );
+                return;
+            }
+
+            elements.addReleaseButton.disabled = true;
+
+            try {
+                const response = await fetch("/api/releases", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        title,
+                        releaseDate,
+                        password
+                    })
+                });
+
+                const data = await response.json().catch(() => null);
+
+                if (!response.ok) {
+                    throw new Error(
+                        data?.error ||
+                        data?.message ||
+                        `HTTP ${response.status}`
+                    );
+                }
+
+                if (response.status !== 201) {
+                    throw new Error(
+                        data?.error ||
+                        data?.message ||
+                        `Сервер вернул неожиданный статус: ${response.status}`
+                    );
+                }
+
+                elements.releaseTitle.value = "";
+                elements.releaseDate.value = "";
+
+                setAdminMessage(
+                    elements.releaseMessage,
+                    "✓ Игра добавлена в календарь.",
+                    "success"
+                );
+
+                await loadReleases();
+            } catch (error) {
+                console.error("Ошибка добавления релиза:", error);
+
+                setAdminMessage(
+                    elements.releaseMessage,
+                    "❌ " + error.message,
+                    "error"
+                );
+            } finally {
+                elements.addReleaseButton.disabled = false;
+            }
+        }
+
+        async function deleteRelease(id) {
+            if (!confirm("Удалить эту игру из календаря?")) {
+                return;
+            }
+
+            const password = getAdminPassword();
+
+            try {
+                const response = await fetch(
+                    `/api/releases/${encodeURIComponent(id)}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
                         },
                         body: JSON.stringify({
                             password
@@ -2849,594 +2676,194 @@
                     }
                 );
 
-                const data = await response.json();
+                const data = await response.json().catch(() => null);
 
                 if (!response.ok) {
                     throw new Error(
-                        data.error ||
-                        "Не удалось удалить публикацию"
+                        data?.error ||
+                        data?.message ||
+                        `HTTP ${response.status}`
                     );
                 }
 
-                allPosts = allPosts.filter(
-                    item =>
-                        String(item.id) !==
-                        String(postId)
+                await loadReleases();
+
+                setAdminMessage(
+                    elements.releaseMessage,
+                    "✓ Игра удалена из календаря.",
+                    "success"
                 );
-
-                updateAdminStats();
-                renderAdminPosts();
-                renderPosts();
-
-                showToast("Публикация удалена");
             } catch (error) {
-                console.error(
-                    "Ошибка удаления поста:",
-                    error
-                );
+                console.error("Ошибка удаления релиза:", error);
 
-                showToast(
-                    error.message ||
-                    "Ошибка удаления"
+                setAdminMessage(
+                    elements.releaseMessage,
+                    "❌ " + error.message,
+                    "error"
                 );
             }
         }
 
-        function setSkin(skin) {
-            const root =
-                document.documentElement;
+        function setupFilters() {
+            document.querySelectorAll(".filter-button").forEach(button => {
+                button.addEventListener("click", () => {
+                    state.filter = button.dataset.filter || "all";
 
-            if (skin === "playstation") {
-                root.style.setProperty(
-                    "--accent",
-                    "#00439c"
-                );
-
-                root.style.setProperty(
-                    "--accent-rgb",
-                    "0, 67, 156"
-                );
-
-                root.style.setProperty(
-                    "--accent-secondary",
-                    "#006fcd"
-                );
-
-                root.style.setProperty(
-                    "--accent-secondary-rgb",
-                    "0, 111, 205"
-                );
-            } else if (skin === "pc") {
-                root.style.setProperty(
-                    "--accent",
-                    "#39ff14"
-                );
-
-                root.style.setProperty(
-                    "--accent-rgb",
-                    "57, 255, 20"
-                );
-
-                root.style.setProperty(
-                    "--accent-secondary",
-                    "#aaff00"
-                );
-
-                root.style.setProperty(
-                    "--accent-secondary-rgb",
-                    "170, 255, 0"
-                );
-            } else {
-                root.style.setProperty(
-                    "--accent",
-                    "#00e5ff"
-                );
-
-                root.style.setProperty(
-                    "--accent-rgb",
-                    "0, 229, 255"
-                );
-
-                root.style.setProperty(
-                    "--accent-secondary",
-                    "#8a2be2"
-                );
-
-                root.style.setProperty(
-                    "--accent-secondary-rgb",
-                    "138, 43, 226"
-                );
-            }
-
-            localStorage.setItem(
-                SKIN_STORAGE_KEY,
-                skin
-            );
-
-            document.querySelectorAll(
-                ".skin-btn"
-            ).forEach(button => {
-                button.classList.toggle(
-                    "active",
-                    button.dataset.skin === skin
-                );
-            });
-        }
-
-        function loadSavedSkin() {
-            let skin =
-                localStorage.getItem(
-                    SKIN_STORAGE_KEY
-                );
-
-            if (
-                skin !== "cyberpunk" &&
-                skin !== "playstation" &&
-                skin !== "pc"
-            ) {
-                skin = "cyberpunk";
-            }
-
-            setSkin(skin);
-        }
-
-        function setTheme(theme) {
-            const isLight =
-                theme === "light";
-
-            document.body.classList.toggle(
-                "light-theme",
-                isLight
-            );
-
-            localStorage.setItem(
-                THEME_STORAGE_KEY,
-                isLight
-                    ? "light"
-                    : "dark"
-            );
-
-            document
-                .querySelector('meta[name="theme-color"]')
-                .setAttribute(
-                    "content",
-                    isLight
-                        ? "#eef2f7"
-                        : "#05070d"
-                );
-        }
-
-        function loadSavedTheme() {
-            const savedTheme =
-                localStorage.getItem(
-                    THEME_STORAGE_KEY
-                );
-
-            setTheme(
-                savedTheme === "light"
-                    ? "light"
-                    : "dark"
-            );
-        }
-
-        function insertTemplate(type) {
-            const textarea =
-                document.getElementById(
-                    "postContent"
-                );
-
-            if (type === "review") {
-                textarea.value =
-`[b]Обзор игры[/b]
-
-Коротко о проекте, его атмосфере и главных особенностях.
-
-[i]Геймплей:[/i]
-Опиши основные механики и впечатления.
-
-[i]Графика:[/i]
-Опиши визуальную часть проекта.
-
-[spoiler]Здесь можно разместить сюжетный спойлер.[/spoiler]
-
-[b]Итог:[/b]
-Финальная информация для читателя.`;
-            }
-
-            if (type === "hot") {
-                textarea.value =
-`[b]ГОРЯЧАЯ НОВОСТЬ[/b]
-
-Разработчики представили новую информацию об игре.
-
-[i]Главное:[/i]
-Ключевые детали события.
-
-[i]Что известно:[/i]
-Факты и подробности.
-
-[spoiler]Дополнительная информация со спойлерами.[/spoiler]`;
-            }
-
-            textarea.focus();
-        }
-
-        document
-            .getElementById("themeToggle")
-            .addEventListener("click", () => {
-                setTheme(
-                    document.body.classList.contains(
-                        "light-theme"
-                    )
-                        ? "dark"
-                        : "light"
-                );
-            });
-
-        document
-            .getElementById("openAdminButton")
-            .addEventListener(
-                "click",
-                openLoginModal
-            );
-
-        document
-            .getElementById("closeLoginButton")
-            .addEventListener(
-                "click",
-                closeLoginModal
-            );
-
-        loginModal.addEventListener(
-            "click",
-            event => {
-                if (
-                    event.target ===
-                    loginModal
-                ) {
-                    closeLoginModal();
-                }
-            }
-        );
-
-        document
-            .getElementById("loginButton")
-            .addEventListener(
-                "click",
-                () => {
-                    const password =
-                        loginPassword.value;
-
-                    if (
-                        password !==
-                        ADMIN_PASSWORD
-                    ) {
-                        showLoginError(
-                            "Неверный пароль администратора."
-                        );
-                        return;
-                    }
-
-                    openDashboard();
-                }
-            );
-
-        loginPassword.addEventListener(
-            "keydown",
-            event => {
-                if (event.key === "Enter") {
                     document
-                        .getElementById(
-                            "loginButton"
-                        )
-                        .click();
-                }
+                        .querySelectorAll(".filter-button")
+                        .forEach(item => {
+                            item.classList.toggle(
+                                "active",
+                                item === button
+                            );
+                        });
 
-                if (event.key === "Escape") {
-                    closeLoginModal();
-                }
-            }
-        );
+                    renderPosts();
+                });
+            });
+        }
 
-        document
-            .getElementById("closeDashboardButton")
-            .addEventListener(
+        function setupSearch() {
+            elements.searchInput.addEventListener("input", event => {
+                state.search = event.target.value;
+                renderPosts();
+            });
+        }
+
+        function updateScrollUI() {
+            const scrollTop =
+                window.scrollY ||
+                document.documentElement.scrollTop ||
+                0;
+
+            const scrollHeight =
+                document.documentElement.scrollHeight -
+                window.innerHeight;
+
+            const progress =
+                scrollHeight > 0
+                    ? Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100))
+                    : 0;
+
+            elements.scrollProgress.style.width = `${progress}%`;
+            elements.backToTop.classList.toggle("visible", scrollTop > 500);
+        }
+
+        function setupScroll() {
+            window.addEventListener("scroll", updateScrollUI, {
+                passive: true
+            });
+
+            elements.backToTop.addEventListener("click", () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+
+            updateScrollUI();
+        }
+
+        function setupAdmin() {
+            elements.adminOpenButton.addEventListener(
                 "click",
-                closeDashboard
+                openAdminPanel
             );
 
-        dashboardPassword.addEventListener(
-            "input",
-            () => {
-                currentAdminPassword =
-                    dashboardPassword.value.trim();
-            }
-        );
+            elements.closeDashboardButton.addEventListener(
+                "click",
+                closeAdminPanel
+            );
 
-        dashboardPassword.addEventListener(
-            "change",
-            () => {
-                currentAdminPassword =
-                    dashboardPassword.value.trim();
-            }
-        );
+            elements.loginButton.addEventListener(
+                "click",
+                loginAdmin
+            );
 
-        document
-            .getElementById("createPostForm")
-            .addEventListener(
+            elements.loginPassword.addEventListener("keydown", event => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    loginAdmin();
+                }
+            });
+
+            elements.adminOverlay.addEventListener("click", event => {
+                if (event.target === elements.adminOverlay) {
+                    closeAdminPanel();
+                }
+            });
+
+            elements.postForm.addEventListener(
                 "submit",
                 createPost
             );
 
-        document
-            .querySelectorAll(".template-btn")
-            .forEach(button => {
-                button.addEventListener(
-                    "click",
-                    () => {
-                        insertTemplate(
-                            button.dataset.template
-                        );
-                    }
-                );
-            });
-
-        document
-            .querySelectorAll(".skin-btn")
-            .forEach(button => {
-                button.addEventListener(
-                    "click",
-                    () => {
-                        setSkin(
-                            button.dataset.skin
-                        );
-
-                        showDashboardMessage(
-                            "skinMessage",
-                            "Стиль сайта изменён.",
-                            "success"
-                        );
-                    }
-                );
-            });
-
-        document
-            .querySelectorAll(".filter-btn")
-            .forEach(button => {
-                button.addEventListener(
-                    "click",
-                    () => {
-                        document
-                            .querySelectorAll(
-                                ".filter-btn"
-                            )
-                            .forEach(item => {
-                                item.classList.remove(
-                                    "active"
-                                );
-                            });
-
-                        button.classList.add(
-                            "active"
-                        );
-
-                        currentFilter =
-                            button.dataset.filter;
-
-                        renderPosts();
-                    }
-                );
-            });
-
-        searchInput.addEventListener(
-            "input",
-            event => {
-                currentSearch =
-                    event.target.value;
-
-                renderPosts();
-            }
-        );
-
-        newsGrid.addEventListener(
-            "click",
-            event => {
-                const voteButton =
-                    event.target.closest(
-                        ".vote-btn"
-                    );
-
-                if (voteButton) {
-                    votePost(
-                        voteButton.dataset.voteId,
-                        voteButton.dataset.voteType
-                    );
-                    return;
-                }
-
-                const shareButton =
-                    event.target.closest(
-                        ".share-btn"
-                    );
-
-                if (shareButton) {
-                    sharePost(
-                        shareButton.dataset.shareId
-                    );
-                    return;
-                }
-
-                const bookmarkButton =
-                    event.target.closest(
-                        ".bookmark-btn"
-                    );
-
-                if (bookmarkButton) {
-                    toggleBookmark(
-                        bookmarkButton.dataset.bookmarkId
-                    );
-                }
-            }
-        );
-
-        newsGrid.addEventListener(
-            "keydown",
-            event => {
-                const spoiler =
-                    event.target.closest(
-                        ".spoiler-text"
-                    );
-
-                if (
-                    spoiler &&
-                    (
-                        event.key === "Enter" ||
-                        event.key === " "
-                    )
-                ) {
-                    event.preventDefault();
-
-                    spoiler.classList.toggle(
-                        "revealed"
-                    );
-                }
-            }
-        );
-
-        document
-            .getElementById("adminPostList")
-            .addEventListener(
+            elements.addReleaseButton.addEventListener(
                 "click",
+                createRelease
+            );
+
+            elements.adminPasswordInput.addEventListener(
+                "input",
                 event => {
-                    const button =
-                        event.target.closest(
-                            ".delete-btn"
-                        );
-
-                    if (!button) {
-                        return;
-                    }
-
-                    deletePost(
-                        button.dataset.deleteId
-                    );
+                    state.adminPassword = event.target.value.trim();
                 }
             );
 
-        document
-            .getElementById("backTop")
-            .addEventListener(
+            document.querySelectorAll(".skin-button").forEach(button => {
+                button.addEventListener("click", () => {
+                    setSkin(button.dataset.skin);
+                });
+            });
+        }
+
+        function setupTheme() {
+            elements.themeToggle.addEventListener(
                 "click",
-                () => {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth"
-                    });
-                }
+                toggleTheme
             );
 
-        window.addEventListener(
-            "scroll",
-            updateScrollProgress,
-            {
-                passive: true
-            }
-        );
-
-        window.addEventListener(
-            "keydown",
-            event => {
-                if (
-                    event.key === "Escape"
-                ) {
-                    if (
-                        loginModal.classList.contains(
-                            "open"
-                        )
-                    ) {
-                        closeLoginModal();
-                    } else if (
-                        dashboardOverlay.classList.contains(
-                            "open"
-                        )
-                    ) {
-                        closeDashboard();
-                    }
-                }
-            }
-        );
-
-        window.addEventListener(
-            "storage",
-            event => {
-                if (
-                    event.key ===
-                    THEME_STORAGE_KEY
-                ) {
-                    loadSavedTheme();
-                }
-
-                if (
-                    event.key ===
-                    SKIN_STORAGE_KEY
-                ) {
-                    loadSavedSkin();
-                }
-            }
-        );
-
-        window.addEventListener(
-            "hashchange",
-            () => {
-                const hash =
-                    window.location.hash;
-
-                if (
-                    !hash.startsWith("#post-")
-                ) {
-                    return;
-                }
-
-                const postId =
-                    decodeURIComponent(
-                        hash.substring(6)
-                    );
-
-                window.setTimeout(() => {
-                    const element =
-                        document.querySelector(
-                            `.news-card[data-post-id="${CSS.escape(postId)}"]`
-                        );
-
-                    if (element) {
-                        element.scrollIntoView({
-                            behavior: "smooth",
-                            block: "center"
-                        });
-
-                        element.style.boxShadow =
-                            "0 0 0 2px var(--accent), 0 0 40px rgba(var(--accent-rgb),0.25)";
-
-                        window.setTimeout(() => {
-                            element.style.boxShadow =
-                                "";
-                        }, 2200);
-                    }
-                }, 100);
-            }
-        );
-
-        function initialize() {
-            loadSavedTheme();
-            loadSavedSkin();
-            renderReleaseCalendar();
-            updateScrollProgress();
-            loadPosts();
-
-            window.setInterval(
-                renderReleaseCalendar,
-                60000
+            elements.dashboardThemeButton.addEventListener(
+                "click",
+                toggleTheme
             );
+        }
+
+        function setupKeyboardShortcuts() {
+            document.addEventListener("keydown", event => {
+                if (
+                    event.key === "Escape" &&
+                    elements.adminOverlay.classList.contains("active")
+                ) {
+                    closeAdminPanel();
+                }
+            });
+        }
+
+        function refreshReleaseCountdowns() {
+            renderReleases();
+
+            if (!elements.adminDashboard.hidden) {
+                renderAdminReleases();
+            }
+        }
+
+        async function initialize() {
+            applyTheme();
+            applySkin();
+            setupTheme();
+            setupFilters();
+            setupSearch();
+            setupScroll();
+            setupAdmin();
+            setupKeyboardShortcuts();
+
+            await Promise.all([
+                loadPosts(),
+                loadReleases()
+            ]);
+
+            setInterval(refreshReleaseCountdowns, 60 * 1000);
         }
 
         initialize();

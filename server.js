@@ -1,324 +1,315 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const POSTS_FILE = path.join(__dirname, 'posts.json');
-const ADMIN_PASSWORD = 'AdminPlayPC2026';
+const ADMIN_PASSWORD = "AdminPlayPC2026";
 
-// Middleware
+const POSTS_FILE = path.join(__dirname, "posts.json");
+const RELEASES_FILE = path.join(__dirname, "releases.json");
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 
-// Static files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Create posts.json if it does not exist
-function ensurePostsFile() {
-    if (!fs.existsSync(POSTS_FILE)) {
-        fs.writeFileSync(POSTS_FILE, '[]', 'utf8');
+function ensureJsonFile(filePath) {
+    if (!fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, "[]", "utf8");
+        return;
     }
-}
-
-// Read posts from posts.json
-function readPosts() {
-    ensurePostsFile();
 
     try {
-        const data = fs.readFileSync(POSTS_FILE, 'utf8');
-        const posts = JSON.parse(data);
+        const content = fs.readFileSync(filePath, "utf8").trim();
+        const parsed = content ? JSON.parse(content) : [];
 
-        if (!Array.isArray(posts)) {
-            throw new Error('posts.json должен содержать массив');
+        if (!Array.isArray(parsed)) {
+            fs.writeFileSync(filePath, "[]", "utf8");
         }
-
-        return posts;
     } catch (error) {
-        console.error('Ошибка чтения posts.json:', error);
-        throw error;
+        fs.writeFileSync(filePath, "[]", "utf8");
     }
 }
 
-// Save posts to posts.json
-function savePosts(posts) {
-    fs.writeFileSync(
-        POSTS_FILE,
-        JSON.stringify(posts, null, 2),
-        'utf8'
-    );
-}
+function readData(filePath) {
+    try {
+        const content = fs.readFileSync(filePath, "utf8").trim();
 
-// Sort posts:
-// 1. Pinned posts first
-// 2. Inside each group — newest to oldest
-function sortPosts(posts) {
-    return [...posts].sort((a, b) => {
-        const pinnedA = a.pinned === true ? 1 : 0;
-        const pinnedB = b.pinned === true ? 1 : 0;
-
-        if (pinnedA !== pinnedB) {
-            return pinnedB - pinnedA;
+        if (!content) {
+            return [];
         }
 
-        const dateA = new Date(a.createdAt).getTime();
-        const dateB = new Date(b.createdAt).getTime();
+        const data = JSON.parse(content);
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+        return [];
+    }
+}
 
-        return dateB - dateA;
+function writeData(filePath, data) {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
+}
+
+function isAdmin(password) {
+    return password === ADMIN_PASSWORD;
+}
+
+ensureJsonFile(POSTS_FILE);
+ensureJsonFile(RELEASES_FILE);
+
+/* =========================
+   POSTS API
+========================= */
+
+app.get("/api/posts", (req, res) => {
+    const posts = readData(POSTS_FILE);
+
+    const sortedPosts = [...posts].sort((a, b) => {
+        const aPinned = a.pinned === true;
+        const bPinned = b.pinned === true;
+
+        if (aPinned !== bPinned) {
+            return aPinned ? -1 : 1;
+        }
+
+        const aTime = Number(a.createdAt) || Number(a.id) || 0;
+        const bTime = Number(b.createdAt) || Number(b.id) || 0;
+
+        return bTime - aTime;
     });
-}
 
-// GET /api/posts
-app.get('/api/posts', (req, res) => {
-    try {
-        const posts = readPosts();
-        const sortedPosts = sortPosts(posts);
-
-        return res.status(200).json(sortedPosts);
-    } catch (error) {
-        console.error('Ошибка GET /api/posts:', error);
-
-        return res.status(500).json({
-            error: 'Ошибка сервера при чтении новостей'
-        });
-    }
+    res.json(sortedPosts);
 });
 
-// POST /api/posts
-app.post('/api/posts', (req, res) => {
-    try {
-        const {
-            title,
-            platform,
-            imageUrl,
-            content,
-            password,
-            pinned
-        } = req.body;
+app.post("/api/posts", (req, res) => {
+    const {
+        title,
+        platform,
+        imageUrl,
+        content,
+        password,
+        pinned
+    } = req.body;
 
-        // Admin authentication
-        if (password !== ADMIN_PASSWORD) {
-            return res.status(401).json({
-                error: 'Ошибка доступа'
-            });
-        }
-
-        // Validate basic types
-        if (
-            typeof title !== 'string' ||
-            typeof platform !== 'string' ||
-            typeof imageUrl !== 'string' ||
-            typeof content !== 'string'
-        ) {
-            return res.status(400).json({
-                error: 'Некорректные данные поста'
-            });
-        }
-
-        const cleanTitle = title.trim();
-        const cleanPlatform = platform.trim();
-        const cleanImageUrl = imageUrl.trim();
-        const cleanContent = content.trim();
-
-        // Validate required fields
-        if (
-            !cleanTitle ||
-            !cleanPlatform ||
-            !cleanImageUrl ||
-            !cleanContent
-        ) {
-            return res.status(400).json({
-                error: 'Все поля поста обязательны'
-            });
-        }
-
-        // Validate platform
-        if (
-            cleanPlatform !== 'PC' &&
-            cleanPlatform !== 'PlayStation'
-        ) {
-            return res.status(400).json({
-                error: 'Недопустимая платформа'
-            });
-        }
-
-        const posts = readPosts();
-
-        // Generate unique ID
-        let id = Date.now().toString();
-
-        while (posts.some(post => String(post.id) === id)) {
-            id = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
-        }
-
-        // Accept boolean true or string "true"
-        const isPinned =
-            pinned === true ||
-            pinned === 'true';
-
-        const newPost = {
-            id,
-            title: cleanTitle,
-            platform: cleanPlatform,
-            imageUrl: cleanImageUrl,
-            content: cleanContent,
-            pinned: isPinned,
-            votesWillPlay: 0,
-            votesWontPlay: 0,
-            createdAt: new Date().toISOString()
-        };
-
-        posts.push(newPost);
-
-        savePosts(posts);
-
-        return res.status(201).json(newPost);
-    } catch (error) {
-        console.error('Ошибка POST /api/posts:', error);
-
-        return res.status(500).json({
-            error: 'Ошибка сервера при создании новости'
+    if (!isAdmin(password)) {
+        return res.status(401).json({
+            error: "Ошибка доступа"
         });
     }
-});
 
-// POST /api/posts/:id/vote
-app.post('/api/posts/:id/vote', (req, res) => {
-    try {
-        const postId = String(req.params.id);
-        const { type } = req.body;
-
-        // Validate vote type
-        if (
-            type !== 'willPlay' &&
-            type !== 'wontPlay'
-        ) {
-            return res.status(400).json({
-                error: 'Недопустимый тип голоса'
-            });
-        }
-
-        const posts = readPosts();
-
-        const postIndex = posts.findIndex(
-            post => String(post.id) === postId
-        );
-
-        if (postIndex === -1) {
-            return res.status(404).json({
-                error: 'Пост не найден'
-            });
-        }
-
-        const post = posts[postIndex];
-
-        // Ensure counters exist for older posts
-        if (
-            typeof post.votesWillPlay !== 'number' ||
-            !Number.isFinite(post.votesWillPlay)
-        ) {
-            post.votesWillPlay = 0;
-        }
-
-        if (
-            typeof post.votesWontPlay !== 'number' ||
-            !Number.isFinite(post.votesWontPlay)
-        ) {
-            post.votesWontPlay = 0;
-        }
-
-        if (type === 'willPlay') {
-            post.votesWillPlay += 1;
-        }
-
-        if (type === 'wontPlay') {
-            post.votesWontPlay += 1;
-        }
-
-        posts[postIndex] = post;
-
-        savePosts(posts);
-
-        return res.status(200).json(post);
-    } catch (error) {
-        console.error(
-            'Ошибка POST /api/posts/:id/vote:',
-            error
-        );
-
-        return res.status(500).json({
-            error: 'Ошибка сервера при сохранении голоса'
+    if (
+        typeof title !== "string" ||
+        typeof platform !== "string" ||
+        typeof imageUrl !== "string" ||
+        typeof content !== "string" ||
+        !title.trim() ||
+        !platform.trim() ||
+        !content.trim()
+    ) {
+        return res.status(400).json({
+            error: "Заполните все обязательные поля"
         });
     }
-});
 
-// DELETE /api/posts/:id
-app.delete('/api/posts/:id', (req, res) => {
-    try {
-        const postId = String(req.params.id);
-
-        const password =
-            req.body?.password ||
-            req.get('X-Admin-Password');
-
-        // Admin authentication
-        if (password !== ADMIN_PASSWORD) {
-            return res.status(401).json({
-                error: 'Ошибка доступа'
-            });
-        }
-
-        const posts = readPosts();
-
-        const postIndex = posts.findIndex(
-            post => String(post.id) === postId
-        );
-
-        if (postIndex === -1) {
-            return res.status(404).json({
-                error: 'Пост не найден'
-            });
-        }
-
-        const deletedPost = posts[postIndex];
-
-        posts.splice(postIndex, 1);
-
-        savePosts(posts);
-
-        return res.status(200).json({
-            success: true,
-            message: 'Пост успешно удален',
-            post: deletedPost
-        });
-    } catch (error) {
-        console.error(
-            'Ошибка DELETE /api/posts/:id:',
-            error
-        );
-
-        return res.status(500).json({
-            error: 'Ошибка сервера при удалении новости'
+    if (!["PC", "PlayStation"].includes(platform)) {
+        return res.status(400).json({
+            error: "Недопустимая платформа"
         });
     }
+
+    const posts = readData(POSTS_FILE);
+    const now = Date.now();
+
+    const newPost = {
+        id: now.toString(),
+        title: title.trim(),
+        platform,
+        imageUrl: imageUrl.trim(),
+        content: content.trim(),
+        pinned: pinned === true || pinned === "true",
+        votesWillPlay: 0,
+        votesWontPlay: 0,
+        createdAt: now,
+        date: new Date(now).toISOString()
+    };
+
+    posts.push(newPost);
+    writeData(POSTS_FILE, posts);
+
+    res.status(201).json(newPost);
 });
 
-// Make sure posts.json exists before starting server
-try {
-    ensurePostsFile();
-} catch (error) {
-    console.error(
-        'Не удалось создать posts.json:',
-        error
+app.post("/api/posts/:id/vote", (req, res) => {
+    const { id } = req.params;
+    const { type } = req.body;
+
+    if (type !== "willPlay" && type !== "wontPlay") {
+        return res.status(400).json({
+            error: "Недопустимый тип голоса"
+        });
+    }
+
+    const posts = readData(POSTS_FILE);
+    const postIndex = posts.findIndex(
+        (post) => String(post.id) === String(id)
     );
 
-    process.exit(1);
-}
+    if (postIndex === -1) {
+        return res.status(404).json({
+            error: "Пост не найден"
+        });
+    }
 
-// Start server
+    const post = posts[postIndex];
+
+    if (typeof post.votesWillPlay !== "number") {
+        post.votesWillPlay = 0;
+    }
+
+    if (typeof post.votesWontPlay !== "number") {
+        post.votesWontPlay = 0;
+    }
+
+    if (type === "willPlay") {
+        post.votesWillPlay += 1;
+    } else {
+        post.votesWontPlay += 1;
+    }
+
+    posts[postIndex] = post;
+    writeData(POSTS_FILE, posts);
+
+    res.status(200).json(post);
+});
+
+app.delete("/api/posts/:id", (req, res) => {
+    const { id } = req.params;
+    const password =
+        req.body?.password ||
+        req.get("x-admin-password");
+
+    if (!isAdmin(password)) {
+        return res.status(401).json({
+            error: "Ошибка доступа"
+        });
+    }
+
+    const posts = readData(POSTS_FILE);
+    const updatedPosts = posts.filter(
+        (post) => String(post.id) !== String(id)
+    );
+
+    if (updatedPosts.length === posts.length) {
+        return res.status(404).json({
+            error: "Пост не найден"
+        });
+    }
+
+    writeData(POSTS_FILE, updatedPosts);
+
+    res.status(200).json({
+        success: true,
+        message: "Пост успешно удалён"
+    });
+});
+
+/* =========================
+   RELEASES API
+========================= */
+
+app.get("/api/releases", (req, res) => {
+    const releases = readData(RELEASES_FILE);
+
+    const sortedReleases = [...releases].sort((a, b) => {
+        const aDate = new Date(a.releaseDate).getTime() || 0;
+        const bDate = new Date(b.releaseDate).getTime() || 0;
+
+        return aDate - bDate;
+    });
+
+    res.json(sortedReleases);
+});
+
+app.post("/api/releases", (req, res) => {
+    const {
+        title,
+        releaseDate,
+        password
+    } = req.body;
+
+    if (!isAdmin(password)) {
+        return res.status(401).json({
+            error: "Ошибка доступа"
+        });
+    }
+
+    if (
+        typeof title !== "string" ||
+        typeof releaseDate !== "string" ||
+        !title.trim() ||
+        !releaseDate.trim()
+    ) {
+        return res.status(400).json({
+            error: "Необходимо указать название игры и дату релиза"
+        });
+    }
+
+    const parsedDate = new Date(releaseDate);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+        return res.status(400).json({
+            error: "Некорректная дата релиза"
+        });
+    }
+
+    const releases = readData(RELEASES_FILE);
+    const now = Date.now();
+
+    const newRelease = {
+        id: now.toString(),
+        title: title.trim(),
+        releaseDate: releaseDate.trim(),
+        createdAt: now
+    };
+
+    releases.push(newRelease);
+    writeData(RELEASES_FILE, releases);
+
+    res.status(201).json(newRelease);
+});
+
+app.delete("/api/releases/:id", (req, res) => {
+    const { id } = req.params;
+    const password =
+        req.body?.password ||
+        req.get("x-admin-password");
+
+    if (!isAdmin(password)) {
+        return res.status(401).json({
+            error: "Ошибка доступа"
+        });
+    }
+
+    const releases = readData(RELEASES_FILE);
+    const updatedReleases = releases.filter(
+        (release) => String(release.id) !== String(id)
+    );
+
+    if (updatedReleases.length === releases.length) {
+        return res.status(404).json({
+            error: "Релиз не найден"
+        });
+    }
+
+    writeData(RELEASES_FILE, updatedReleases);
+
+    res.status(200).json({
+        success: true,
+        message: "Релиз успешно удалён"
+    });
+});
+
 app.listen(PORT, () => {
-    console.log(
-        `PlayPC сервер запущен на порту ${PORT}`
-    );
+    console.log(`PlayPC server is running on port ${PORT}`);
 });
