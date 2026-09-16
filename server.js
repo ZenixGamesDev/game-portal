@@ -50,16 +50,36 @@ function savePosts(posts) {
     );
 }
 
+// Sort posts:
+// 1. Pinned posts first
+// 2. Inside each group — newest to oldest
+function sortPosts(posts) {
+    return [...posts].sort((a, b) => {
+        const pinnedA = a.pinned === true ? 1 : 0;
+        const pinnedB = b.pinned === true ? 1 : 0;
+
+        if (pinnedA !== pinnedB) {
+            return pinnedB - pinnedA;
+        }
+
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+
+        return dateB - dateA;
+    });
+}
+
 // GET /api/posts
 app.get('/api/posts', (req, res) => {
     try {
         const posts = readPosts();
+        const sortedPosts = sortPosts(posts);
 
-        res.status(200).json(posts);
+        return res.status(200).json(sortedPosts);
     } catch (error) {
         console.error('Ошибка GET /api/posts:', error);
 
-        res.status(500).json({
+        return res.status(500).json({
             error: 'Ошибка сервера при чтении новостей'
         });
     }
@@ -73,17 +93,18 @@ app.post('/api/posts', (req, res) => {
             platform,
             imageUrl,
             content,
-            password
+            password,
+            pinned
         } = req.body;
 
-        // Check administrator password
+        // Admin authentication
         if (password !== ADMIN_PASSWORD) {
             return res.status(401).json({
                 error: 'Ошибка доступа'
             });
         }
 
-        // Validate post data
+        // Validate basic types
         if (
             typeof title !== 'string' ||
             typeof platform !== 'string' ||
@@ -100,6 +121,7 @@ app.post('/api/posts', (req, res) => {
         const cleanImageUrl = imageUrl.trim();
         const cleanContent = content.trim();
 
+        // Validate required fields
         if (
             !cleanTitle ||
             !cleanPlatform ||
@@ -111,6 +133,7 @@ app.post('/api/posts', (req, res) => {
             });
         }
 
+        // Validate platform
         if (
             cleanPlatform !== 'PC' &&
             cleanPlatform !== 'PlayStation'
@@ -122,12 +145,17 @@ app.post('/api/posts', (req, res) => {
 
         const posts = readPosts();
 
-        // Generate a unique ID
+        // Generate unique ID
         let id = Date.now().toString();
 
         while (posts.some(post => String(post.id) === id)) {
             id = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
         }
+
+        // Accept boolean true or string "true"
+        const isPinned =
+            pinned === true ||
+            pinned === 'true';
 
         const newPost = {
             id,
@@ -135,6 +163,9 @@ app.post('/api/posts', (req, res) => {
             platform: cleanPlatform,
             imageUrl: cleanImageUrl,
             content: cleanContent,
+            pinned: isPinned,
+            votesWillPlay: 0,
+            votesWontPlay: 0,
             createdAt: new Date().toISOString()
         };
 
@@ -152,18 +183,86 @@ app.post('/api/posts', (req, res) => {
     }
 });
 
+// POST /api/posts/:id/vote
+app.post('/api/posts/:id/vote', (req, res) => {
+    try {
+        const postId = String(req.params.id);
+        const { type } = req.body;
+
+        // Validate vote type
+        if (
+            type !== 'willPlay' &&
+            type !== 'wontPlay'
+        ) {
+            return res.status(400).json({
+                error: 'Недопустимый тип голоса'
+            });
+        }
+
+        const posts = readPosts();
+
+        const postIndex = posts.findIndex(
+            post => String(post.id) === postId
+        );
+
+        if (postIndex === -1) {
+            return res.status(404).json({
+                error: 'Пост не найден'
+            });
+        }
+
+        const post = posts[postIndex];
+
+        // Ensure counters exist for older posts
+        if (
+            typeof post.votesWillPlay !== 'number' ||
+            !Number.isFinite(post.votesWillPlay)
+        ) {
+            post.votesWillPlay = 0;
+        }
+
+        if (
+            typeof post.votesWontPlay !== 'number' ||
+            !Number.isFinite(post.votesWontPlay)
+        ) {
+            post.votesWontPlay = 0;
+        }
+
+        if (type === 'willPlay') {
+            post.votesWillPlay += 1;
+        }
+
+        if (type === 'wontPlay') {
+            post.votesWontPlay += 1;
+        }
+
+        posts[postIndex] = post;
+
+        savePosts(posts);
+
+        return res.status(200).json(post);
+    } catch (error) {
+        console.error(
+            'Ошибка POST /api/posts/:id/vote:',
+            error
+        );
+
+        return res.status(500).json({
+            error: 'Ошибка сервера при сохранении голоса'
+        });
+    }
+});
+
 // DELETE /api/posts/:id
 app.delete('/api/posts/:id', (req, res) => {
     try {
         const postId = String(req.params.id);
 
-        // Password can be provided in the request body
-        // or in the X-Admin-Password header.
         const password =
             req.body?.password ||
             req.get('X-Admin-Password');
 
-        // Check administrator password
+        // Admin authentication
         if (password !== ADMIN_PASSWORD) {
             return res.status(401).json({
                 error: 'Ошибка доступа'
@@ -194,7 +293,10 @@ app.delete('/api/posts/:id', (req, res) => {
             post: deletedPost
         });
     } catch (error) {
-        console.error('Ошибка DELETE /api/posts/:id:', error);
+        console.error(
+            'Ошибка DELETE /api/posts/:id:',
+            error
+        );
 
         return res.status(500).json({
             error: 'Ошибка сервера при удалении новости'
@@ -202,15 +304,21 @@ app.delete('/api/posts/:id', (req, res) => {
     }
 });
 
-// Create posts.json during server initialization
+// Make sure posts.json exists before starting server
 try {
     ensurePostsFile();
 } catch (error) {
-    console.error('Не удалось создать posts.json:', error);
+    console.error(
+        'Не удалось создать posts.json:',
+        error
+    );
+
     process.exit(1);
 }
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`PlayPC сервер запущен на порту ${PORT}`);
+    console.log(
+        `PlayPC сервер запущен на порту ${PORT}`
+    );
 });
