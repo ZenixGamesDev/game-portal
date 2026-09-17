@@ -4,16 +4,19 @@ const path = require("path");
 const { exec } = require("child_process");
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
+const PUBLIC_DIR = path.join(__dirname, "public");
 
-const ROOT_DIR = __dirname;
-const PUBLIC_DIR = path.join(ROOT_DIR, "public");
+const POSTS_FILE = path.join(__dirname, "posts.json");
+const RELEASES_FILE = path.join(__dirname, "releases.json");
+const CONFIG_FILE = path.join(__dirname, "config.json");
+const QUIZ_FILE = path.join(__dirname, "quiz.json");
+const POLL_FILE = path.join(__dirname, "poll.json");
 
-const CONFIG_FILE = path.join(ROOT_DIR, "config.json");
-const POSTS_FILE = path.join(ROOT_DIR, "posts.json");
-const RELEASES_FILE = path.join(ROOT_DIR, "releases.json");
-const QUIZ_FILE = path.join(ROOT_DIR, "quiz.json");
-const POLL_FILE = path.join(ROOT_DIR, "poll.json");
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(express.static(PUBLIC_DIR));
 
 const DEFAULT_CONFIG = {
     password: "AdminPlayPC2026",
@@ -28,21 +31,25 @@ const DEFAULT_CONFIG = {
 
 const DEFAULT_POLL = {
     question: "Какую игру вы ждёте больше всего?",
-    options: ["Grand Theft Auto VI", "The Last of Us", "Uncharted", "Far Cry"],
-    votes: [0, 0, 0, 0],
-    totalVotes: 0
+    options: [
+        { id: "option-1", text: "Grand Theft Auto VI", votes: 0 },
+        { id: "option-2", text: "Resident Evil Requiem", votes: 0 },
+        { id: "option-3", text: "The Witcher 4", votes: 0 },
+        { id: "option-4", text: "Другое", votes: 0 }
+    ]
 };
 
 const DEFAULT_QUIZ = {
-    question: "Из какой серии эта игра?",
-    image: "",
-    options: ["Uncharted", "Far Cry", "The Last of Us", "Assassin's Creed"],
-    correctIndex: 0
+    question: "Угадайте игру по описанию",
+    description: "Создатели предлагают огромный открытый мир и кинематографичный сюжет.",
+    options: [
+        "Grand Theft Auto V",
+        "The Last of Us",
+        "Red Dead Redemption 2",
+        "Minecraft"
+    ],
+    answer: 2
 };
-
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-app.use(express.static(PUBLIC_DIR));
 
 function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -55,28 +62,45 @@ function ensureJsonFile(file, defaultValue) {
             JSON.stringify(defaultValue, null, 2),
             "utf8"
         );
+        return;
+    }
+
+    try {
+        const raw = fs.readFileSync(file, "utf8").trim();
+
+        if (!raw) {
+            fs.writeFileSync(
+                file,
+                JSON.stringify(defaultValue, null, 2),
+                "utf8"
+            );
+            return;
+        }
+
+        JSON.parse(raw);
+    } catch (error) {
+        fs.writeFileSync(
+            file,
+            JSON.stringify(defaultValue, null, 2),
+            "utf8"
+        );
     }
 }
 
 function ensureFiles() {
-    ensureJsonFile(CONFIG_FILE, DEFAULT_CONFIG);
     ensureJsonFile(POSTS_FILE, []);
     ensureJsonFile(RELEASES_FILE, []);
+    ensureJsonFile(CONFIG_FILE, DEFAULT_CONFIG);
     ensureJsonFile(QUIZ_FILE, DEFAULT_QUIZ);
     ensureJsonFile(POLL_FILE, DEFAULT_POLL);
 
     try {
-        const config = readJson(CONFIG_FILE, DEFAULT_CONFIG);
+        const config = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
 
         let changed = false;
 
         if (!config || typeof config !== "object") {
-            fs.writeFileSync(
-                CONFIG_FILE,
-                JSON.stringify(DEFAULT_CONFIG, null, 2),
-                "utf8"
-            );
-            return;
+            throw new Error("Invalid config");
         }
 
         if (typeof config.password !== "string" || !config.password.trim()) {
@@ -118,18 +142,22 @@ function ensureFiles() {
 function readJson(file, fallback) {
     try {
         if (!fs.existsSync(file)) {
+            fs.writeFileSync(
+                file,
+                JSON.stringify(fallback, null, 2),
+                "utf8"
+            );
             return clone(fallback);
         }
 
-        const raw = fs.readFileSync(file, "utf8");
+        const raw = fs.readFileSync(file, "utf8").trim();
 
-        if (!raw.trim()) {
+        if (!raw) {
             return clone(fallback);
         }
 
         return JSON.parse(raw);
     } catch (error) {
-        console.error(`Ошибка чтения ${path.basename(file)}:`, error.message);
         return clone(fallback);
     }
 }
@@ -143,16 +171,41 @@ function writeJson(file, data) {
 }
 
 function getConfig() {
-    ensureFiles();
-
     const config = readJson(CONFIG_FILE, DEFAULT_CONFIG);
 
-    if (!config || typeof config !== "object") {
+    if (
+        !config ||
+        typeof config !== "object" ||
+        Array.isArray(config)
+    ) {
+        writeJson(CONFIG_FILE, DEFAULT_CONFIG);
         return clone(DEFAULT_CONFIG);
+    }
+
+    let changed = false;
+
+    if (typeof config.password !== "string" || !config.password.trim()) {
+        config.password = DEFAULT_CONFIG.password;
+        changed = true;
+    }
+
+    if (typeof config.siteName !== "string") {
+        config.siteName = DEFAULT_CONFIG.siteName;
+        changed = true;
+    }
+
+    if (typeof config.footerText !== "string") {
+        config.footerText = DEFAULT_CONFIG.footerText;
+        changed = true;
     }
 
     if (!Array.isArray(config.musicPlaylist)) {
         config.musicPlaylist = [];
+        changed = true;
+    }
+
+    if (changed) {
+        writeJson(CONFIG_FILE, config);
     }
 
     return config;
@@ -160,14 +213,13 @@ function getConfig() {
 
 function getAdminPassword() {
     const config = getConfig();
-    return typeof config.password === "string"
-        ? config.password
-        : DEFAULT_CONFIG.password;
+    return config.password;
 }
 
 function extractPassword(req) {
     const bodyPassword =
-        req.body && typeof req.body.password === "string"
+        req.body &&
+        typeof req.body.password === "string"
             ? req.body.password
             : "";
 
@@ -176,12 +228,27 @@ function extractPassword(req) {
             ? req.headers["x-admin-password"]
             : "";
 
+    const authorization =
+        typeof req.headers.authorization === "string"
+            ? req.headers.authorization
+            : "";
+
+    const bearerPassword = authorization.startsWith("Bearer ")
+        ? authorization.slice(7)
+        : "";
+
     const queryPassword =
         typeof req.query.password === "string"
             ? req.query.password
             : "";
 
-    return bodyPassword || headerPassword || queryPassword;
+    return (
+        bodyPassword ||
+        headerPassword ||
+        bearerPassword ||
+        queryPassword ||
+        ""
+    );
 }
 
 function isAdmin(req) {
@@ -198,617 +265,557 @@ function requireAdmin(req, res, next) {
     if (!isAdmin(req)) {
         return res.status(401).json({
             success: false,
-            error: "Сервер отклонил пароль"
+            error: "Неверный пароль администратора."
         });
     }
 
     next();
 }
 
-function publicConfig() {
+function generateId(prefix = "id") {
+    return `${prefix}-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 10)}`;
+}
+
+function normalizePlatform(platform) {
+    if (typeof platform !== "string") {
+        return "PC";
+    }
+
+    const value = platform.trim();
+
+    if (value === "PlayStation") {
+        return "PlayStation";
+    }
+
+    if (value === "PC / PlayStation") {
+        return "PC / PlayStation";
+    }
+
+    return "PC";
+}
+
+function normalizeMoodTag(tag) {
+    if (typeof tag !== "string") {
+        return "";
+    }
+
+    const value = tag.trim();
+
+    const allowed = [
+        "🔥 Официально",
+        "👀 Слух",
+        "⚡ Инсайд",
+        "📝 Мнение"
+    ];
+
+    return allowed.includes(value) ? value : "";
+}
+
+function normalizePost(post, existing = null) {
+    const source = post && typeof post === "object" ? post : {};
+
+    const result = existing
+        ? { ...existing }
+        : {};
+
+    if (!result.id) {
+        result.id = source.id || generateId("post");
+    }
+
+    result.title =
+        typeof source.title === "string"
+            ? source.title.trim()
+            : typeof result.title === "string"
+                ? result.title
+                : "";
+
+    result.content =
+        typeof source.content === "string"
+            ? source.content
+            : typeof result.content === "string"
+                ? result.content
+                : "";
+
+    result.image =
+        typeof source.image === "string"
+            ? source.image
+            : typeof result.image === "string"
+                ? result.image
+                : "";
+
+    result.platform = normalizePlatform(
+        source.platform !== undefined
+            ? source.platform
+            : result.platform
+    );
+
+    result.moodTag = normalizeMoodTag(
+        source.moodTag !== undefined
+            ? source.moodTag
+            : result.moodTag
+    );
+
+    result.category =
+        typeof source.category === "string"
+            ? source.category
+            : typeof result.category === "string"
+                ? result.category
+                : "";
+
+    result.author =
+        typeof source.author === "string"
+            ? source.author
+            : typeof result.author === "string"
+                ? result.author
+                : "PlayPC";
+
+    result.status =
+        source.status === "draft" ||
+        source.status === "scheduled" ||
+        source.status === "archived"
+            ? source.status
+            : result.status || "published";
+
+    result.scheduledAt =
+        source.scheduledAt !== undefined
+            ? source.scheduledAt
+            : result.scheduledAt || null;
+
+    result.pinned =
+        source.pinned !== undefined
+            ? Boolean(source.pinned)
+            : Boolean(result.pinned);
+
+    result.createdAt =
+        source.createdAt ||
+        result.createdAt ||
+        new Date().toISOString();
+
+    result.updatedAt = new Date().toISOString();
+
+    result.publishedAt =
+        source.publishedAt !== undefined
+            ? source.publishedAt
+            : result.publishedAt || null;
+
+    result.analytics = {
+        ...(existing && existing.analytics
+            ? existing.analytics
+            : {}),
+        ...(source.analytics && typeof source.analytics === "object"
+            ? source.analytics
+            : {})
+    };
+
+    const analyticsKeys = [
+        "views",
+        "shares",
+        "bookmarks",
+        "likes",
+        "dislikes"
+    ];
+
+    for (const key of analyticsKeys) {
+        const value = Number(result.analytics[key]);
+        result.analytics[key] =
+            Number.isFinite(value) && value >= 0
+                ? Math.floor(value)
+                : 0;
+    }
+
+    return result;
+}
+
+function normalizeRelease(release, existing = null) {
+    const source =
+        release && typeof release === "object"
+            ? release
+            : {};
+
+    const result = existing
+        ? { ...existing }
+        : {};
+
+    if (!result.id) {
+        result.id = source.id || generateId("release");
+    }
+
+    result.title =
+        typeof source.title === "string"
+            ? source.title.trim()
+            : result.title || "";
+
+    result.description =
+        typeof source.description === "string"
+            ? source.description
+            : result.description || "";
+
+    result.image =
+        typeof source.image === "string"
+            ? source.image
+            : result.image || "";
+
+    result.platform =
+        typeof source.platform === "string"
+            ? source.platform
+            : result.platform || "PC";
+
+    result.releaseDate =
+        source.releaseDate !== undefined
+            ? source.releaseDate
+            : result.releaseDate || null;
+
+    result.releaseTime =
+        source.releaseTime !== undefined
+            ? source.releaseTime
+            : result.releaseTime || "00:00:00";
+
+    result.price =
+        source.price !== undefined
+            ? source.price
+            : result.price ?? "";
+
+    result.currency =
+        typeof source.currency === "string"
+            ? source.currency
+            : result.currency || "USD";
+
+    result.developer =
+        typeof source.developer === "string"
+            ? source.developer
+            : result.developer || "";
+
+    result.genre =
+        typeof source.genre === "string"
+            ? source.genre
+            : result.genre || "";
+
+    result.archived =
+        source.archived !== undefined
+            ? Boolean(source.archived)
+            : Boolean(result.archived);
+
+    result.createdAt =
+        source.createdAt ||
+        result.createdAt ||
+        new Date().toISOString();
+
+    result.updatedAt = new Date().toISOString();
+
+    result.votes = {
+        waiting:
+            Number(
+                source.votes &&
+                source.votes.waiting !== undefined
+                    ? source.votes.waiting
+                    : result.votes &&
+                      result.votes.waiting
+            ) || 0,
+        skipped:
+            Number(
+                source.votes &&
+                source.votes.skipped !== undefined
+                    ? source.votes.skipped
+                    : result.votes &&
+                      result.votes.skipped
+            ) || 0
+    };
+
+    return result;
+}
+
+ensureFiles();
+
+/* =========================================================
+   PUBLIC CONFIG
+   ========================================================= */
+
+app.get("/api/config", (req, res) => {
     const config = getConfig();
 
-    return {
+    res.json({
         siteName: config.siteName,
         footerText: config.footerText,
         musicPlaylist: Array.isArray(config.musicPlaylist)
             ? config.musicPlaylist
             : []
-    };
-}
-
-function createId(prefix = "item") {
-    return `${prefix}_${Date.now()}_${Math.random()
-        .toString(36)
-        .slice(2, 10)}`;
-}
-
-function normalizeAnalytics(item) {
-    if (!item.analytics || typeof item.analytics !== "object") {
-        item.analytics = {};
-    }
-
-    const keys = [
-        "likes",
-        "dislikes",
-        "shares",
-        "bookmarks",
-        "clicks"
-    ];
-
-    for (const key of keys) {
-        const value = Number(item.analytics[key]);
-        item.analytics[key] = Number.isFinite(value) && value >= 0
-            ? value
-            : 0;
-    }
-
-    return item;
-}
-
-function parseDate(value) {
-    if (!value) {
-        return null;
-    }
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-        return null;
-    }
-
-    return date;
-}
-
-function isPublishedPost(post) {
-    if (post.isDraft === true) {
-        return false;
-    }
-
-    const publishAt = parseDate(post.publishAt);
-
-    if (publishAt && publishAt.getTime() > Date.now()) {
-        return false;
-    }
-
-    return true;
-}
-
-function sanitizePostForPublic(post) {
-    const copy = clone(post);
-
-    normalizeAnalytics(copy);
-
-    return copy;
-}
-
-function sanitizeReleaseForPublic(release) {
-    return clone(release);
-}
-
-function sanitizeQuizForPublic(quiz) {
-    const copy = clone(quiz);
-
-    delete copy.correctIndex;
-
-    return copy;
-}
-
-function normalizePoll(poll) {
-    if (!poll || typeof poll !== "object") {
-        poll = clone(DEFAULT_POLL);
-    }
-
-    if (typeof poll.question !== "string") {
-        poll.question = DEFAULT_POLL.question;
-    }
-
-    if (!Array.isArray(poll.options)) {
-        poll.options = clone(DEFAULT_POLL.options);
-    }
-
-    poll.options = poll.options.map((option) => {
-        if (typeof option === "string") {
-            return option;
-        }
-
-        if (option && typeof option === "object") {
-            return String(
-                option.text ??
-                option.title ??
-                option.label ??
-                ""
-            );
-        }
-
-        return String(option ?? "");
     });
-
-    if (!Array.isArray(poll.votes)) {
-        poll.votes = [];
-    }
-
-    while (poll.votes.length < poll.options.length) {
-        poll.votes.push(0);
-    }
-
-    poll.votes = poll.options.map((_, index) => {
-        const value = Number(poll.votes[index]);
-        return Number.isFinite(value) && value >= 0 ? value : 0;
-    });
-
-    poll.totalVotes = poll.votes.reduce(
-        (sum, value) => sum + value,
-        0
-    );
-
-    return poll;
-}
-
-function normalizeQuiz(quiz) {
-    if (!quiz || typeof quiz !== "object") {
-        quiz = clone(DEFAULT_QUIZ);
-    }
-
-    if (typeof quiz.question !== "string") {
-        quiz.question = DEFAULT_QUIZ.question;
-    }
-
-    if (typeof quiz.image !== "string") {
-        quiz.image = "";
-    }
-
-    if (!Array.isArray(quiz.options)) {
-        quiz.options = clone(DEFAULT_QUIZ.options);
-    }
-
-    quiz.options = quiz.options.map((option) => {
-        if (typeof option === "string") {
-            return option;
-        }
-
-        if (option && typeof option === "object") {
-            return String(
-                option.text ??
-                option.title ??
-                option.label ??
-                ""
-            );
-        }
-
-        return String(option ?? "");
-    });
-
-    while (quiz.options.length < 4) {
-        quiz.options.push("");
-    }
-
-    quiz.options = quiz.options.slice(0, 4);
-
-    const correctIndex = Number(quiz.correctIndex);
-
-    quiz.correctIndex =
-        Number.isInteger(correctIndex) &&
-        correctIndex >= 0 &&
-        correctIndex < quiz.options.length
-            ? correctIndex
-            : 0;
-
-    return quiz;
-}
-
-function normalizeMusicItem(item, index) {
-    if (typeof item === "string") {
-        return {
-            id: `music_${index}_${Date.now()}`,
-            title: `Трек ${index + 1}`,
-            mp3Data: item
-        };
-    }
-
-    if (!item || typeof item !== "object") {
-        return null;
-    }
-
-    return {
-        id: String(item.id || createId("music")),
-        title: String(item.title || `Трек ${index + 1}`),
-        mp3Data: String(
-            item.mp3Data ||
-            item.data ||
-            item.url ||
-            ""
-        )
-    };
-}
-
-function normalizeMusicPlaylist(playlist) {
-    if (!Array.isArray(playlist)) {
-        return [];
-    }
-
-    return playlist
-        .map(normalizeMusicItem)
-        .filter(Boolean)
-        .filter((item) => item.mp3Data);
-}
-
-function sanitizeMusicPlaylist(playlist) {
-    return normalizeMusicPlaylist(playlist);
-}
-
-function runCommand(command) {
-    return new Promise((resolve) => {
-        exec(
-            command,
-            {
-                cwd: ROOT_DIR,
-                windowsHide: true,
-                maxBuffer: 1024 * 1024
-            },
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.error(
-                        "GitHub sync error:",
-                        error.message
-                    );
-                    if (stderr) {
-                        console.error(stderr);
-                    }
-                    resolve(false);
-                    return;
-                }
-
-                if (stdout) {
-                    console.log(stdout.trim());
-                }
-
-                resolve(true);
-            }
-        );
-    });
-}
-
-async function syncWithGitHub() {
-    try {
-        if (!fs.existsSync(path.join(ROOT_DIR, ".git"))) {
-            console.log("Git-репозиторий не найден. Sync пропущен.");
-            return false;
-        }
-
-        const addResult = await runCommand(
-            "git add posts.json releases.json config.json quiz.json poll.json"
-        );
-
-        if (!addResult) {
-            return false;
-        }
-
-        const status = await new Promise((resolve) => {
-            exec(
-                "git status --porcelain",
-                {
-                    cwd: ROOT_DIR,
-                    windowsHide: true,
-                    maxBuffer: 1024 * 1024
-                },
-                (error, stdout) => {
-                    if (error) {
-                        resolve("");
-                        return;
-                    }
-
-                    resolve(stdout.trim());
-                }
-            );
-        });
-
-        if (!status) {
-            return true;
-        }
-
-        const commitMessage =
-            `PlayPC auto sync ${new Date().toISOString()}`;
-
-        const commitResult = await runCommand(
-            `git commit -m "${commitMessage.replace(/"/g, '\\"')}"`
-        );
-
-        if (!commitResult) {
-            return false;
-        }
-
-        return await runCommand("git push");
-    } catch (error) {
-        console.error(
-            "Ошибка syncWithGitHub():",
-            error.message
-        );
-        return false;
-    }
-}
-
-async function syncAndRespond(res, payload = {}) {
-    try {
-        await syncWithGitHub();
-    } catch (error) {
-        console.error(error.message);
-    }
-
-    return res.json({
-        success: true,
-        ...payload
-    });
-}
-
-ensureFiles();
-
-/* =========================
-   PUBLIC CONFIG
-========================= */
-
-app.get("/api/config", (req, res) => {
-    return res.json(publicConfig());
 });
 
-/* =========================
+/* =========================================================
    ADMIN LOGIN
-========================= */
+   ========================================================= */
 
 app.post("/api/admin/login", (req, res) => {
-    const suppliedPassword =
+    const password =
         req.body && typeof req.body.password === "string"
             ? req.body.password
             : "";
 
-    if (suppliedPassword !== getAdminPassword()) {
+    if (password !== getAdminPassword()) {
         return res.status(401).json({
             success: false,
-            error: "Сервер отклонил пароль"
+            error: "Неверный пароль."
         });
     }
 
-    return res.status(200).json({
+    return res.json({
         success: true,
         token: "authenticated"
     });
 });
 
-/* =========================
+/* =========================================================
    POSTS
-========================= */
+   ========================================================= */
 
 app.get("/api/posts", (req, res) => {
     const posts = readJson(POSTS_FILE, []);
 
-    const wantsAdmin =
-        req.query.admin === "1" ||
-        req.query.admin === "true" ||
-        req.headers["x-admin-password"];
+    const now = Date.now();
 
-    if (wantsAdmin && isAdmin(req)) {
-        return res.json(
-            posts.map((post) => {
-                normalizeAnalytics(post);
-                return post;
-            })
-        );
+    const normalizedPosts = Array.isArray(posts)
+        ? posts.map((post) => {
+            const item = normalizePost(post);
+
+            if (
+                item.status === "scheduled" &&
+                item.scheduledAt
+            ) {
+                const scheduledTime =
+                    new Date(item.scheduledAt).getTime();
+
+                if (
+                    Number.isFinite(scheduledTime) &&
+                    scheduledTime <= now
+                ) {
+                    item.status = "published";
+                    item.publishedAt =
+                        item.publishedAt ||
+                        item.scheduledAt;
+                }
+            }
+
+            return item;
+        })
+        : [];
+
+    if (
+        JSON.stringify(normalizedPosts) !==
+        JSON.stringify(posts)
+    ) {
+        writeJson(POSTS_FILE, normalizedPosts);
     }
 
-    const visiblePosts = posts
-        .filter(isPublishedPost)
-        .map(sanitizePostForPublic);
-
-    return res.json(visiblePosts);
+    res.json(normalizedPosts);
 });
 
 app.post("/api/posts", requireAdmin, async (req, res) => {
-    const posts = readJson(POSTS_FILE, []);
+    try {
+        const posts = readJson(POSTS_FILE, []);
 
-    const body = req.body || {};
+        const source = req.body || {};
 
-    const post = {
-        id: String(body.id || createId("post")),
-        title: String(body.title || "Без названия"),
-        platform: String(body.platform || "PC"),
-        imageUrl: String(body.imageUrl || ""),
-        content: String(body.content || ""),
-        moodTag: String(body.moodTag || "📝 Мнение"),
-        publishAt: body.publishAt
-            ? String(body.publishAt)
-            : new Date().toISOString(),
-        isDraft: body.isDraft === true,
-        pinned: body.pinned === true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        analytics: {
-            likes: 0,
-            dislikes: 0,
-            shares: 0,
-            bookmarks: 0,
-            clicks: 0
-        }
-    };
+        const post = normalizePost({
+            ...source,
+            id: source.id || generateId("post"),
+            platform: normalizePlatform(source.platform),
+            moodTag: normalizeMoodTag(source.moodTag),
+            createdAt:
+                source.createdAt ||
+                new Date().toISOString()
+        });
 
-    normalizeAnalytics(post);
+        posts.unshift(post);
 
-    posts.unshift(post);
+        writeJson(POSTS_FILE, posts);
 
-    writeJson(POSTS_FILE, posts);
+        await syncWithGitHub();
 
-    return syncAndRespond(res, {
-        post
-    });
+        res.status(201).json({
+            success: true,
+            post
+        });
+    } catch (error) {
+        console.error("POST /api/posts:", error);
+
+        res.status(500).json({
+            success: false,
+            error: "Не удалось создать новость."
+        });
+    }
 });
 
 app.put("/api/posts/:id", requireAdmin, async (req, res) => {
-    const posts = readJson(POSTS_FILE, []);
+    try {
+        const posts = readJson(POSTS_FILE, []);
 
-    const index = posts.findIndex(
-        (post) => String(post.id) === String(req.params.id)
-    );
+        const index = posts.findIndex(
+            (post) => String(post.id) === String(req.params.id)
+        );
 
-    if (index === -1) {
-        return res.status(404).json({
+        if (index === -1) {
+            return res.status(404).json({
+                success: false,
+                error: "Новость не найдена."
+            });
+        }
+
+        const oldPost = posts[index];
+
+        const updatedPost = normalizePost(
+            {
+                ...req.body,
+                id: oldPost.id,
+                createdAt:
+                    req.body.createdAt ||
+                    oldPost.createdAt
+            },
+            oldPost
+        );
+
+        posts[index] = updatedPost;
+
+        writeJson(POSTS_FILE, posts);
+
+        await syncWithGitHub();
+
+        res.json({
+            success: true,
+            post: updatedPost
+        });
+    } catch (error) {
+        console.error("PUT /api/posts/:id:", error);
+
+        res.status(500).json({
             success: false,
-            error: "Пост не найден"
+            error: "Не удалось обновить новость."
         });
     }
-
-    const oldPost = posts[index];
-    const body = req.body || {};
-
-    const updatedPost = {
-        ...oldPost,
-        title:
-            body.title !== undefined
-                ? String(body.title)
-                : oldPost.title,
-        platform:
-            body.platform !== undefined
-                ? String(body.platform)
-                : oldPost.platform,
-        imageUrl:
-            body.imageUrl !== undefined
-                ? String(body.imageUrl)
-                : oldPost.imageUrl || "",
-        content:
-            body.content !== undefined
-                ? String(body.content)
-                : oldPost.content || "",
-        moodTag:
-            body.moodTag !== undefined
-                ? String(body.moodTag)
-                : oldPost.moodTag || "📝 Мнение",
-        publishAt:
-            body.publishAt !== undefined
-                ? String(body.publishAt)
-                : oldPost.publishAt,
-        isDraft:
-            body.isDraft !== undefined
-                ? body.isDraft === true
-                : oldPost.isDraft === true,
-        pinned:
-            body.pinned !== undefined
-                ? body.pinned === true
-                : oldPost.pinned === true,
-        updatedAt: new Date().toISOString()
-    };
-
-    normalizeAnalytics(updatedPost);
-
-    posts[index] = updatedPost;
-
-    writeJson(POSTS_FILE, posts);
-
-    return syncAndRespond(res, {
-        post: updatedPost
-    });
 });
 
 app.delete("/api/posts/:id", requireAdmin, async (req, res) => {
-    const posts = readJson(POSTS_FILE, []);
+    try {
+        const posts = readJson(POSTS_FILE, []);
 
-    const index = posts.findIndex(
-        (post) => String(post.id) === String(req.params.id)
-    );
+        const index = posts.findIndex(
+            (post) => String(post.id) === String(req.params.id)
+        );
 
-    if (index === -1) {
-        return res.status(404).json({
+        if (index === -1) {
+            return res.status(404).json({
+                success: false,
+                error: "Новость не найдена."
+            });
+        }
+
+        const deleted = posts.splice(index, 1)[0];
+
+        writeJson(POSTS_FILE, posts);
+
+        await syncWithGitHub();
+
+        res.json({
+            success: true,
+            post: deleted
+        });
+    } catch (error) {
+        console.error("DELETE /api/posts/:id:", error);
+
+        res.status(500).json({
             success: false,
-            error: "Пост не найден"
+            error: "Не удалось удалить новость."
         });
     }
-
-    const deleted = posts.splice(index, 1)[0];
-
-    writeJson(POSTS_FILE, posts);
-
-    return syncAndRespond(res, {
-        deletedId: deleted.id
-    });
 });
 
-app.post("/api/posts/:id/click", (req, res) => {
-    const posts = readJson(POSTS_FILE, []);
+app.post("/api/posts/:id/click", async (req, res) => {
+    try {
+        const posts = readJson(POSTS_FILE, []);
 
-    const post = posts.find(
-        (item) => String(item.id) === String(req.params.id)
-    );
+        const index = posts.findIndex(
+            (post) => String(post.id) === String(req.params.id)
+        );
 
-    if (!post) {
-        return res.status(404).json({
+        if (index === -1) {
+            return res.status(404).json({
+                success: false,
+                error: "Новость не найдена."
+            });
+        }
+
+        const type =
+            req.body &&
+            typeof req.body.type === "string"
+                ? req.body.type.trim().toLowerCase()
+                : "";
+
+        const supportedTypes = [
+            "share",
+            "bookmark",
+            "like",
+            "dislike"
+        ];
+
+        if (!supportedTypes.includes(type)) {
+            return res.status(400).json({
+                success: false,
+                error: "Неизвестный тип аналитики."
+            });
+        }
+
+        const post = normalizePost(posts[index]);
+
+        if (!post.analytics) {
+            post.analytics = {};
+        }
+
+        if (type === "share") {
+            post.analytics.shares += 1;
+        } else if (type === "bookmark") {
+            post.analytics.bookmarks += 1;
+        } else if (type === "like") {
+            post.analytics.likes += 1;
+        } else if (type === "dislike") {
+            post.analytics.dislikes += 1;
+        }
+
+        post.updatedAt = new Date().toISOString();
+
+        posts[index] = post;
+
+        writeJson(POSTS_FILE, posts);
+
+        res.json({
+            success: true,
+            analytics: post.analytics
+        });
+    } catch (error) {
+        console.error("POST /api/posts/:id/click:", error);
+
+        res.status(500).json({
             success: false,
-            error: "Пост не найден"
+            error: "Не удалось сохранить аналитику."
         });
     }
-
-    normalizeAnalytics(post);
-
-    const type = String(
-        req.body && req.body.type
-            ? req.body.type
-            : "click"
-    );
-
-    const supportedTypes = [
-        "like",
-        "dislike",
-        "share",
-        "bookmark",
-        "click"
-    ];
-
-    const analyticsKey = supportedTypes.includes(type)
-        ? `${type}s`
-        : "clicks";
-
-    if (analyticsKey === "lik es") {
-        post.analytics.likes += 1;
-    } else if (analyticsKey === "dislikes") {
-        post.analytics.dislikes += 1;
-    } else if (analyticsKey === "shares") {
-        post.analytics.shares += 1;
-    } else if (analyticsKey === "bookmarks") {
-        post.analytics.bookmarks += 1;
-    } else {
-        post.analytics.clicks += 1;
-    }
-
-    if (type === "like") {
-        post.analytics.likes += 1;
-    } else if (type === "dislike") {
-        post.analytics.dislikes += 1;
-    } else if (type === "share") {
-        post.analytics.shares += 1;
-    } else if (type === "bookmark") {
-        post.analytics.bookmarks += 1;
-    } else if (type === "click") {
-        post.analytics.clicks += 1;
-    }
-
-    post.updatedAt = new Date().toISOString();
-
-    writeJson(POSTS_FILE, posts);
-
-    return res.json({
-        success: true,
-        analytics: post.analytics
-    });
 });
 
-/* =========================
+/* =========================================================
    RELEASES
-========================= */
+   ========================================================= */
 
 app.get("/api/releases", (req, res) => {
     const releases = readJson(RELEASES_FILE, []);
 
-    const active = releases
-        .filter((release) => release.archived !== true)
-        .map(sanitizeReleaseForPublic);
+    const active = Array.isArray(releases)
+        ? releases
+            .map((release) => normalizeRelease(release))
+            .filter((release) => !release.archived)
+        : [];
 
-    return res.json(active);
+    res.json(active);
 });
 
 app.get(
@@ -817,143 +824,96 @@ app.get(
     (req, res) => {
         const releases = readJson(RELEASES_FILE, []);
 
-        return res.json(releases);
+        const archive = Array.isArray(releases)
+            ? releases
+                .map((release) => normalizeRelease(release))
+                .filter((release) => release.archived)
+            : [];
+
+        res.json(archive);
     }
 );
 
-app.post(
-    "/api/releases",
-    requireAdmin,
-    async (req, res) => {
+app.post("/api/releases", requireAdmin, async (req, res) => {
+    try {
         const releases = readJson(RELEASES_FILE, []);
-        const body = req.body || {};
 
-        const platforms = Array.isArray(body.platforms)
-            ? body.platforms.map(String)
-            : body.platform
-                ? [String(body.platform)]
-                : ["PC"];
-
-        const release = {
-            id: String(body.id || createId("release")),
-            title: String(body.title || "Без названия"),
-            platforms,
-            platform: platforms.join(", "),
-            releaseDate: String(
-                body.releaseDate ||
-                body.releaseAt ||
-                new Date().toISOString()
-            ),
-            price:
-                body.price === undefined ||
-                body.price === ""
-                    ? 0
-                    : Number(body.price),
-            backgroundUrl: String(
-                body.backgroundUrl ||
-                body.imageUrl ||
-                ""
-            ),
-            imageUrl: String(body.imageUrl || ""),
-            description: String(body.description || ""),
-            archived: false,
-            createdAt: new Date().toISOString(),
-            pcRequirements: {
-                minimum: {
-                    cpu: String(
-                        body.pcRequirements?.minimum?.cpu ||
-                        body.minCpu ||
-                        ""
-                    ),
-                    gpu: String(
-                        body.pcRequirements?.minimum?.gpu ||
-                        body.minGpu ||
-                        ""
-                    ),
-                    ram: String(
-                        body.pcRequirements?.minimum?.ram ||
-                        body.minRam ||
-                        ""
-                    ),
-                    storage: String(
-                        body.pcRequirements?.minimum?.storage ||
-                        body.minStorage ||
-                        ""
-                    )
-                },
-                recommended: {
-                    cpu: String(
-                        body.pcRequirements?.recommended?.cpu ||
-                        body.recommendedCpu ||
-                        ""
-                    ),
-                    gpu: String(
-                        body.pcRequirements?.recommended?.gpu ||
-                        body.recommendedGpu ||
-                        ""
-                    ),
-                    ram: String(
-                        body.pcRequirements?.recommended?.ram ||
-                        body.recommendedRam ||
-                        ""
-                    ),
-                    storage: String(
-                        body.pcRequirements?.recommended?.storage ||
-                        body.recommendedStorage ||
-                        ""
-                    )
-                }
-            },
-            votes: {
-                pc: 0,
-                playstation: 0,
-                xbox: 0
-            }
-        };
-
-        if (!Number.isFinite(release.price)) {
-            release.price = 0;
-        }
+        const release = normalizeRelease({
+            ...req.body,
+            id: req.body.id || generateId("release")
+        });
 
         releases.unshift(release);
 
         writeJson(RELEASES_FILE, releases);
 
-        return syncAndRespond(res, {
+        await syncWithGitHub();
+
+        res.status(201).json({
+            success: true,
             release
         });
+    } catch (error) {
+        console.error("POST /api/releases:", error);
+
+        res.status(500).json({
+            success: false,
+            error: "Не удалось создать релиз."
+        });
     }
-);
+});
 
 app.patch(
     "/api/releases/:id/archive",
     requireAdmin,
     async (req, res) => {
-        const releases = readJson(RELEASES_FILE, []);
+        try {
+            const releases = readJson(RELEASES_FILE, []);
 
-        const release = releases.find(
-            (item) => String(item.id) === String(req.params.id)
-        );
+            const index = releases.findIndex(
+                (release) =>
+                    String(release.id) ===
+                    String(req.params.id)
+            );
 
-        if (!release) {
-            return res.status(404).json({
+            if (index === -1) {
+                return res.status(404).json({
+                    success: false,
+                    error: "Релиз не найден."
+                });
+            }
+
+            releases[index] = normalizeRelease(
+                {
+                    ...releases[index],
+                    archived:
+                        req.body &&
+                        req.body.archived !== undefined
+                            ? Boolean(req.body.archived)
+                            : true
+                },
+                releases[index]
+            );
+
+            writeJson(RELEASES_FILE, releases);
+
+            await syncWithGitHub();
+
+            res.json({
+                success: true,
+                release: releases[index]
+            });
+        } catch (error) {
+            console.error(
+                "PATCH /api/releases/:id/archive:",
+                error
+            );
+
+            res.status(500).json({
                 success: false,
-                error: "Релиз не найден"
+                error: "Не удалось изменить архивный статус."
             });
         }
-
-        release.archived =
-            req.body && req.body.archived !== undefined
-                ? req.body.archived === true
-                : !release.archived;
-
-        release.updatedAt = new Date().toISOString();
-
-        writeJson(RELEASES_FILE, releases);
-
-        return syncAndRespond(res, {
-            release
-        });
     }
 );
 
@@ -961,465 +921,625 @@ app.delete(
     "/api/releases/:id",
     requireAdmin,
     async (req, res) => {
-        const releases = readJson(RELEASES_FILE, []);
+        try {
+            const releases = readJson(RELEASES_FILE, []);
 
-        const index = releases.findIndex(
-            (item) => String(item.id) === String(req.params.id)
-        );
+            const index = releases.findIndex(
+                (release) =>
+                    String(release.id) ===
+                    String(req.params.id)
+            );
 
-        if (index === -1) {
-            return res.status(404).json({
+            if (index === -1) {
+                return res.status(404).json({
+                    success: false,
+                    error: "Релиз не найден."
+                });
+            }
+
+            const deleted = releases.splice(index, 1)[0];
+
+            writeJson(RELEASES_FILE, releases);
+
+            await syncWithGitHub();
+
+            res.json({
+                success: true,
+                release: deleted
+            });
+        } catch (error) {
+            console.error(
+                "DELETE /api/releases/:id:",
+                error
+            );
+
+            res.status(500).json({
                 success: false,
-                error: "Релиз не найден"
+                error: "Не удалось удалить релиз."
             });
         }
-
-        const deleted = releases.splice(index, 1)[0];
-
-        writeJson(RELEASES_FILE, releases);
-
-        return syncAndRespond(res, {
-            deletedId: deleted.id
-        });
     }
 );
 
 app.post(
     "/api/releases/:id/vote",
-    (req, res) => {
-        const releases = readJson(RELEASES_FILE, []);
+    async (req, res) => {
+        try {
+            const releases = readJson(RELEASES_FILE, []);
 
-        const release = releases.find(
-            (item) => String(item.id) === String(req.params.id)
-        );
+            const index = releases.findIndex(
+                (release) =>
+                    String(release.id) ===
+                    String(req.params.id)
+            );
 
-        if (!release) {
-            return res.status(404).json({
+            if (index === -1) {
+                return res.status(404).json({
+                    success: false,
+                    error: "Релиз не найден."
+                });
+            }
+
+            const type =
+                req.body &&
+                typeof req.body.type === "string"
+                    ? req.body.type.trim().toLowerCase()
+                    : "";
+
+            if (
+                type !== "waiting" &&
+                type !== "wait" &&
+                type !== "skipped" &&
+                type !== "skip"
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    error: "Неизвестный вариант голосования."
+                });
+            }
+
+            const release = normalizeRelease(releases[index]);
+
+            if (type === "waiting" || type === "wait") {
+                release.votes.waiting += 1;
+            } else {
+                release.votes.skipped += 1;
+            }
+
+            release.updatedAt = new Date().toISOString();
+
+            releases[index] = release;
+
+            writeJson(RELEASES_FILE, releases);
+
+            res.json({
+                success: true,
+                votes: release.votes
+            });
+        } catch (error) {
+            console.error(
+                "POST /api/releases/:id/vote:",
+                error
+            );
+
+            res.status(500).json({
                 success: false,
-                error: "Релиз не найден"
+                error: "Не удалось сохранить голос."
             });
         }
-
-        if (!release.votes || typeof release.votes !== "object") {
-            release.votes = {
-                pc: 0,
-                playstation: 0,
-                xbox: 0
-            };
-        }
-
-        const platform = String(
-            req.body?.platform ||
-            req.body?.vote ||
-            ""
-        ).toLowerCase();
-
-        if (
-            platform !== "pc" &&
-            platform !== "playstation" &&
-            platform !== "xbox"
-        ) {
-            return res.status(400).json({
-                success: false,
-                error: "Некорректная платформа"
-            });
-        }
-
-        release.votes[platform] =
-            Number(release.votes[platform] || 0) + 1;
-
-        writeJson(RELEASES_FILE, releases);
-
-        return res.json({
-            success: true,
-            votes: release.votes
-        });
     }
 );
 
-/* =========================
+/* =========================================================
    MUSIC
-========================= */
+   ========================================================= */
 
 app.get("/api/music", (req, res) => {
     const config = getConfig();
 
-    return res.json({
-        musicPlaylist: sanitizeMusicPlaylist(
-            config.musicPlaylist
-        )
-    });
+    res.json(
+        Array.isArray(config.musicPlaylist)
+            ? config.musicPlaylist
+            : []
+    );
 });
 
-app.post(
-    "/api/music/manage",
-    requireAdmin,
-    async (req, res) => {
+app.post("/api/music/manage", requireAdmin, async (req, res) => {
+    try {
         const config = getConfig();
-
-        const playlist = Array.isArray(req.body?.musicPlaylist)
-            ? req.body.musicPlaylist
-            : [];
-
-        config.musicPlaylist =
-            sanitizeMusicPlaylist(playlist);
-
-        writeJson(CONFIG_FILE, config);
-
-        return syncAndRespond(res, {
-            musicPlaylist: config.musicPlaylist
-        });
-    }
-);
-
-app.delete(
-    "/api/admin/music/:id",
-    requireAdmin,
-    async (req, res) => {
-        const config = getConfig();
-
-        const playlist = normalizeMusicPlaylist(
-            config.musicPlaylist
-        );
-
-        const index = playlist.findIndex(
-            (track) => String(track.id) === String(req.params.id)
-        );
-
-        if (index === -1) {
-            return res.status(404).json({
-                success: false,
-                error: "Трек не найден"
-            });
-        }
-
-        const deleted = playlist.splice(index, 1)[0];
-
-        config.musicPlaylist = playlist;
-
-        writeJson(CONFIG_FILE, config);
-
-        return syncAndRespond(res, {
-            deletedId: deleted.id,
-            musicPlaylist: playlist
-        });
-    }
-);
-
-/* =========================
-   ADMIN CONFIG
-========================= */
-
-app.post(
-    "/api/admin/config",
-    async (req, res) => {
-        const config = getConfig();
-
-        const currentPassword =
-            req.body &&
-            typeof req.body.password === "string"
-                ? req.body.password
-                : "";
-
-        if (currentPassword !== config.password) {
-            return res.status(401).json({
-                success: false,
-                error: "Сервер отклонил пароль"
-            });
-        }
-
-        const siteName =
-            req.body.siteName !== undefined
-                ? String(req.body.siteName).trim()
-                : config.siteName;
-
-        const footerText =
-            req.body.footerText !== undefined
-                ? String(req.body.footerText)
-                : config.footerText;
-
-        const newPassword =
-            req.body.newPassword !== undefined
-                ? String(req.body.newPassword)
-                : "";
-
-        config.siteName =
-            siteName || config.siteName || "PlayPC";
-
-        config.footerText = footerText;
-
-        if (newPassword.trim()) {
-            config.password = newPassword.trim();
-        }
 
         if (!Array.isArray(config.musicPlaylist)) {
             config.musicPlaylist = [];
         }
 
+        const track = req.body || {};
+
+        if (
+            !track.title ||
+            typeof track.title !== "string"
+        ) {
+            return res.status(400).json({
+                success: false,
+                error: "Укажите название трека."
+            });
+        }
+
+        if (
+            !track.data &&
+            !track.src &&
+            !track.audio
+        ) {
+            return res.status(400).json({
+                success: false,
+                error: "Не найден Base64-аудиофайл."
+            });
+        }
+
+        const newTrack = {
+            id: track.id || generateId("track"),
+            title: track.title.trim(),
+            artist:
+                typeof track.artist === "string"
+                    ? track.artist.trim()
+                    : "PlayPC",
+            data:
+                track.data ||
+                track.src ||
+                track.audio,
+            type:
+                typeof track.type === "string"
+                    ? track.type
+                    : "audio/mpeg",
+            createdAt:
+                track.createdAt ||
+                new Date().toISOString()
+        };
+
+        config.musicPlaylist.push(newTrack);
+
         writeJson(CONFIG_FILE, config);
 
-        return syncAndRespond(res, {
-            siteName: config.siteName,
-            footerText: config.footerText,
+        await syncWithGitHub();
+
+        res.status(201).json({
+            success: true,
+            track: newTrack,
             musicPlaylist: config.musicPlaylist
         });
+    } catch (error) {
+        console.error("POST /api/music/manage:", error);
+
+        res.status(500).json({
+            success: false,
+            error: "Не удалось сохранить трек."
+        });
+    }
+});
+
+app.delete(
+    "/api/admin/music/:id",
+    requireAdmin,
+    async (req, res) => {
+        try {
+            const config = getConfig();
+
+            if (!Array.isArray(config.musicPlaylist)) {
+                config.musicPlaylist = [];
+            }
+
+            const index = config.musicPlaylist.findIndex(
+                (track) =>
+                    String(track.id) ===
+                    String(req.params.id)
+            );
+
+            if (index === -1) {
+                return res.status(404).json({
+                    success: false,
+                    error: "Трек не найден."
+                });
+            }
+
+            const deleted =
+                config.musicPlaylist.splice(index, 1)[0];
+
+            writeJson(CONFIG_FILE, config);
+
+            await syncWithGitHub();
+
+            res.json({
+                success: true,
+                track: deleted,
+                musicPlaylist: config.musicPlaylist
+            });
+        } catch (error) {
+            console.error(
+                "DELETE /api/admin/music/:id:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                error: "Не удалось удалить трек."
+            });
+        }
     }
 );
 
-/* =========================
-   CLEAR DATABASE
-========================= */
+/* =========================================================
+   DYNAMIC ADMIN CONFIG
+   ========================================================= */
+
+app.post(
+    "/api/admin/config",
+    requireAdmin,
+    async (req, res) => {
+        try {
+            const config = getConfig();
+
+            const currentPassword =
+                typeof req.body.currentPassword === "string"
+                    ? req.body.currentPassword
+                    : typeof req.body.password === "string"
+                        ? req.body.password
+                        : "";
+
+            if (currentPassword !== config.password) {
+                return res.status(401).json({
+                    success: false,
+                    error: "Текущий пароль администратора указан неверно."
+                });
+            }
+
+            if (
+                req.body.siteName !== undefined &&
+                typeof req.body.siteName === "string"
+            ) {
+                const siteName = req.body.siteName.trim();
+
+                if (siteName) {
+                    config.siteName = siteName;
+                }
+            }
+
+            if (
+                req.body.footerText !== undefined &&
+                typeof req.body.footerText === "string"
+            ) {
+                config.footerText = req.body.footerText;
+            }
+
+            if (
+                typeof req.body.newPassword === "string" &&
+                req.body.newPassword.trim()
+            ) {
+                config.password = req.body.newPassword.trim();
+            }
+
+            if (!Array.isArray(config.musicPlaylist)) {
+                config.musicPlaylist = [];
+            }
+
+            writeJson(CONFIG_FILE, config);
+
+            await syncWithGitHub();
+
+            res.json({
+                success: true,
+                siteName: config.siteName,
+                footerText: config.footerText,
+                passwordChanged:
+                    typeof req.body.newPassword === "string" &&
+                    Boolean(req.body.newPassword.trim()),
+                musicPlaylist: config.musicPlaylist
+            });
+        } catch (error) {
+            console.error(
+                "POST /api/admin/config:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                error: "Не удалось сохранить настройки."
+            });
+        }
+    }
+);
+
+/* =========================================================
+   CLEAR ALL DATA
+   ========================================================= */
 
 app.post(
     "/api/admin/clear-all",
     requireAdmin,
     async (req, res) => {
-        writeJson(POSTS_FILE, []);
-        writeJson(RELEASES_FILE, []);
-        writeJson(QUIZ_FILE, clone(DEFAULT_QUIZ));
-        writeJson(POLL_FILE, clone(DEFAULT_POLL));
+        try {
+            writeJson(POSTS_FILE, []);
+            writeJson(RELEASES_FILE, []);
 
-        const config = getConfig();
+            const config = getConfig();
+            config.musicPlaylist = [];
+            writeJson(CONFIG_FILE, config);
 
-        config.musicPlaylist = [];
+            writeJson(POLL_FILE, clone(DEFAULT_POLL));
+            writeJson(QUIZ_FILE, clone(DEFAULT_QUIZ));
 
-        writeJson(CONFIG_FILE, config);
+            await syncWithGitHub();
 
-        return syncAndRespond(res, {
-            message: "База PlayPC очищена"
-        });
+            res.json({
+                success: true
+            });
+        } catch (error) {
+            console.error(
+                "POST /api/admin/clear-all:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                error: "Не удалось очистить данные."
+            });
+        }
     }
 );
 
-/* =========================
+/* =========================================================
    POLL
-========================= */
+   ========================================================= */
 
 app.get("/api/poll", (req, res) => {
-    const poll = normalizePoll(
-        readJson(POLL_FILE, DEFAULT_POLL)
-    );
+    const poll = readJson(POLL_FILE, DEFAULT_POLL);
 
-    writeJson(POLL_FILE, poll);
-
-    return res.json(poll);
+    res.json(poll);
 });
 
-app.post("/api/poll/vote", (req, res) => {
-    const poll = normalizePoll(
-        readJson(POLL_FILE, DEFAULT_POLL)
-    );
+app.post("/api/poll/vote", async (req, res) => {
+    try {
+        const poll = readJson(POLL_FILE, DEFAULT_POLL);
 
-    const rawIndex =
-        req.body?.optionIndex ??
-        req.body?.index ??
-        req.body?.answerIndex;
+        if (!Array.isArray(poll.options)) {
+            poll.options = [];
+        }
 
-    const optionIndex = Number(rawIndex);
+        const optionId =
+            req.body &&
+            typeof req.body.optionId === "string"
+                ? req.body.optionId
+                : req.body &&
+                  typeof req.body.id === "string"
+                    ? req.body.id
+                    : "";
 
-    if (
-        !Number.isInteger(optionIndex) ||
-        optionIndex < 0 ||
-        optionIndex >= poll.options.length
-    ) {
-        return res.status(400).json({
+        const optionIndex = poll.options.findIndex(
+            (option) =>
+                String(option.id) === String(optionId)
+        );
+
+        if (optionIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                error: "Вариант ответа не найден."
+            });
+        }
+
+        const currentVotes =
+            Number(poll.options[optionIndex].votes) || 0;
+
+        poll.options[optionIndex].votes =
+            currentVotes + 1;
+
+        writeJson(POLL_FILE, poll);
+
+        res.json({
+            success: true,
+            poll
+        });
+    } catch (error) {
+        console.error("POST /api/poll/vote:", error);
+
+        res.status(500).json({
             success: false,
-            error: "Некорректный вариант ответа"
+            error: "Не удалось сохранить голос."
         });
     }
-
-    poll.votes[optionIndex] += 1;
-    poll.totalVotes += 1;
-
-    writeJson(POLL_FILE, poll);
-
-    return res.json({
-        success: true,
-        poll
-    });
 });
 
 app.post(
     "/api/poll/manage",
     requireAdmin,
     async (req, res) => {
-        const oldPoll = normalizePoll(
-            readJson(POLL_FILE, DEFAULT_POLL)
-        );
+        try {
+            const body = req.body || {};
 
-        const body = req.body || {};
+            const question =
+                typeof body.question === "string"
+                    ? body.question.trim()
+                    : "";
 
-        const options = Array.isArray(body.options)
-            ? body.options
-                .map((option) => {
+            const incomingOptions = Array.isArray(body.options)
+                ? body.options
+                : [];
+
+            const options = incomingOptions
+                .map((option, index) => {
                     if (typeof option === "string") {
-                        return option.trim();
+                        return {
+                            id: `option-${index + 1}`,
+                            text: option.trim(),
+                            votes: 0
+                        };
                     }
 
-                    if (option && typeof option === "object") {
-                        return String(
-                            option.text ??
-                            option.title ??
-                            option.label ??
-                            ""
-                        ).trim();
+                    if (
+                        option &&
+                        typeof option === "object"
+                    ) {
+                        return {
+                            id:
+                                option.id ||
+                                `option-${index + 1}`,
+                            text:
+                                typeof option.text === "string"
+                                    ? option.text.trim()
+                                    : "",
+                            votes:
+                                Number(option.votes) || 0
+                        };
                     }
 
-                    return "";
+                    return null;
                 })
-                .filter(Boolean)
-            : oldPoll.options;
+                .filter(
+                    (option) =>
+                        option &&
+                        typeof option.text === "string" &&
+                        option.text
+                );
 
-        const poll = {
-            question:
-                body.question !== undefined
-                    ? String(body.question)
-                    : oldPoll.question,
-            options:
-                options.length > 0
-                    ? options
-                    : oldPoll.options,
-            votes: [],
-            totalVotes: 0,
-            updatedAt: new Date().toISOString()
-        };
+            const poll = {
+                question:
+                    question ||
+                    DEFAULT_POLL.question,
+                options:
+                    options.length > 0
+                        ? options
+                        : clone(DEFAULT_POLL.options),
+                updatedAt: new Date().toISOString()
+            };
 
-        const resetVotes =
-            body.resetVotes === true ||
-            body.resetVotes === "true";
+            writeJson(POLL_FILE, poll);
 
-        if (resetVotes) {
-            poll.votes = poll.options.map(() => 0);
-        } else {
-            poll.votes = poll.options.map(
-                (_, index) =>
-                    Number(oldPoll.votes[index] || 0)
+            await syncWithGitHub();
+
+            res.json({
+                success: true,
+                poll
+            });
+        } catch (error) {
+            console.error(
+                "POST /api/poll/manage:",
+                error
             );
+
+            res.status(500).json({
+                success: false,
+                error: "Не удалось сохранить опрос."
+            });
         }
-
-        poll.totalVotes = poll.votes.reduce(
-            (sum, value) => sum + value,
-            0
-        );
-
-        writeJson(POLL_FILE, poll);
-
-        return syncAndRespond(res, {
-            poll
-        });
     }
 );
 
-/* =========================
+/* =========================================================
    QUIZ
-========================= */
+   ========================================================= */
 
 app.get("/api/quiz", (req, res) => {
-    const quiz = normalizeQuiz(
-        readJson(QUIZ_FILE, DEFAULT_QUIZ)
-    );
+    const quiz = readJson(QUIZ_FILE, DEFAULT_QUIZ);
 
-    writeJson(QUIZ_FILE, quiz);
+    res.json(quiz);
+});
 
-    return res.json(
-        sanitizeQuizForPublic(quiz)
-    );
+app.post("/api/quiz/answer", async (req, res) => {
+    try {
+        const quiz = readJson(QUIZ_FILE, DEFAULT_QUIZ);
+
+        const rawAnswer =
+            req.body &&
+            req.body.answer !== undefined
+                ? req.body.answer
+                : req.body &&
+                  req.body.index !== undefined
+                    ? req.body.index
+                    : null;
+
+        const numericAnswer = Number(rawAnswer);
+        const correctAnswer = Number(quiz.answer);
+
+        const correct =
+            Number.isFinite(numericAnswer) &&
+            Number.isFinite(correctAnswer) &&
+            numericAnswer === correctAnswer;
+
+        res.json({
+            success: true,
+            correct,
+            answer: correctAnswer
+        });
+    } catch (error) {
+        console.error("POST /api/quiz/answer:", error);
+
+        res.status(500).json({
+            success: false,
+            error: "Не удалось проверить ответ."
+        });
+    }
 });
 
 app.post(
     "/api/quiz/manage",
     requireAdmin,
     async (req, res) => {
-        const body = req.body || {};
+        try {
+            const body = req.body || {};
 
-        const options = Array.isArray(body.options)
-            ? body.options.map((option) => {
-                if (typeof option === "string") {
-                    return option;
-                }
+            const quiz = {
+                question:
+                    typeof body.question === "string"
+                        ? body.question
+                        : DEFAULT_QUIZ.question,
 
-                if (option && typeof option === "object") {
-                    return String(
-                        option.text ??
-                        option.title ??
-                        option.label ??
-                        ""
-                    );
-                }
+                description:
+                    typeof body.description === "string"
+                        ? body.description
+                        : DEFAULT_QUIZ.description,
 
-                return String(option ?? "");
-            })
-            : clone(DEFAULT_QUIZ.options);
+                options:
+                    Array.isArray(body.options)
+                        ? body.options.map((option) =>
+                            typeof option === "string"
+                                ? option
+                                : String(option ?? "")
+                        )
+                        : clone(DEFAULT_QUIZ.options),
 
-        const rawCorrectIndex =
-            body.correctIndex ??
-            body.answerIndex ??
-            0;
+                answer:
+                    Number.isFinite(Number(body.answer))
+                        ? Number(body.answer)
+                        : DEFAULT_QUIZ.answer,
 
-        const correctIndex = Number(rawCorrectIndex);
+                updatedAt: new Date().toISOString()
+            };
 
-        const quiz = normalizeQuiz({
-            question: String(
-                body.question ||
-                DEFAULT_QUIZ.question
-            ),
-            image: String(body.image || ""),
-            options,
-            correctIndex:
-                Number.isInteger(correctIndex)
-                    ? correctIndex
-                    : 0,
-            updatedAt: new Date().toISOString()
-        });
+            writeJson(QUIZ_FILE, quiz);
 
-        writeJson(QUIZ_FILE, quiz);
+            await syncWithGitHub();
 
-        return syncAndRespond(res, {
-            quiz: sanitizeQuizForPublic(quiz)
-        });
+            res.json({
+                success: true,
+                quiz
+            });
+        } catch (error) {
+            console.error(
+                "POST /api/quiz/manage:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                error: "Не удалось сохранить викторину."
+            });
+        }
     }
 );
 
-app.post("/api/quiz/answer", (req, res) => {
-    const quiz = normalizeQuiz(
-        readJson(QUIZ_FILE, DEFAULT_QUIZ)
-    );
-
-    const rawIndex =
-        req.body?.answerIndex ??
-        req.body?.index ??
-        req.body?.optionIndex;
-
-    const answerIndex = Number(rawIndex);
-
-    if (
-        !Number.isInteger(answerIndex) ||
-        answerIndex < 0 ||
-        answerIndex >= quiz.options.length
-    ) {
-        return res.status(400).json({
-            success: false,
-            error: "Некорректный ответ"
-        });
-    }
-
-    const correct =
-        answerIndex === quiz.correctIndex;
-
-    return res.json({
-        success: true,
-        correct,
-        answerIndex,
-        correctIndex: quiz.correctIndex
-    });
-});
-
-/* =========================
+/* =========================================================
    HEALTH CHECK
-========================= */
+   ========================================================= */
 
 app.get("/api/health", (req, res) => {
-    return res.json({
+    res.json({
         success: true,
         status: "online",
         siteName: getConfig().siteName,
@@ -1427,18 +1547,62 @@ app.get("/api/health", (req, res) => {
     });
 });
 
-/* =========================
-   FALLBACK
-========================= */
+/* =========================================================
+   GITHUB SYNC
+   ========================================================= */
 
-app.get("*", (req, res) => {
-    if (
-        req.path.startsWith("/api/") ||
-        req.path.startsWith("/api")
-    ) {
+function syncWithGitHub() {
+    return new Promise((resolve) => {
+        const filesToSync = [
+            "posts.json",
+            "releases.json",
+            "config.json",
+            "quiz.json",
+            "poll.json"
+        ];
+
+        const command =
+            `git add ${filesToSync.join(" ")} && ` +
+            `git diff --cached --quiet || ` +
+            `git commit -m "PlayPC automatic data sync ${new Date().toISOString()}" && ` +
+            `git push`;
+
+        exec(
+            command,
+            {
+                cwd: __dirname,
+                maxBuffer: 1024 * 1024 * 10
+            },
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.log(
+                        "GitHub sync skipped/failed:",
+                        stderr || error.message
+                    );
+                    resolve(false);
+                    return;
+                }
+
+                console.log(
+                    "GitHub sync completed:",
+                    stdout || "OK"
+                );
+
+                resolve(true);
+            }
+        );
+    });
+}
+
+/* =========================================================
+   404 / FRONTEND FALLBACK
+   ========================================================= */
+
+app.use((req, res, next) => {
+    if (req.path.startsWith("/api/")) {
         return res.status(404).json({
             success: false,
-            error: "API route not found"
+            error: "API endpoint not found."
         });
     }
 
@@ -1454,9 +1618,9 @@ app.get("*", (req, res) => {
     return res.status(404).send("PlayPC");
 });
 
-/* =========================
+/* =========================================================
    ERROR HANDLER
-========================= */
+   ========================================================= */
 
 app.use((error, req, res, next) => {
     console.error("Server error:", error);
@@ -1465,24 +1629,27 @@ app.use((error, req, res, next) => {
         return next(error);
     }
 
-    return res.status(500).json({
+    res.status(500).json({
         success: false,
-        error: "Внутренняя ошибка сервера"
+        error: "Внутренняя ошибка сервера."
     });
 });
 
-/* =========================
-   START
-========================= */
+/* =========================================================
+   START SERVER
+   ========================================================= */
 
 app.listen(PORT, () => {
-    console.log("======================================");
-    console.log("          PlayPC SERVER ONLINE");
-    console.log("======================================");
+    ensureFiles();
+
+    console.log("========================================");
+    console.log("          PLAYPC SERVER ONLINE");
+    console.log("========================================");
     console.log(`Port: ${PORT}`);
+    console.log(`Site: ${getConfig().siteName}`);
     console.log(`Public: ${PUBLIC_DIR}`);
-    console.log("Config: config.json");
-    console.log("Admin password: loaded dynamically from config.json");
-    console.log("GitHub auto-sync: enabled");
-    console.log("======================================");
+    console.log("Dynamic admin configuration: ENABLED");
+    console.log("Multiplatform news: ENABLED");
+    console.log("GitHub synchronization: ENABLED");
+    console.log("========================================");
 });
