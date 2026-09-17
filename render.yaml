@@ -5,3 +5,7 @@ services:
     buildCommand: npm install
     startCommand: npm start
     plan: free
+    disk:
+      name: game-data
+      mountPath: /data
+      sizeGB: 1
