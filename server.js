@@ -18,7 +18,8 @@ const QUIZ_FILE = path.join(__dirname, "quiz.json");
 
 const DEFAULT_CONFIG = {
     password: "AdminPlayPC2026",
-    siteName: "PlayPC"
+    siteName: "PlayPC",
+    musicPlaylist: []
 };
 
 const DEFAULT_QUIZ_DATA = {
@@ -33,9 +34,18 @@ const DEFAULT_QUIZ_DATA = {
     poll: {
         topic: "Опрос месяца",
         options: [
-            { text: "Вариант 1", votes: 0 },
-            { text: "Вариант 2", votes: 0 },
-            { text: "Вариант 3", votes: 0 }
+            {
+                text: "Вариант 1",
+                votes: 0
+            },
+            {
+                text: "Вариант 2",
+                votes: 0
+            },
+            {
+                text: "Вариант 3",
+                votes: 0
+            }
         ]
     }
 };
@@ -49,22 +59,25 @@ let githubSyncQueued = false;
 
 async function syncWithGitHub() {
     /*
-     * Локально process.env.PORT отсутствует.
+     * На локальном компьютере process.env.PORT обычно
+     * отсутствует, поэтому git push здесь не выполняется.
+     *
      * На Render PORT устанавливается автоматически.
      */
     if (!process.env.PORT) {
-        console.log("[GitHub Sync] Локальный режим — git push пропущен.");
+        console.log(
+            "[GitHub Sync] Local mode: synchronization skipped."
+        );
         return;
     }
 
-    /*
-     * Если предыдущая синхронизация ещё выполняется,
-     * ставим следующую в очередь, чтобы команды никогда
-     * не выполнялись одновременно.
-     */
     if (githubSyncRunning) {
         githubSyncQueued = true;
-        console.log("[GitHub Sync] Изменение поставлено в очередь.");
+
+        console.log(
+            "[GitHub Sync] Synchronization queued."
+        );
+
         return;
     }
 
@@ -74,24 +87,22 @@ async function syncWithGitHub() {
         const commands = [
             'git config user.name "ZenixServerBot"',
             'git config user.email "bot@playpc.ru"',
-            'git add posts.json releases.json config.json quiz.json'
+            "git add posts.json releases.json config.json quiz.json"
         ];
 
         for (const command of commands) {
-            console.log(`[GitHub Sync] Выполняется: ${command}`);
+            console.log(
+                `[GitHub Sync] ${command}`
+            );
+
             await execAsync(command, {
                 cwd: __dirname,
                 maxBuffer: 1024 * 1024
             });
         }
 
-        /*
-         * git commit возвращает код 1, если изменений нет.
-         * Это нормальная ситуация, поэтому её обрабатываем
-         * отдельно и всё равно пытаемся выполнить push.
-         */
         try {
-            const result = await execAsync(
+            const commitResult = await execAsync(
                 'git commit -m "Авто-обновление базы данных с сервера"',
                 {
                     cwd: __dirname,
@@ -99,33 +110,33 @@ async function syncWithGitHub() {
                 }
             );
 
-            if (result.stdout) {
+            if (commitResult.stdout) {
                 console.log(
                     "[GitHub Sync] Commit:",
-                    result.stdout.trim()
+                    commitResult.stdout.trim()
                 );
             }
 
-            if (result.stderr) {
+            if (commitResult.stderr) {
                 console.log(
                     "[GitHub Sync] Commit info:",
-                    result.stderr.trim()
+                    commitResult.stderr.trim()
                 );
             }
-        } catch (commitError) {
-            const commitOutput =
-                `${commitError.stdout || ""}\n${commitError.stderr || ""}`;
+        } catch (error) {
+            const output =
+                `${error.stdout || ""}\n${error.stderr || ""}`;
 
             if (
                 /nothing to commit|nothing added to commit|working tree clean/i.test(
-                    commitOutput
+                    output
                 )
             ) {
                 console.log(
-                    "[GitHub Sync] Новых изменений для commit нет."
+                    "[GitHub Sync] Nothing new to commit."
                 );
             } else {
-                throw commitError;
+                throw error;
             }
         }
 
@@ -152,11 +163,11 @@ async function syncWithGitHub() {
         }
 
         console.log(
-            "[GitHub Sync] Синхронизация с GitHub завершена."
+            "[GitHub Sync] Completed successfully."
         );
     } catch (error) {
         console.error(
-            "[GitHub Sync] Ошибка синхронизации:",
+            "[GitHub Sync] Failed:",
             error.message
         );
 
@@ -182,7 +193,7 @@ async function syncWithGitHub() {
             setImmediate(() => {
                 syncWithGitHub().catch((error) => {
                     console.error(
-                        "[GitHub Sync] Ошибка queued sync:",
+                        "[GitHub Sync] Queued sync failed:",
                         error.message
                     );
                 });
@@ -192,7 +203,31 @@ async function syncWithGitHub() {
 }
 
 /* =========================================================
-   JSON HELPERS
+   EXPRESS
+========================================================= */
+
+app.use(
+    express.json({
+        limit: "10mb"
+    })
+);
+
+app.use(
+    express.urlencoded({
+        extended: true,
+        limit: "10mb"
+    })
+);
+
+app.use(
+    express.static(PUBLIC_DIR, {
+        extensions: ["html"],
+        index: "index.html"
+    })
+);
+
+/* =========================================================
+   FILE HELPERS
 ========================================================= */
 
 function ensureJsonFile(filePath, defaultValue) {
@@ -200,13 +235,17 @@ function ensureJsonFile(filePath, defaultValue) {
         if (!fs.existsSync(filePath)) {
             fs.writeFileSync(
                 filePath,
-                JSON.stringify(defaultValue, null, 2),
+                JSON.stringify(
+                    defaultValue,
+                    null,
+                    2
+                ),
                 "utf8"
             );
         }
     } catch (error) {
         console.error(
-            `Ошибка создания ${filePath}:`,
+            `Cannot create ${filePath}:`,
             error.message
         );
     }
@@ -215,24 +254,34 @@ function ensureJsonFile(filePath, defaultValue) {
 function readJson(filePath, defaultValue) {
     try {
         if (!fs.existsSync(filePath)) {
-            ensureJsonFile(filePath, defaultValue);
+            ensureJsonFile(
+                filePath,
+                defaultValue
+            );
+
             return defaultValue;
         }
 
-        const raw = fs.readFileSync(
-            filePath,
-            "utf8"
-        ).trim();
+        const raw = fs
+            .readFileSync(
+                filePath,
+                "utf8"
+            )
+            .trim();
 
         if (!raw) {
-            ensureJsonFile(filePath, defaultValue);
+            ensureJsonFile(
+                filePath,
+                defaultValue
+            );
+
             return defaultValue;
         }
 
         return JSON.parse(raw);
     } catch (error) {
         console.error(
-            `Ошибка чтения ${filePath}:`,
+            `Cannot read ${filePath}:`,
             error.message
         );
 
@@ -244,14 +293,18 @@ function writeJson(filePath, data) {
     try {
         fs.writeFileSync(
             filePath,
-            JSON.stringify(data, null, 2),
+            JSON.stringify(
+                data,
+                null,
+                2
+            ),
             "utf8"
         );
 
         return true;
     } catch (error) {
         console.error(
-            `Ошибка записи ${filePath}:`,
+            `Cannot write ${filePath}:`,
             error.message
         );
 
@@ -259,75 +312,31 @@ function writeJson(filePath, data) {
     }
 }
 
-/* =========================================================
-   CONFIG
-========================================================= */
-
-function getConfig() {
-    const config = readJson(
-        CONFIG_FILE,
-        DEFAULT_CONFIG
+/*
+ * Важно:
+ * Все операции записи вызывают syncWithGitHub()
+ * сразу после успешного fs.writeFileSync через writeJson().
+ */
+function writeJsonAndSync(filePath, data) {
+    const saved = writeJson(
+        filePath,
+        data
     );
 
-    return {
-        password:
-            typeof config.password === "string" &&
-            config.password.length > 0
-                ? config.password
-                : DEFAULT_CONFIG.password,
-
-        siteName:
-            typeof config.siteName === "string" &&
-            config.siteName.trim()
-                ? config.siteName.trim()
-                : DEFAULT_CONFIG.siteName
-    };
-}
-
-function getAdminPassword(req) {
-    const headerPassword =
-        req.get("X-Admin-Password") ||
-        req.get("X-Password");
-
-    const queryPassword =
-        typeof req.query.password === "string"
-            ? req.query.password
-            : "";
-
-    const bodyPassword =
-        req.body &&
-        typeof req.body.password === "string"
-            ? req.body.password
-            : "";
-
-    return (
-        headerPassword ||
-        queryPassword ||
-        bodyPassword ||
-        ""
-    );
-}
-
-function requireAdmin(req, res, next) {
-    const config = getConfig();
-    const password = getAdminPassword(req);
-
-    if (
-        !password ||
-        password !== config.password
-    ) {
-        return res.status(401).json({
-            success: false,
-            error: "Неверный пароль администратора"
+    if (saved) {
+        syncWithGitHub().catch((error) => {
+            console.error(
+                "[GitHub Sync] Background error:",
+                error.message
+            );
         });
     }
 
-    req.isAdmin = true;
-    next();
+    return saved;
 }
 
 /* =========================================================
-   NORMALIZERS
+   BASIC HELPERS
 ========================================================= */
 
 function normalizeBoolean(
@@ -340,20 +349,28 @@ function normalizeBoolean(
 
     if (typeof value === "string") {
         const normalized =
-            value.trim().toLowerCase();
+            value
+                .trim()
+                .toLowerCase();
 
         if (
-            ["true", "1", "yes", "on"].includes(
-                normalized
-            )
+            [
+                "true",
+                "1",
+                "yes",
+                "on"
+            ].includes(normalized)
         ) {
             return true;
         }
 
         if (
-            ["false", "0", "no", "off"].includes(
-                normalized
-            )
+            [
+                "false",
+                "0",
+                "no",
+                "off"
+            ].includes(normalized)
         ) {
             return false;
         }
@@ -398,376 +415,6 @@ function normalizePlatforms(platforms) {
     return [];
 }
 
-function normalizePost(post) {
-    if (!post || typeof post !== "object") {
-        return null;
-    }
-
-    const normalized = {
-        id:
-            post.id !== undefined &&
-            post.id !== null
-                ? post.id
-                : Date.now(),
-
-        title:
-            typeof post.title === "string"
-                ? post.title.trim()
-                : "",
-
-        content:
-            typeof post.content === "string"
-                ? post.content
-                : "",
-
-        platform:
-            typeof post.platform === "string"
-                ? post.platform
-                : "",
-
-        imageUrl:
-            typeof post.imageUrl === "string"
-                ? post.imageUrl
-                : "",
-
-        pinned: normalizeBoolean(
-            post.pinned,
-            false
-        ),
-
-        isDraft: normalizeBoolean(
-            post.isDraft,
-            false
-        ),
-
-        publishAt:
-            typeof post.publishAt === "string"
-                ? post.publishAt
-                : "",
-
-        moodTag:
-            typeof post.moodTag === "string"
-                ? post.moodTag
-                : "",
-
-        createdAt:
-            typeof post.createdAt === "string"
-                ? post.createdAt
-                : new Date().toISOString(),
-
-        updatedAt:
-            typeof post.updatedAt === "string"
-                ? post.updatedAt
-                : new Date().toISOString(),
-
-        votesWillPlay: normalizeNumber(
-            post.votesWillPlay !== undefined
-                ? post.votesWillPlay
-                : post.willPlay,
-            0
-        ),
-
-        votesWontPlay: normalizeNumber(
-            post.votesWontPlay !== undefined
-                ? post.votesWontPlay
-                : post.wontPlay,
-            0
-        )
-    };
-
-    normalized.willPlay =
-        normalized.votesWillPlay;
-
-    normalized.wontPlay =
-        normalized.votesWontPlay;
-
-    return normalized;
-}
-
-function normalizeRelease(release) {
-    if (
-        !release ||
-        typeof release !== "object"
-    ) {
-        return null;
-    }
-
-    const normalized = {
-        id:
-            release.id !== undefined &&
-            release.id !== null
-                ? release.id
-                : Date.now(),
-
-        title:
-            typeof release.title === "string"
-                ? release.title.trim()
-                : "",
-
-        releaseDate:
-            typeof release.releaseDate === "string"
-                ? release.releaseDate
-                : "",
-
-        priceDigital: normalizeNumber(
-            release.priceDigital,
-            0
-        ),
-
-        priceDisk: normalizeNumber(
-            release.priceDisk,
-            0
-        ),
-
-        platforms: normalizePlatforms(
-            release.platforms
-        ),
-
-        systemReq:
-            typeof release.systemReq === "string"
-                ? release.systemReq
-                : "",
-
-        bgUrl:
-            typeof release.bgUrl === "string"
-                ? release.bgUrl
-                : "",
-
-        discount: normalizeNumber(
-            release.discount,
-            0
-        ),
-
-        isMainHit: normalizeBoolean(
-            release.isMainHit,
-            false
-        ),
-
-        isArchived: normalizeBoolean(
-            release.isArchived,
-            false
-        ),
-
-        createdAt:
-            typeof release.createdAt === "string"
-                ? release.createdAt
-                : new Date().toISOString(),
-
-        updatedAt:
-            typeof release.updatedAt === "string"
-                ? release.updatedAt
-                : new Date().toISOString(),
-
-        votesWillPlay: normalizeNumber(
-            release.votesWillPlay !== undefined
-                ? release.votesWillPlay
-                : release.willPlay,
-            0
-        ),
-
-        votesWontPlay: normalizeNumber(
-            release.votesWontPlay !== undefined
-                ? release.votesWontPlay
-                : release.wontPlay,
-            0
-        )
-    };
-
-    normalized.willPlay =
-        normalized.votesWillPlay;
-
-    normalized.wontPlay =
-        normalized.votesWontPlay;
-
-    return normalized;
-}
-
-function normalizeQuiz(data) {
-    if (
-        !data ||
-        typeof data !== "object"
-    ) {
-        return JSON.parse(
-            JSON.stringify(
-                DEFAULT_QUIZ_DATA
-            )
-        );
-    }
-
-    const options =
-        Array.isArray(data.options)
-            ? data.options
-                .map((option) =>
-                    String(option).trim()
-                )
-                .filter(Boolean)
-                .slice(0, 3)
-            : [];
-
-    const pollSource =
-        data.poll &&
-        typeof data.poll === "object"
-            ? data.poll
-            : DEFAULT_QUIZ_DATA.poll;
-
-    const pollOptions =
-        Array.isArray(
-            pollSource.options
-        )
-            ? pollSource.options
-                .map((option) => {
-                    if (
-                        typeof option ===
-                        "string"
-                    ) {
-                        return {
-                            text: option,
-                            votes: 0
-                        };
-                    }
-
-                    return {
-                        text:
-                            option &&
-                            typeof option.text ===
-                            "string"
-                                ? option.text.trim()
-                                : "",
-
-                        votes:
-                            option
-                                ? normalizeNumber(
-                                    option.votes,
-                                    0
-                                )
-                                : 0
-                    };
-                })
-                .filter(
-                    (option) => option.text
-                )
-            : [];
-
-    const safeOptions =
-        options.length > 0
-            ? options
-            : [
-                ...DEFAULT_QUIZ_DATA.options
-            ];
-
-    const correctIndex = Math.max(
-        0,
-        Math.min(
-            safeOptions.length - 1,
-            Math.floor(
-                normalizeNumber(
-                    data.correctIndex,
-                    0
-                )
-            )
-        )
-    );
-
-    return {
-        question:
-            typeof data.question ===
-                "string" &&
-            data.question.trim()
-                ? data.question.trim()
-                : DEFAULT_QUIZ_DATA.question,
-
-        screenshotUrl:
-            typeof data.screenshotUrl ===
-                "string"
-                ? data.screenshotUrl
-                : "",
-
-        options: safeOptions,
-
-        correctIndex,
-
-        poll: {
-            topic:
-                typeof pollSource.topic ===
-                    "string" &&
-                pollSource.topic.trim()
-                    ? pollSource.topic.trim()
-                    : DEFAULT_QUIZ_DATA
-                        .poll.topic,
-
-            options:
-                pollOptions.length > 0
-                    ? pollOptions
-                    : DEFAULT_QUIZ_DATA
-                        .poll.options
-                        .map((option) => ({
-                            ...option
-                        }))
-        }
-    };
-}
-
-/* =========================================================
-   DATA ACCESS
-========================================================= */
-
-function getPosts() {
-    const raw = readJson(
-        POSTS_FILE,
-        []
-    );
-
-    const posts =
-        Array.isArray(raw)
-            ? raw
-            : [];
-
-    return posts
-        .map(normalizePost)
-        .filter(Boolean);
-}
-
-function getReleases() {
-    const raw = readJson(
-        RELEASES_FILE,
-        []
-    );
-
-    const releases =
-        Array.isArray(raw)
-            ? raw
-            : [];
-
-    return releases
-        .map(normalizeRelease)
-        .filter(Boolean);
-}
-
-function savePosts(posts) {
-    return writeJson(
-        POSTS_FILE,
-        posts
-            .map(normalizePost)
-            .filter(Boolean)
-    );
-}
-
-function saveReleases(releases) {
-    return writeJson(
-        RELEASES_FILE,
-        releases
-            .map(normalizeRelease)
-            .filter(Boolean)
-    );
-}
-
-function saveQuiz(quiz) {
-    return writeJson(
-        QUIZ_FILE,
-        normalizeQuiz(quiz)
-    );
-}
-
 function createId(items) {
     let id = Date.now();
 
@@ -803,6 +450,306 @@ function isFuturePublishDate(
     return timestamp > Date.now();
 }
 
+/* =========================================================
+   CONFIG NORMALIZATION
+========================================================= */
+
+function normalizeMusicPlaylist(
+    playlist
+) {
+    if (!Array.isArray(playlist)) {
+        return [];
+    }
+
+    return playlist
+        .map((track, index) => {
+            if (
+                !track ||
+                typeof track !== "object"
+            ) {
+                return null;
+            }
+
+            return {
+                id:
+                    track.id !==
+                    undefined &&
+                    track.id !== null
+                        ? track.id
+                        : index + 1,
+
+                title:
+                    typeof track.title ===
+                        "string"
+                        ? track.title.trim()
+                        : `Трек ${index + 1}`,
+
+                mp3Url:
+                    typeof track.mp3Url ===
+                        "string"
+                        ? track.mp3Url.trim()
+                        : ""
+            };
+        })
+        .filter(
+            (track) =>
+                track &&
+                track.title &&
+                track.mp3Url
+        );
+}
+
+function normalizeConfig(
+    config
+) {
+    if (
+        !config ||
+        typeof config !== "object"
+    ) {
+        config = {};
+    }
+
+    return {
+        password:
+            typeof config.password ===
+                "string" &&
+            config.password.length > 0
+                ? config.password
+                : DEFAULT_CONFIG.password,
+
+        siteName:
+            typeof config.siteName ===
+                "string" &&
+            config.siteName.trim()
+                ? config.siteName.trim()
+                : DEFAULT_CONFIG.siteName,
+
+        musicPlaylist:
+            normalizeMusicPlaylist(
+                config.musicPlaylist
+            )
+    };
+}
+
+function getConfig() {
+    return normalizeConfig(
+        readJson(
+            CONFIG_FILE,
+            DEFAULT_CONFIG
+        )
+    );
+}
+
+function getAdminPassword(req) {
+    const headerPassword =
+        req.get("X-Admin-Password") ||
+        req.get("X-Password");
+
+    const queryPassword =
+        typeof req.query.password ===
+            "string"
+            ? req.query.password
+            : "";
+
+    const bodyPassword =
+        req.body &&
+        typeof req.body.password ===
+            "string"
+            ? req.body.password
+            : "";
+
+    return (
+        headerPassword ||
+        queryPassword ||
+        bodyPassword ||
+        ""
+    );
+}
+
+function requireAdmin(
+    req,
+    res,
+    next
+) {
+    const config =
+        getConfig();
+
+    const password =
+        getAdminPassword(req);
+
+    if (
+        !password ||
+        password !==
+            config.password
+    ) {
+        return res.status(401).json({
+            success: false,
+            error:
+                "Неверный пароль администратора"
+        });
+    }
+
+    req.isAdmin = true;
+
+    next();
+}
+
+/* =========================================================
+   POST NORMALIZATION
+========================================================= */
+
+function normalizePost(post) {
+    if (
+        !post ||
+        typeof post !== "object"
+    ) {
+        return null;
+    }
+
+    const normalized = {
+        id:
+            post.id !== undefined &&
+            post.id !== null
+                ? post.id
+                : Date.now(),
+
+        title:
+            typeof post.title ===
+                "string"
+                ? post.title.trim()
+                : "",
+
+        platform:
+            typeof post.platform ===
+                "string"
+                ? post.platform
+                : "",
+
+        imageUrl:
+            typeof post.imageUrl ===
+                "string"
+                ? post.imageUrl
+                : "",
+
+        content:
+            typeof post.content ===
+                "string"
+                ? post.content
+                : "",
+
+        moodTag:
+            typeof post.moodTag ===
+                "string"
+                ? post.moodTag
+                : "",
+
+        isDraft:
+            normalizeBoolean(
+                post.isDraft,
+                false
+            ),
+
+        publishAt:
+            typeof post.publishAt ===
+                "string"
+                ? post.publishAt
+                : "",
+
+        pinned:
+            normalizeBoolean(
+                post.pinned,
+                false
+            ),
+
+        clicksShare:
+            Math.max(
+                0,
+                normalizeNumber(
+                    post.clicksShare,
+                    0
+                )
+            ),
+
+        clicksBookmark:
+            Math.max(
+                0,
+                normalizeNumber(
+                    post.clicksBookmark,
+                    0
+                )
+            ),
+
+        updatedAt:
+            typeof post.updatedAt ===
+                "string"
+                ? post.updatedAt
+                : "",
+
+        createdAt:
+            typeof post.createdAt ===
+                "string"
+                ? post.createdAt
+                : new Date().toISOString(),
+
+        votesWillPlay:
+            Math.max(
+                0,
+                normalizeNumber(
+                    post.votesWillPlay !==
+                        undefined
+                        ? post.votesWillPlay
+                        : post.willPlay,
+                    0
+                )
+            ),
+
+        votesWontPlay:
+            Math.max(
+                0,
+                normalizeNumber(
+                    post.votesWontPlay !==
+                        undefined
+                        ? post.votesWontPlay
+                        : post.wontPlay,
+                    0
+                )
+            )
+    };
+
+    normalized.willPlay =
+        normalized.votesWillPlay;
+
+    normalized.wontPlay =
+        normalized.votesWontPlay;
+
+    return normalized;
+}
+
+function getPosts() {
+    const raw =
+        readJson(
+            POSTS_FILE,
+            []
+        );
+
+    return (
+        Array.isArray(raw)
+            ? raw
+            : []
+    )
+        .map(normalizePost)
+        .filter(Boolean);
+}
+
+function savePosts(posts) {
+    return writeJsonAndSync(
+        POSTS_FILE,
+        posts
+            .map(normalizePost)
+            .filter(Boolean)
+    );
+}
+
 function sortPosts(posts) {
     return [...posts].sort(
         (a, b) => {
@@ -831,6 +778,172 @@ function sortPosts(posts) {
 
             return dateB - dateA;
         }
+    );
+}
+
+/* =========================================================
+   RELEASE NORMALIZATION
+========================================================= */
+
+function normalizeRelease(
+    release
+) {
+    if (
+        !release ||
+        typeof release !==
+            "object"
+    ) {
+        return null;
+    }
+
+    const normalized = {
+        id:
+            release.id !== undefined &&
+            release.id !== null
+                ? release.id
+                : Date.now(),
+
+        title:
+            typeof release.title ===
+                "string"
+                ? release.title.trim()
+                : "",
+
+        releaseDate:
+            typeof release.releaseDate ===
+                "string"
+                ? release.releaseDate
+                : "",
+
+        priceDigital:
+            Math.max(
+                0,
+                normalizeNumber(
+                    release.priceDigital,
+                    0
+                )
+            ),
+
+        priceDisk:
+            Math.max(
+                0,
+                normalizeNumber(
+                    release.priceDisk,
+                    0
+                )
+            ),
+
+        platforms:
+            normalizePlatforms(
+                release.platforms
+            ),
+
+        systemReq:
+            typeof release.systemReq ===
+                "string"
+                ? release.systemReq
+                : "",
+
+        bgUrl:
+            typeof release.bgUrl ===
+                "string"
+                ? release.bgUrl
+                : "",
+
+        discount:
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    normalizeNumber(
+                        release.discount,
+                        0
+                    )
+                )
+            ),
+
+        isMainHit:
+            normalizeBoolean(
+                release.isMainHit,
+                false
+            ),
+
+        isArchived:
+            normalizeBoolean(
+                release.isArchived,
+                false
+            ),
+
+        createdAt:
+            typeof release.createdAt ===
+                "string"
+                ? release.createdAt
+                : new Date().toISOString(),
+
+        updatedAt:
+            typeof release.updatedAt ===
+                "string"
+                ? release.updatedAt
+                : "",
+
+        votesWillPlay:
+            Math.max(
+                0,
+                normalizeNumber(
+                    release.votesWillPlay !==
+                        undefined
+                        ? release.votesWillPlay
+                        : release.willPlay,
+                    0
+                )
+            ),
+
+        votesWontPlay:
+            Math.max(
+                0,
+                normalizeNumber(
+                    release.votesWontPlay !==
+                        undefined
+                        ? release.votesWontPlay
+                        : release.wontPlay,
+                    0
+                )
+            )
+    };
+
+    normalized.willPlay =
+        normalized.votesWillPlay;
+
+    normalized.wontPlay =
+        normalized.votesWontPlay;
+
+    return normalized;
+}
+
+function getReleases() {
+    const raw =
+        readJson(
+            RELEASES_FILE,
+            []
+        );
+
+    return (
+        Array.isArray(raw)
+            ? raw
+            : []
+    )
+        .map(normalizeRelease)
+        .filter(Boolean);
+}
+
+function saveReleases(
+    releases
+) {
+    return writeJsonAndSync(
+        RELEASES_FILE,
+        releases
+            .map(normalizeRelease)
+            .filter(Boolean)
     );
 }
 
@@ -898,7 +1011,169 @@ function sortReleasesByPrice(
 }
 
 /* =========================================================
-   INITIALIZATION
+   QUIZ NORMALIZATION
+========================================================= */
+
+function normalizeQuiz(
+    data
+) {
+    if (
+        !data ||
+        typeof data !== "object"
+    ) {
+        return JSON.parse(
+            JSON.stringify(
+                DEFAULT_QUIZ_DATA
+            )
+        );
+    }
+
+    const options =
+        Array.isArray(
+            data.options
+        )
+            ? data.options
+                .map((option) =>
+                    String(
+                        option
+                    ).trim()
+                )
+                .filter(Boolean)
+                .slice(0, 3)
+            : [];
+
+    const safeOptions =
+        options.length > 0
+            ? options
+            : [
+                ...DEFAULT_QUIZ_DATA.options
+            ];
+
+    const pollSource =
+        data.poll &&
+        typeof data.poll ===
+            "object"
+            ? data.poll
+            : DEFAULT_QUIZ_DATA.poll;
+
+    const pollOptions =
+        Array.isArray(
+            pollSource.options
+        )
+            ? pollSource.options
+                .map((option) => {
+                    if (
+                        typeof option ===
+                        "string"
+                    ) {
+                        return {
+                            text:
+                                option.trim(),
+                            votes: 0
+                        };
+                    }
+
+                    return {
+                        text:
+                            option &&
+                            typeof option.text ===
+                                "string"
+                                ? option.text.trim()
+                                : "",
+
+                        votes:
+                            option
+                                ? Math.max(
+                                    0,
+                                    normalizeNumber(
+                                        option.votes,
+                                        0
+                                    )
+                                )
+                                : 0
+                    };
+                })
+                .filter(
+                    (option) =>
+                        option.text
+                )
+            : [];
+
+    const safePollOptions =
+        pollOptions.length > 0
+            ? pollOptions
+            : DEFAULT_QUIZ_DATA
+                .poll.options
+                .map((option) => ({
+                    ...option
+                }));
+
+    const correctIndex =
+        Math.max(
+            0,
+            Math.min(
+                safeOptions.length - 1,
+                Math.floor(
+                    normalizeNumber(
+                        data.correctIndex,
+                        0
+                    )
+                )
+            )
+        );
+
+    return {
+        question:
+            typeof data.question ===
+                "string" &&
+            data.question.trim()
+                ? data.question.trim()
+                : DEFAULT_QUIZ_DATA.question,
+
+        screenshotUrl:
+            typeof data.screenshotUrl ===
+                "string"
+                ? data.screenshotUrl
+                : "",
+
+        options:
+            safeOptions,
+
+        correctIndex,
+
+        poll: {
+            topic:
+                typeof pollSource.topic ===
+                    "string" &&
+                pollSource.topic.trim()
+                    ? pollSource.topic.trim()
+                    : DEFAULT_QUIZ_DATA
+                        .poll.topic,
+
+            options:
+                safePollOptions
+        }
+    };
+}
+
+function getQuiz() {
+    return normalizeQuiz(
+        readJson(
+            QUIZ_FILE,
+            DEFAULT_QUIZ_DATA
+        )
+    );
+}
+
+function saveQuiz(quiz) {
+    return writeJsonAndSync(
+        QUIZ_FILE,
+        normalizeQuiz(quiz)
+    );
+}
+
+/* =========================================================
+   INITIALIZE JSON DATABASES
 ========================================================= */
 
 ensureJsonFile(
@@ -921,25 +1196,31 @@ ensureJsonFile(
     DEFAULT_QUIZ_DATA
 );
 
+/*
+ * Мягкая миграция старого config.json:
+ * добавляет musicPlaylist, если его ещё нет.
+ */
+const initialConfigRaw =
+    readJson(
+        CONFIG_FILE,
+        DEFAULT_CONFIG
+    );
+
+if (
+    !Array.isArray(
+        initialConfigRaw.musicPlaylist
+    )
+) {
+    writeJson(
+        CONFIG_FILE,
+        normalizeConfig(
+            initialConfigRaw
+        )
+    );
+}
+
 /* =========================================================
-   EXPRESS
-========================================================= */
-
-app.use(
-    express.json({
-        limit: "10mb"
-    })
-);
-
-app.use(
-    express.urlencoded({
-        extended: true,
-        limit: "10mb"
-    })
-);
-
-/* =========================================================
-   CONFIG API
+   PUBLIC CONFIG
 ========================================================= */
 
 app.get(
@@ -950,13 +1231,119 @@ app.get(
 
         res.json({
             siteName:
-                config.siteName
+                config.siteName,
+
+            musicPlaylist:
+                config.musicPlaylist
         });
     }
 );
 
 /* =========================================================
-   POSTS API
+   MUSIC API
+========================================================= */
+
+app.get(
+    "/api/music",
+    (req, res) => {
+        const config =
+            getConfig();
+
+        res.json({
+            musicPlaylist:
+                config.musicPlaylist
+        });
+    }
+);
+
+app.post(
+    "/api/music/manage",
+    requireAdmin,
+    (req, res) => {
+        const body =
+            req.body || {};
+
+        let playlist =
+            body.musicPlaylist;
+
+        if (
+            playlist ===
+                undefined &&
+            body.playlist !==
+                undefined
+        ) {
+            playlist =
+                body.playlist;
+        }
+
+        if (!Array.isArray(playlist)) {
+            return res.status(400).json({
+                success: false,
+                error:
+                    "musicPlaylist должен быть массивом"
+            });
+        }
+
+        const normalizedPlaylist =
+            normalizeMusicPlaylist(
+                playlist
+            ).map(
+                (track, index) => ({
+                    id:
+                        track.id !==
+                            undefined &&
+                        track.id !==
+                            null
+                            ? track.id
+                            : Date.now() +
+                              index,
+
+                    title:
+                        track.title,
+
+                    mp3Url:
+                        track.mp3Url
+                })
+            );
+
+        const config =
+            getConfig();
+
+        const newConfig = {
+            password:
+                config.password,
+
+            siteName:
+                config.siteName,
+
+            musicPlaylist:
+                normalizedPlaylist
+        };
+
+        if (
+            !writeJsonAndSync(
+                CONFIG_FILE,
+                newConfig
+            )
+        ) {
+            return res.status(500).json({
+                success: false,
+                error:
+                    "Не удалось сохранить музыкальный плейлист"
+            });
+        }
+
+        res.json({
+            success: true,
+
+            musicPlaylist:
+                newConfig.musicPlaylist
+        });
+    }
+);
+
+/* =========================================================
+   POSTS — GET
 ========================================================= */
 
 app.get(
@@ -1012,6 +1399,10 @@ app.get(
     }
 );
 
+/* =========================================================
+   POSTS — CREATE
+========================================================= */
+
 app.post(
     "/api/posts",
     requireAdmin,
@@ -1055,13 +1446,12 @@ app.post(
 
         const post =
             normalizePost({
-                id: createId(
-                    posts
-                ),
+                id:
+                    createId(
+                        posts
+                    ),
 
                 title,
-
-                content,
 
                 platform:
                     typeof body.platform ===
@@ -1075,11 +1465,13 @@ app.post(
                         ? body.imageUrl.trim()
                         : "",
 
-                pinned:
-                    normalizeBoolean(
-                        body.pinned,
-                        false
-                    ),
+                content,
+
+                moodTag:
+                    typeof body.moodTag ===
+                        "string"
+                        ? body.moodTag.trim()
+                        : "",
 
                 isDraft:
                     normalizeBoolean(
@@ -1093,15 +1485,19 @@ app.post(
                         ? body.publishAt
                         : "",
 
-                moodTag:
-                    typeof body.moodTag ===
-                        "string"
-                        ? body.moodTag.trim()
-                        : "",
+                pinned:
+                    normalizeBoolean(
+                        body.pinned,
+                        false
+                    ),
 
-                createdAt: now,
+                clicksShare: 0,
+
+                clicksBookmark: 0,
 
                 updatedAt: now,
+
+                createdAt: now,
 
                 votesWillPlay: 0,
 
@@ -1118,21 +1514,166 @@ app.post(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Post create:",
-                    error.message
-                );
-            }
-        );
-
         res.status(201).json({
             success: true,
             post
         });
     }
 );
+
+/* =========================================================
+   POSTS — FULL UPDATE PUT
+========================================================= */
+
+app.put(
+    "/api/posts/:id",
+    requireAdmin,
+    (req, res) => {
+        const posts =
+            getPosts();
+
+        const id =
+            String(req.params.id);
+
+        const index =
+            posts.findIndex(
+                (post) =>
+                    String(post.id) ===
+                    id
+            );
+
+        if (index === -1) {
+            return res.status(404).json({
+                success: false,
+                error:
+                    "Новость не найдена"
+            });
+        }
+
+        const body =
+            req.body || {};
+
+        const title =
+            typeof body.title ===
+                "string"
+                ? body.title.trim()
+                : "";
+
+        const content =
+            typeof body.content ===
+                "string"
+                ? body.content
+                : "";
+
+        if (!title) {
+            return res.status(400).json({
+                success: false,
+                error:
+                    "Заголовок новости обязателен"
+            });
+        }
+
+        if (!content.trim()) {
+            return res.status(400).json({
+                success: false,
+                error:
+                    "Текст новости обязателен"
+            });
+        }
+
+        const oldPost =
+            posts[index];
+
+        const updatedAt =
+            new Date().toISOString();
+
+        /*
+         * Полностью обновляем поля контента,
+         * но сохраняем ID, дату создания
+         * и накопленную аналитику/голоса.
+         */
+        posts[index] =
+            normalizePost({
+                id:
+                    oldPost.id,
+
+                title,
+
+                platform:
+                    typeof body.platform ===
+                        "string"
+                        ? body.platform.trim()
+                        : "",
+
+                imageUrl:
+                    typeof body.imageUrl ===
+                        "string"
+                        ? body.imageUrl.trim()
+                        : "",
+
+                content,
+
+                moodTag:
+                    typeof body.moodTag ===
+                        "string"
+                        ? body.moodTag.trim()
+                        : "",
+
+                isDraft:
+                    normalizeBoolean(
+                        body.isDraft,
+                        false
+                    ),
+
+                publishAt:
+                    typeof body.publishAt ===
+                        "string"
+                        ? body.publishAt
+                        : "",
+
+                pinned:
+                    normalizeBoolean(
+                        body.pinned,
+                        false
+                    ),
+
+                clicksShare:
+                    oldPost.clicksShare,
+
+                clicksBookmark:
+                    oldPost.clicksBookmark,
+
+                updatedAt,
+
+                createdAt:
+                    oldPost.createdAt,
+
+                votesWillPlay:
+                    oldPost.votesWillPlay,
+
+                votesWontPlay:
+                    oldPost.votesWontPlay
+            });
+
+        if (!savePosts(posts)) {
+            return res.status(500).json({
+                success: false,
+                error:
+                    "Не удалось обновить новость"
+            });
+        }
+
+        res.json({
+            success: true,
+            post:
+                posts[index]
+        });
+    }
+);
+
+/* =========================================================
+   POSTS — PATCH COMPATIBILITY ROUTE
+========================================================= */
 
 app.patch(
     "/api/posts/:id",
@@ -1228,14 +1769,14 @@ app.patch(
         }
 
         if (
-            body.pinned !==
+            body.moodTag !==
             undefined
         ) {
-            post.pinned =
-                normalizeBoolean(
-                    body.pinned,
-                    post.pinned
-                );
+            post.moodTag =
+                typeof body.moodTag ===
+                    "string"
+                    ? body.moodTag.trim()
+                    : "";
         }
 
         if (
@@ -1261,14 +1802,42 @@ app.patch(
         }
 
         if (
-            body.moodTag !==
+            body.pinned !==
             undefined
         ) {
-            post.moodTag =
-                typeof body.moodTag ===
-                    "string"
-                    ? body.moodTag.trim()
-                    : "";
+            post.pinned =
+                normalizeBoolean(
+                    body.pinned,
+                    post.pinned
+                );
+        }
+
+        if (
+            body.clicksShare !==
+            undefined
+        ) {
+            post.clicksShare =
+                Math.max(
+                    0,
+                    normalizeNumber(
+                        body.clicksShare,
+                        post.clicksShare
+                    )
+                );
+        }
+
+        if (
+            body.clicksBookmark !==
+            undefined
+        ) {
+            post.clicksBookmark =
+                Math.max(
+                    0,
+                    normalizeNumber(
+                        body.clicksBookmark,
+                        post.clicksBookmark
+                    )
+                );
         }
 
         if (
@@ -1316,21 +1885,101 @@ app.patch(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Post update:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true,
             post
         });
     }
 );
+
+/* =========================================================
+   POSTS — ANALYTICS CLICKS
+========================================================= */
+
+app.post(
+    "/api/posts/:id/click",
+    (req, res) => {
+        const posts =
+            getPosts();
+
+        const id =
+            String(req.params.id);
+
+        const index =
+            posts.findIndex(
+                (post) =>
+                    String(post.id) ===
+                    id
+            );
+
+        if (index === -1) {
+            return res.status(404).json({
+                success: false,
+                error:
+                    "Новость не найдена"
+            });
+        }
+
+        const type =
+            req.body &&
+            typeof req.body.type ===
+                "string"
+                ? req.body.type.trim()
+                : "";
+
+        if (
+            type !== "share" &&
+            type !== "bookmark"
+        ) {
+            return res.status(400).json({
+                success: false,
+                error:
+                    'type должен быть "share" или "bookmark"'
+            });
+        }
+
+        if (
+            type === "share"
+        ) {
+            posts[index]
+                .clicksShare += 1;
+        }
+
+        if (
+            type === "bookmark"
+        ) {
+            posts[index]
+                .clicksBookmark += 1;
+        }
+
+        posts[index].updatedAt =
+            new Date().toISOString();
+
+        if (!savePosts(posts)) {
+            return res.status(500).json({
+                success: false,
+                error:
+                    "Не удалось сохранить аналитику"
+            });
+        }
+
+        res.json({
+            success: true,
+
+            clicksShare:
+                posts[index]
+                    .clicksShare,
+
+            clicksBookmark:
+                posts[index]
+                    .clicksBookmark
+        });
+    }
+);
+
+/* =========================================================
+   POSTS — VOTING
+========================================================= */
 
 app.post(
     "/api/posts/:id/vote",
@@ -1403,15 +2052,6 @@ app.post(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Post vote:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true,
 
@@ -1433,6 +2073,10 @@ app.post(
         });
     }
 );
+
+/* =========================================================
+   POSTS — DELETE
+========================================================= */
 
 app.delete(
     "/api/posts/:id",
@@ -1472,15 +2116,6 @@ app.delete(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Post delete:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true
         });
@@ -1488,7 +2123,7 @@ app.delete(
 );
 
 /* =========================================================
-   RELEASES API
+   RELEASES — GET ACTIVE
 ========================================================= */
 
 app.get(
@@ -1497,7 +2132,7 @@ app.get(
         const releases =
             getReleases();
 
-        const activeReleases =
+        const active =
             releases.filter(
                 (release) =>
                     release.isArchived !==
@@ -1506,11 +2141,15 @@ app.get(
 
         res.json(
             sortReleasesByDate(
-                activeReleases
+                active
             )
         );
     }
 );
+
+/* =========================================================
+   RELEASES — ARCHIVE / HALL OF FAME
+========================================================= */
 
 app.get(
     "/api/releases/archive",
@@ -1519,7 +2158,7 @@ app.get(
         const releases =
             getReleases();
 
-        const archivedReleases =
+        const archived =
             releases.filter(
                 (release) =>
                     release.isArchived ===
@@ -1528,11 +2167,15 @@ app.get(
 
         res.json(
             sortReleasesByDate(
-                archivedReleases
+                archived
             )
         );
     }
 );
+
+/* =========================================================
+   RELEASES — CREATE
+========================================================= */
 
 app.post(
     "/api/releases",
@@ -1569,14 +2212,11 @@ app.post(
             });
         }
 
-        const parsedDate =
-            new Date(
-                releaseDate
-            ).getTime();
-
         if (
             !Number.isFinite(
-                parsedDate
+                new Date(
+                    releaseDate
+                ).getTime()
             )
         ) {
             return res.status(400).json({
@@ -1586,11 +2226,6 @@ app.post(
             });
         }
 
-        const platforms =
-            normalizePlatforms(
-                body.platforms
-            );
-
         const releases =
             getReleases();
 
@@ -1599,9 +2234,10 @@ app.post(
 
         const release =
             normalizeRelease({
-                id: createId(
-                    releases
-                ),
+                id:
+                    createId(
+                        releases
+                    ),
 
                 title,
 
@@ -1619,7 +2255,10 @@ app.post(
                         0
                     ),
 
-                platforms,
+                platforms:
+                    normalizePlatforms(
+                        body.platforms
+                    ),
 
                 systemReq:
                     typeof body.systemReq ===
@@ -1657,16 +2296,20 @@ app.post(
                         false
                     ),
 
-                createdAt: now,
+                createdAt:
+                    now,
 
-                updatedAt: now,
+                updatedAt:
+                    now,
 
                 votesWillPlay: 0,
 
                 votesWontPlay: 0
             });
 
-        releases.push(release);
+        releases.push(
+            release
+        );
 
         if (
             !saveReleases(
@@ -1680,21 +2323,16 @@ app.post(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Release create:",
-                    error.message
-                );
-            }
-        );
-
         res.status(201).json({
             success: true,
             release
         });
     }
 );
+
+/* =========================================================
+   RELEASES — ARCHIVE TOGGLE
+========================================================= */
 
 app.patch(
     "/api/releases/:id/archive",
@@ -1742,22 +2380,18 @@ app.patch(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Release archive:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true,
+
             release:
                 releases[index]
         });
     }
 );
+
+/* =========================================================
+   RELEASES — VOTING
+========================================================= */
 
 app.post(
     "/api/releases/:id/vote",
@@ -1845,15 +2479,6 @@ app.post(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Release vote:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true,
 
@@ -1875,6 +2500,10 @@ app.post(
         });
     }
 );
+
+/* =========================================================
+   RELEASES — DELETE
+========================================================= */
 
 app.delete(
     "/api/releases/:id",
@@ -1916,15 +2545,6 @@ app.delete(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Release delete:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true
         });
@@ -1932,19 +2552,14 @@ app.delete(
 );
 
 /* =========================================================
-   QUIZ API
+   QUIZ — GET
 ========================================================= */
 
 app.get(
     "/api/quiz",
     (req, res) => {
         const quiz =
-            normalizeQuiz(
-                readJson(
-                    QUIZ_FILE,
-                    DEFAULT_QUIZ_DATA
-                )
-            );
+            getQuiz();
 
         res.json({
             question:
@@ -1958,6 +2573,10 @@ app.get(
         });
     }
 );
+
+/* =========================================================
+   QUIZ — MANAGE
+========================================================= */
 
 app.post(
     "/api/quiz/manage",
@@ -1992,7 +2611,9 @@ app.post(
             });
         }
 
-        if (options.length < 2) {
+        if (
+            options.length < 2
+        ) {
             return res.status(400).json({
                 success: false,
                 error:
@@ -2021,12 +2642,7 @@ app.post(
         }
 
         const currentQuiz =
-            normalizeQuiz(
-                readJson(
-                    QUIZ_FILE,
-                    DEFAULT_QUIZ_DATA
-                )
-            );
+            getQuiz();
 
         const quiz =
             normalizeQuiz({
@@ -2057,15 +2673,6 @@ app.post(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Quiz update:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true,
 
@@ -2083,16 +2690,15 @@ app.post(
     }
 );
 
+/* =========================================================
+   QUIZ — ANSWER
+========================================================= */
+
 app.post(
     "/api/quiz/answer",
     (req, res) => {
         const quiz =
-            normalizeQuiz(
-                readJson(
-                    QUIZ_FILE,
-                    DEFAULT_QUIZ_DATA
-                )
-            );
+            getQuiz();
 
         const rawIndex =
             req.body &&
@@ -2133,19 +2739,14 @@ app.post(
 );
 
 /* =========================================================
-   POLL API
+   POLL — GET
 ========================================================= */
 
 app.get(
     "/api/poll",
     (req, res) => {
         const quiz =
-            normalizeQuiz(
-                readJson(
-                    QUIZ_FILE,
-                    DEFAULT_QUIZ_DATA
-                )
-            );
+            getQuiz();
 
         res.json({
             topic:
@@ -2157,16 +2758,15 @@ app.get(
     }
 );
 
+/* =========================================================
+   POLL — VOTE
+========================================================= */
+
 app.post(
     "/api/poll/vote",
     (req, res) => {
         const quiz =
-            normalizeQuiz(
-                readJson(
-                    QUIZ_FILE,
-                    DEFAULT_QUIZ_DATA
-                )
-            );
+            getQuiz();
 
         const body =
             req.body || {};
@@ -2212,22 +2812,18 @@ app.post(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Poll vote:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true,
+
             options:
                 quiz.poll.options
         });
     }
 );
+
+/* =========================================================
+   POLL — MANAGE
+========================================================= */
 
 app.post(
     "/api/poll/manage",
@@ -2269,9 +2865,12 @@ app.post(
                                         : "",
 
                                 votes:
-                                    normalizeNumber(
-                                        option.votes,
-                                        0
+                                    Math.max(
+                                        0,
+                                        normalizeNumber(
+                                            option.votes,
+                                            0
+                                        )
                                     )
                             };
                         }
@@ -2292,7 +2891,9 @@ app.post(
                     .slice(0, 10)
                 : [];
 
-        if (options.length < 2) {
+        if (
+            options.length < 2
+        ) {
             return res.status(400).json({
                 success: false,
                 error:
@@ -2301,18 +2902,17 @@ app.post(
         }
 
         const currentQuiz =
-            normalizeQuiz(
-                readJson(
-                    QUIZ_FILE,
-                    DEFAULT_QUIZ_DATA
-                )
-            );
+            getQuiz();
 
         const resetVotes =
-            body.resetVotes === true ||
-            body.resetVotes === "true" ||
-            body.resetVotes === 1 ||
-            body.resetVotes === "1";
+            body.resetVotes ===
+                true ||
+            body.resetVotes ===
+                "true" ||
+            body.resetVotes ===
+                1 ||
+            body.resetVotes ===
+                "1";
 
         const finalOptions =
             options.map(
@@ -2323,13 +2923,7 @@ app.post(
                     votes:
                         resetVotes
                             ? 0
-                            : Math.max(
-                                0,
-                                normalizeNumber(
-                                    option.votes,
-                                    0
-                                )
-                            )
+                            : option.votes
                 })
             );
 
@@ -2365,17 +2959,9 @@ app.post(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Poll update:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true,
+
             poll:
                 quiz.poll
         });
@@ -2396,7 +2982,7 @@ app.post(
         const currentConfig =
             getConfig();
 
-        const newSiteName =
+        const siteName =
             typeof body.siteName ===
                 "string"
                 ? body.siteName.trim()
@@ -2414,17 +3000,17 @@ app.post(
                         ? body.password
                         : "";
 
-        let newPassword =
+        let password =
             currentConfig.password;
 
         if (
             requestedPassword.trim()
         ) {
-            newPassword =
+            password =
                 requestedPassword;
         }
 
-        if (!newSiteName) {
+        if (!siteName) {
             return res.status(400).json({
                 success: false,
                 error:
@@ -2433,7 +3019,7 @@ app.post(
         }
 
         if (
-            newPassword.length < 4
+            password.length < 4
         ) {
             return res.status(400).json({
                 success: false,
@@ -2443,15 +3029,17 @@ app.post(
         }
 
         const newConfig = {
-            password:
-                newPassword,
+            password,
 
-            siteName:
-                newSiteName
+            siteName,
+
+            musicPlaylist:
+                currentConfig
+                    .musicPlaylist
         };
 
         if (
-            !writeJson(
+            !writeJsonAndSync(
                 CONFIG_FILE,
                 newConfig
             )
@@ -2463,26 +3051,20 @@ app.post(
             });
         }
 
-        syncWithGitHub().catch(
-            (error) => {
-                console.error(
-                    "[GitHub Sync] Config update:",
-                    error.message
-                );
-            }
-        );
-
         res.json({
             success: true,
 
             siteName:
-                newConfig.siteName
+                newConfig.siteName,
+
+            musicPlaylist:
+                newConfig.musicPlaylist
         });
     }
 );
 
 /* =========================================================
-   CLEAR ALL DATABASE
+   ADMIN — CLEAR ALL
 ========================================================= */
 
 app.post(
@@ -2490,10 +3072,16 @@ app.post(
     requireAdmin,
     (req, res) => {
         const postsSaved =
-            savePosts([]);
+            writeJson(
+                POSTS_FILE,
+                []
+            );
 
         const releasesSaved =
-            saveReleases([]);
+            writeJson(
+                RELEASES_FILE,
+                []
+            );
 
         if (
             !postsSaved ||
@@ -2517,6 +3105,7 @@ app.post(
 
         res.json({
             success: true,
+
             message:
                 "Новости и релизы полностью очищены"
         });
@@ -2536,20 +3125,6 @@ app.use(
                 "API маршрут не найден"
         });
     }
-);
-
-/* =========================================================
-   STATIC FRONTEND
-========================================================= */
-
-app.use(
-    express.static(
-        PUBLIC_DIR,
-        {
-            extensions: ["html"],
-            index: "index.html"
-        }
-    )
 );
 
 /* =========================================================
